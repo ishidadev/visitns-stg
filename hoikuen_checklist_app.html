@@ -1,577 +1,946 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>保育園見学チェックリスト・クラウドアプリ</title>
-    <style>
-        @page { size: A3 landscape; margin: 10mm 12mm; background-color: #ffffff; }
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
-            margin: 0; padding: 0; width: 100%; color: #222; font-size: 10.5pt; line-height: 1.35;
-        }
-        
-        /* ヘッダー */
-        .header { border-bottom: 2px solid #555; padding-bottom: 6px; margin-bottom: 12px; display: flex; align-items: flex-end; justify-content: space-between; }
-        .header-left { display: flex; align-items: flex-end; }
-        .header h1 { margin: 0; font-size: 24pt; letter-spacing: 2px; color: #333; }
-        .header-info { margin-left: 40px; display: flex; gap: 20px; }
-        .header-info-field { border-bottom: 1px solid #333; width: 250px; font-size: 13pt; padding-bottom: 2px; }
-        .header p { margin: 0; font-size: 10pt; color: #666; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>保育園見学チェックリスト</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --blue:#1e5a8c;--blue-bg:#eef5fc;
+    --green:#2e7d32;--green-bg:#edf7ee;
+    --red:#c62828;--red-bg:#fdf2f2;
+    --orange:#e65100;--orange-bg:#fdf7ef;
+    --yellow:#7a6800;--yellow-bg:#fffae6;
+    --pink:#c2185b;--pink-bg:#fce4ec;
+    --gray:#555;--gray-bg:#f5f5f5;
+    --surface:#fff;--bg:#f2f4f7;
+    --text:#222;--sub:#666;--border:#e4e7ec;
+    --radius:14px;--shadow:0 2px 8px rgba(0,0,0,0.08);
+  }
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
 
-        /* レイアウト */
-        .main-container { display: flex; justify-content: space-between; width: 100%; gap: 12px; }
-        .column { flex: 1; display: flex; flex-direction: column; width: calc(25% - 9px); }
-        .section { margin-bottom: 12px; border: 1px solid #ccc; border-radius: 6px; background: #fff; width: 100%; }
-        .section-title { padding: 6px 8px; font-size: 11pt; font-weight: bold; border-bottom: 1px solid #ccc; }
-        
-        /* カラー */
-        .col-blue { border-color: #a8cce8; } .col-blue .section-title { background-color: #eef5fc; color: #1e5a8c; border-color: #a8cce8; }
-        .col-green { border-color: #a8e8b6; } .col-green .section-title { background-color: #eeffeef; color: #2e7d32; border-color: #a8e8b6; }
-        .col-red { border-color: #f5baba; } .col-red .section-title { background-color: #fdf2f2; color: #c62828; border-color: #f5baba; }
-        .col-orange { border-color: #f5d3a6; } .col-orange .section-title { background-color: #fdf7ef; color: #e65100; border-color: #f5d3a6; }
-        .col-yellow { border-color: #e8db8b; } .col-yellow .section-title { background-color: #fffae6; color: #827717; border-color: #e8db8b; }
+  /* ===== HEADER ===== */
+  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 14px 8px;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+  .app-title{font-size:13px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .school-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+  .school-tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
+  .tab-btn.active{background:var(--blue);color:#fff;font-weight:700;}
+  .tab-btn.inactive{background:#e8ecf0;color:#555;font-weight:500;}
+  .tab-add{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1.5px dashed #aaa;background:transparent;color:#888;font-size:12px;cursor:pointer;font-family:inherit;}
+  .tab-add:hover{border-color:#666;color:#555;}
 
-        .row { display: flex; border-bottom: 1px solid #e4e4e4; }
-        .row:last-child { border-bottom: none; }
-        .item-name { flex: 0 0 35%; font-weight: 500; padding: 6px 8px; border-right: 1px solid #e4e4e4; background-color: #fbfbfb; display: flex; align-items: center; }
-        .item-val { flex: 1; padding: 6px 8px; display: flex; flex-wrap: wrap; align-items: center; color: #333; }
+  /* ===== MODAL ===== */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-box{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+  .modal-title{font-size:15px;font-weight:700;margin-bottom:14px;}
+  .modal-input{width:100%;padding:11px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border .2s;}
+  .modal-input:focus{border-color:var(--blue);}
+  .modal-btns{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;}
+  .btn-cancel{padding:9px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;}
+  .btn-primary{padding:9px 18px;border-radius:10px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;}
 
-        /* インタラクティブ要素の設定 */
-        .chk-item { display: inline-flex; align-items: center; margin-right: 12px; margin-bottom: 2px; margin-top: 2px; cursor: pointer; user-select: none; }
-        .chk { display: inline-block; width: 12px; height: 12px; border: 1px solid #888; border-radius: 2px; background: #fff; margin-right: 4px; flex-shrink: 0; position: relative; }
-        
-        /* チェックされた時のモダンなインジケータ */
-        .chk.is-checked { background-color: #1e5a8c; border-color: #1e5a8c; }
-        .chk.is-checked::after { content: ''; position: absolute; left: 3px; top: 1px; width: 3px; height: 6px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  /* ===== MAIN CONTENT ===== */
+  .main{padding:12px 12px 90px;}
+  .school-header{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .school-name-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .school-name-input{flex:1;font-size:17px;font-weight:700;border:none;border-bottom:2px solid #e0e0e0;padding:4px 0;outline:none;font-family:inherit;background:transparent;color:var(--text);transition:border .2s;}
+  .school-name-input:focus{border-color:var(--blue);}
+  .delete-btn{background:none;border:none;color:#e57373;font-size:22px;cursor:pointer;padding:2px;flex-shrink:0;}
+  .date-row{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:13px;}
+  .date-input{border:none;border-bottom:1px solid #ddd;font-size:13px;color:#444;outline:none;font-family:inherit;background:transparent;padding:2px 0;}
 
-        /* 入力用カッコのGoodnotes/ブラウザ両対応スタイル */
-        .blank { color: #0056b3; font-weight: bold; padding: 0 4px; outline: none; border-bottom: 1px dashed #aaa; min-width: 30px; display: inline-block; }
-        .blank:empty::before { content: '　　'; color: #ccc; } /* 空の時のスペース維持 */
-        .full-width { flex-basis: 100%; }
-        .star { color: #ccc; font-size: 14pt; letter-spacing: 4px; cursor: pointer; user-select: none; }
-        .star span:hover, .star span.active { color: #ffb300; }
+  /* ===== SECTION ===== */
+  .section{background:#fff;border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
+  .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:none;cursor:pointer;text-align:left;background:var(--surface);transition:background .2s;font-family:inherit;}
+  .section-header.open{background:var(--sec-bg);}
+  .section-title{font-weight:700;font-size:13px;color:var(--sec-color);}
+  .section-arrow{font-size:12px;color:#bbb;transition:transform .2s;}
+  .section-arrow.open{transform:rotate(180deg);}
+  .section-body{border-top:2px solid var(--sec-bg);}
+  .progress-bar{height:3px;background:#f0f0f0;margin:0 15px 0;}
+  .progress-fill{height:3px;border-radius:2px;background:var(--sec-color);transition:width .3s;}
 
-        /* ログイン画面のオーバーレイレイアウト */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f7f9; z-index: 9999; display: flex; justify-content: center; align-items: center; font-family: sans-serif; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 360px; text-align: center; }
-        .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 11pt; }
-        .login-box button { width: 100%; padding: 12px; background: #1e5a8c; color: white; border: none; border-radius: 4px; font-size: 12pt; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        
-        /* ステータスインジケータ */
-        #sync-status { font-size: 9pt; padding: 4px 8px; border-radius: 4px; color: white; background: #666; font-weight: bold; }
-        .status-saved { background: #2e7d32 !important; }
-        .status-saving { background: #f57f17 !important; }
-        #logout-btn { padding: 4px 8px; font-size: 9pt; background: #f5f5f5; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-    </style>
+  /* ===== ROWS ===== */
+  .row{padding:11px 14px;border-bottom:1px solid #f2f2f4;}
+  .row:last-child{border-bottom:none;}
+  .row-label{display:flex;align-items:center;gap:5px;margin-bottom:7px;}
+  .badge{font-size:9px;padding:2px 5px;border-radius:4px;color:#fff;font-weight:700;flex-shrink:0;}
+  .badge-req{background:#e65100;}
+  .badge-pre{background:#1e5a8c;}
+  .label-text{font-size:12px;font-weight:600;color:#444;}
+
+  /* ===== CHIPS ===== */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{padding:6px 12px;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:#fff;color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
+  .chip.selected{background:var(--sec-color);color:#fff;font-weight:700;}
+  .chip:active{opacity:0.7;transform:scale(0.96);}
+
+  /* ===== INPUTS ===== */
+  .text-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;color:var(--text);}
+  .text-input:focus{border-color:var(--sec-color);}
+  .note-input{margin-top:7px;width:100%;padding:7px 11px;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:#555;background:#fafafa;}
+  .note-input:focus{border-color:var(--sec-color);background:#fff;}
+  .textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:100px;transition:border .2s;}
+  .textarea:focus{border-color:var(--sec-color);}
+
+  /* ===== STARS ===== */
+  .stars{display:flex;gap:6px;}
+  .star-btn{background:none;border:none;cursor:pointer;font-size:30px;padding:2px;line-height:1;transition:color .1s, transform .1s;}
+  .star-btn:active{transform:scale(0.85);}
+  .star-filled{color:#f59e0b;}
+  .star-empty{color:#ddd;}
+  .star-filled.highlight{color:#e65100;}
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state{padding:60px 20px;text-align:center;color:#aaa;}
+  .empty-icon{font-size:56px;margin-bottom:12px;}
+  .empty-text{font-size:14px;line-height:1.6;}
+
+  /* ===== PROGRESS TAG ===== */
+  .progress-tag{font-size:10px;color:var(--sec-color);opacity:.7;margin-left:6px;font-weight:500;}
+
+  /* ===== EXPORT BTN ===== */
+  .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;}
+  .export-btn{flex:1;padding:12px;border-radius:12px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
+  .btn-export{background:var(--green);color:#fff;}
+  .btn-expand{background:var(--blue-bg);color:var(--blue);}
+
+  /* ===== VIEW MODE SELECTOR ===== */
+  .mode-selector-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #e8ecf0;
+    padding: 3px;
+    border-radius: 20px;
+    margin-left: auto;
+  }
+  .mode-btn {
+    padding: 5px 12px;
+    border-radius: 16px;
+    border: none;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    background: transparent;
+    color: #555;
+    font-weight: 500;
+    transition: all .2s;
+  }
+  .mode-btn.active {
+    background: #fff;
+    color: var(--text);
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  /* ===== A3 MODE LAYOUT ===== */
+  body.mode-a3 {
+    background: #ffffff;
+    padding: 10px;
+  }
+  body.mode-a3 .main {
+    max-width: 100% !important;
+    padding: 10px 0 40px 0;
+  }
+  body.mode-a3 .main-container-grid {
+    column-count: 4;
+    column-gap: 14px;
+    width: 100%;
+  }
+  body.mode-a3 .section {
+    display: inline-block;
+    width: 100%;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+    margin-bottom: 14px;
+  }
+  body.mode-a3 .section-body {
+    display: block !important;
+  }
+  body.mode-a3 .section-arrow, body.mode-a3 .progress-bar {
+    display: none !important;
+  }
+  body.mode-a3 .export-area {
+    display: none !important;
+  }
+
+  /* ===== LOGIN OVERLAY ===== */
+  #login-overlay { position: fixed; inset: 0; background: #f4f7f9; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+  .login-box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); width: 100%; max-width: 360px; text-align: center; }
+  .login-box h2 { font-size: 18px; color: #333; margin-bottom: 6px; font-weight: 700; }
+  .login-box p { font-size: 12px; color: #666; margin-bottom: 20px; }
+  .login-box input { width: 100%; padding: 11px 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; }
+  .login-box input:focus { border-color: #1e5a8c; }
+  .login-box button { width: 100%; padding: 12px; background: #1e5a8c; color: white; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; font-weight: 700; margin-top: 12px; box-shadow: 0 2px 6px rgba(30,90,140,0.2); }
+  
+  #sync-status { font-size: 10px; padding: 4px 10px; border-radius: 12px; color: white; background: #777; font-weight: bold; }
+  .status-saved { background: #2e7d32 !important; }
+  .status-saving { background: #f57f17 !important; }
+  #logout-btn { padding: 5px 10px; font-size: 11px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: 500; }
+
+</style>
 </head>
 <body>
 
-    <div id="login-overlay">
-        <div class="login-box">
-            <h2 style="color:#333; margin-bottom:5px;">保育園見学クラウド</h2>
-            <p style="color:#666; font-size:9pt; margin-bottom:20px;">閲覧には認証が必要です</p>
-            <input type="email" id="login-email" placeholder="メールアドレス（ID）">
-            <input type="password" id="login-password" placeholder="パスワード">
-            <button id="login-submit-btn">ログイン</button>
-            <p id="login-error" style="color:red; font-size:9.5pt; margin-top:10px;"></p>
-        </div>
+<!-- 🔐 ログイン画面 -->
+<div id="login-overlay">
+    <div class="login-box">
+        <h2>保育園見学チェックリスト</h2>
+        <p>閲覧・編集には認証が必要です</p>
+        <input type="email" id="login-email" placeholder="メールアドレス">
+        <input type="password" id="login-password" placeholder="パスワード">
+        <button id="login-submit-btn">ログイン</button>
+        <p id="login-error" style="color:red; font-size:12px; margin-top:10px; font-weight:500;"></p>
+    </div>
+</div>
+
+<div id="app-header" class="app-header">
+  <div style="display:flex; align-items:center; justify-content:between; width:100%; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+    <div class="app-title" style="margin-bottom:0;">🏫 保育園見学チェックリスト</div>
+    
+    <!-- 📱/📄 表示モード切り替えトグル -->
+    <div class="mode-selector-container">
+      <button id="mode-toggle-btn" class="mode-btn active" onclick="setViewMode('toggle')">📱 トグル形式</button>
+      <button id="mode-a3-btn" class="mode-btn" onclick="setViewMode('a3')">📄 A3印刷形式</button>
     </div>
 
-    <div class="header">
-        <div class="header-left">
-            <h1>保育園見学チェックリスト</h1>
-            <div class="header-info">
-                <div class="header-info-field">見学日：<span class="blank" id="field-visit-date"></span></div>
-                <div class="header-info-field" style="background:#fffde6;">園名★：<span class="blank" id="field-nursery-name" style="color:#cc0000;"></span></div>
-            </div>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div id="sync-status">接続中...</div>
-            <button id="logout-btn">ログアウト</button>
-        </div>
+    <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
+        <div id="sync-status">接続中...</div>
+        <button id="logout-btn">ログアウト</button>
     </div>
+  </div>
+  <div class="school-tabs" id="school-tabs"></div>
+</div>
 
-    <div class="main-container">
-        <div class="column">
-            <div class="section col-blue">
-                <div class="section-title">🏢 ① 基本情報・立地</div>
-                <div class="row"><div class="item-name"><span class="pre-badge">事前</span>運営主体</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>公立</span>
-                    <span class="chk-item"><span class="chk"></span>私立</span>
-                    <span class="chk-item"><span class="chk"></span>企業</span>
-                    <span class="chk-item"><span class="chk"></span>他</span>
-                </div></div>
-                <div class="row"><div class="item-name"><span class="pre-badge">事前</span>所在地</div><div class="item-val">〒<span class="blank"></span></div></div>
-                <div class="row"><div class="item-name"><span class="pre-badge">事前</span>最寄駅・バス停</div><div class="item-val"><span class="blank"></span></div></div>
-                <div class="row"><div class="item-name"><span class="pre-badge">事前</span>自宅からの時間</div><div class="item-val">約<span class="blank"></span>分</div></div>
-                <div class="row"><div class="item-name">通園手段</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>徒歩</span>
-                    <span class="chk-item"><span class="chk"></span>自転車</span>
-                    <span class="chk-item"><span class="chk"></span>車</span>
-                    <span class="chk-item"><span class="chk"></span>電/バ</span>
-                </div></div>
-                <div class="row"><div class="item-name">通園ルート安全</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>歩道有</span>
-                    <span class="chk-item"><span class="chk"></span>交通量多</span>
-                    <span class="chk-item"><span class="chk"></span>信号横断</span>
-                </div></div>
-                <div class="row"><div class="item-name">危険箇所</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>坂道</span>
-                    <span class="chk-item full-width"><span class="chk"></span>他<span class="blank"></span></span>
-                </div></div>
-                <div class="row"><div class="item-name">周辺環境</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>騒音</span>
-                    <span class="chk-item"><span class="chk"></span>治安</span>
-                    <span class="chk-item"><span class="chk"></span>車通り</span>
-                    <span class="chk-item"><span class="chk"></span>公園有</span>
-                </div></div>
-                <div class="row"><div class="item-name">駐車場</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">駐輪場</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name"><span class="req-badge">重要</span>ベビーカー置場</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>有 <span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>なし</span>
-                </div></div>
-            </div>
+<div class="main" id="main-content">
+  <div class="empty-state">
+    <div class="empty-icon">🏫</div>
+    <div class="empty-text">下の「＋ 園を追加」から<br>見学する園を登録してください</div>
+  </div>
+</div>
 
-            <div class="section col-blue">
-                <div class="section-title">🕒 ② 園の基本運営</div>
-                <div class="row"><div class="item-name">開園時間</div><div class="item-val"><span class="blank"></span>:<span class="blank"></span> 〜 <span class="blank"></span>:<span class="blank"></span></div></div>
-                <div class="row"><div class="item-name">延長保育</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>有 <span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>無</span>
-                </div></div>
-                <div class="row"><div class="item-name">土曜保育</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">日祝保育</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">休園日</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>日曜</span>
-                    <span class="chk-item"><span class="chk"></span>祝日</span>
-                    <span class="chk-item"><span class="chk"></span>年末年始</span>
-                    <span class="chk-item"><span class="chk"></span>他</span>
-                </div></div>
-                <div class="row"><div class="item-name">定員</div><div class="item-val"><span class="blank"></span>名</div></div>
-                <div class="row"><div class="item-name">年齢別構成</div><div class="item-val">0歳<span class="blank"></span> 1歳<span class="blank"></span> 2歳<span class="blank"></span> 3歳<span class="blank"></span> 4歳<span class="blank"></span> 5歳<span class="blank"></span></div></div>
-                <div class="row"><div class="item-name">待機児童状況</div><div class="item-val"><span class="chk-item"><span class="chk"></span>多い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>少ない</span></div></div>
-                <div class="row"><div class="item-name">入園難易度</div><div class="item-val"><span class="chk-item"><span class="chk"></span>高い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>低い</span></div></div>
-                <div class="row"><div class="item-name"><span class="pre-badge">事前</span>兄弟枠の有無</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-            </div>
-        </div>
+<div class="export-area">
+  <button class="export-btn btn-expand" onclick="expandAll()">📂 全セクション展開</button>
+  <button class="export-btn btn-export" onclick="exportSummary()">📋 サマリーコピー</button>
+</div>
 
-        <div class="column">
-            <div class="section col-green">
-                <div class="section-title">🧸 ③ 施設・設備</div>
-                <div class="row"><div class="item-name"><span class="req-badge">重要</span>園内清潔・ニオイ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>良い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">整理整頓状況</div><div class="item-val"><span class="chk-item"><span class="chk"></span>良い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">保育室の広さ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>十分</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>狭い</span></div></div>
-                <div class="row"><div class="item-name">1人当りスペース</div><div class="item-val"><span class="chk-item"><span class="chk"></span>十分</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>狭い</span></div></div>
-                <div class="row"><div class="item-name">採光状況</div><div class="item-val"><span class="chk-item"><span class="chk"></span>明るい</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>暗い</span></div></div>
-                <div class="row"><div class="item-name">換気状況</div><div class="item-val"><span class="chk-item"><span class="chk"></span>良い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>悪い</span></div></div>
-                <div class="row"><div class="item-name">冷暖房・床暖房</div><div class="item-val"><span class="chk-item"><span class="chk"></span>設定適切</span><span class="chk-item"><span class="chk"></span>床暖有</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">トイレの数・清潔</div><div class="item-val"><span class="chk-item"><span class="chk"></span>十分綺麗</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">手洗い場使い易さ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>使い易い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">おむつ替えスペース</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">調乳スペース</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">調理室の有無</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">園庭の有無・広さ</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>あり <span class="blank"></span></span>
-                    <span class="chk-item full-width"><span class="chk"></span>なし <span class="blank"></span></span>
-                </div></div>
-                <div class="row"><div class="item-name">外の遊具玩具</div><div class="item-val"><span class="chk-item"><span class="chk"></span>充実</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>少ない</span></div></div>
-                <div class="row"><div class="item-name">室内の遊具玩具</div><div class="item-val"><span class="chk-item"><span class="chk"></span>充実</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>少ない</span></div></div>
-                <div class="row"><div class="item-name">午睡寝具</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>布団</span><span class="chk-item"><span class="chk"></span>コット</span>
-                    <span class="chk-item full-width"><span class="chk"></span>他<span class="blank"></span></span>
-                </div></div>
-                <div class="row"><div class="item-name">午睡場所</div><div class="item-val">
-                    <span class="chk-item"><span class="chk"></span>別室あり</span><span class="chk-item"><span class="chk"></span>保育室内</span>
-                    <span class="chk-item full-width"><span class="chk"></span>他<span class="blank"></span></span>
-                </div></div>
-                <div class="row"><div class="item-name">ロッカーの広さ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>十分</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>狭い</span></div></div>
-            </div>
-
-            <div class="section col-red">
-                <div class="section-title">🛡️ ④ 安全・防犯・防災</div>
-                <div class="row"><div class="item-name">施錠オートロック</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>あり <span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>なし</span>
-                </div></div>
-                <div class="row"><div class="item-name">防犯カメラ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">不審者対策</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">来園者チェック</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>あり <span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>なし</span>
-                </div></div>
-                <div class="row"><div class="item-name">避難経路明確さ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>明確</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>不明確</span></div></div>
-                <div class="row"><div class="item-name">避難訓練の頻度</div><div class="item-val">月<span class="blank"></span>回 / 季節・年<span class="blank"></span>回</div></div>
-                <div class="row"><div class="item-name">災害時対応・場所</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>説明有 <span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>不明</span>
-                </div></div>
-                <div class="row"><div class="item-name">緊急連絡体制</div><div class="item-val"><span class="chk-item"><span class="chk"></span>明確・説明有</span><span class="chk-item"><span class="chk"></span>不明確</span></div></div>
-                <div class="row"><div class="item-name">事故怪我時の対応</div><div class="item-val"><span class="chk-item"><span class="chk"></span>説明あり</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">AEDの有無</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">保険加入の有無</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name"><span class="req-badge">重要</span>ヒヤリハット共有</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="section col-orange">
-                <div class="section-title">📖 ⑤ 保育内容・方針</div>
-                <div class="row"><div class="item-name"><span class="pre-badge">事前</span>保育理念</div><div class="item-val"><span class="chk-item"><span class="chk"></span>共感できる</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>合わない</span></div></div>
-                <div class="row"><div class="item-name">教育方針・特色</div><div class="item-val"><span class="chk-item"><span class="chk"></span>共感できる</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>合わない</span></div></div>
-                <div class="row"><div class="item-name">子どもへの接し方</div><div class="item-val"><span class="chk-item"><span class="chk"></span>丁寧温か</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">自由/一斉保育</div><div class="item-val"><span class="chk-item"><span class="chk"></span>自由寄り</span><span class="chk-item"><span class="chk"></span>一斉寄り</span><span class="chk-item"><span class="chk"></span>バランス</span></div></div>
-                <div class="row"><div class="item-name">外遊びの頻度</div><div class="item-val"><span class="chk-item"><span class="chk"></span>毎日</span><span class="chk-item"><span class="chk"></span>週<span class="blank"></span>回</span><span class="chk-item"><span class="chk"></span>天候次第</span></div></div>
-                <div class="row"><div class="item-name">散歩の有無安全</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>あり <span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>なし</span>
-                </div></div>
-                <div class="row"><div class="item-name">行事内容活動</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>充実<span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>少ない</span>
-                </div></div>
-                <div class="row"><div class="item-name">英語体操等活動</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>あり<span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>なし</span>
-                </div></div>
-                <div class="row"><div class="item-name">制作活動の頻度</div><div class="item-val"><span class="chk-item"><span class="chk"></span>多い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>少ない</span></div></div>
-                <div class="row"><div class="item-name">テレビ動画使用</div><div class="item-val">
-                    <span class="chk-item full-width"><span class="chk"></span>あり<span class="blank"></span></span>
-                    <span class="chk-item"><span class="chk"></span>なし</span>
-                </div></div>
-                <div class="row"><div class="item-name">発達支援の有無</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">異年齢交流</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-            </div>
-
-            <div class="section col-blue">
-                <div class="section-title">⏰ ⑥ 1日の生活</div>
-                <div class="row"><div class="item-name">登降園の時間帯</div><div class="item-val">登 <span class="blank"></span> 〜 / 降 <span class="blank"></span> 〜が多い</div></div>
-                <div class="row"><div class="item-name">日程表</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり(別紙等)</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">外遊び時間帯</div><div class="item-val"><span class="blank"></span> 〜 <span class="blank"></span></div></div>
-                <div class="row"><div class="item-name">昼寝時間・長さ</div><div class="item-val"><span class="blank"></span> 〜 <span class="blank"></span></div></div>
-                <div class="row"><div class="item-name"><span class="req-badge">重要</span>午睡見守り体制</div><div class="item-val"><span class="chk-item"><span class="chk"></span>センサー有</span><span class="chk-item"><span class="chk"></span>目視のみ</span><span class="chk-item"><span class="chk"></span>5分毎等</span></div></div>
-            </div>
-            
-            <div class="section col-yellow">
-                <div class="section-title">🍽️ ⑦ 食事・健康</div>
-                <div class="row"><div class="item-name"><span class="pre-badge">事前</span>給食</div><div class="item-val"><span class="chk-item"><span class="chk"></span>自園調理</span><span class="chk-item"><span class="chk"></span>外部委託</span><span class="chk-item"><span class="chk"></span>弁当持参</span></div></div>
-                <div class="row"><div class="item-name">アレルギー対応</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">メニュー・栄養</div><div class="item-val"><span class="chk-item"><span class="chk"></span>工夫あり</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">離乳食対応</div><div class="item-val"><span class="chk-item"><span class="chk"></span>丁寧</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">食育活動</div><div class="item-val"><span class="chk-item"><span class="chk"></span>あり</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">食事様子完食強要</div><div class="item-val"><span class="chk-item"><span class="chk"></span>楽しそう</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>強要あり</span></div></div>
-                <div class="row"><div class="item-name">食事介助の仕方</div><div class="item-val"><span class="chk-item"><span class="chk"></span>丁寧</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">検温健康チェック</div><div class="item-val"><span class="chk-item"><span class="chk"></span>毎日実施</span><span class="chk-item"><span class="chk"></span>不定期</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">体調不良時対応</div><div class="item-val"><span class="chk-item"><span class="chk"></span>隔離可説有</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">発熱時呼出基準</div><div class="item-val"><span class="chk-item"><span class="chk"></span>37.5℃〜</span><span class="chk-item"><span class="chk"></span>38.0℃〜</span><span class="chk-item"><span class="chk"></span>他<span class="blank"></span></span></div></div>
-                <div class="row"><div class="item-name">病児病後児保育</div><div class="item-val text-left"><span class="chk-item"><span class="chk"></span>あり(併設)</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name"><span class="req-badge">重要</span>使用済おむつ</div><div class="item-val" style="font-weight:bold; color:#d32f2f;"><span class="chk-item"><span class="chk"></span>園で廃棄</span><span class="chk-item"><span class="chk"></span>持ち帰り</span></div></div>
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="section col-red" style="border-color: #f8bbd0;">
-                <div class="section-title">💖 ⑧ 雰囲気・子どもの様子</div>
-                <div class="row"><div class="item-name">子どもの表情</div><div class="item-val"><span class="chk-item"><span class="chk"></span>楽しそう</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">泣く子トラブル対応</div><div class="item-val"><span class="chk-item"><span class="chk"></span>丁寧仲裁上手</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name"><span class="req-badge">重要</span>怒鳴り声の有無</div><div class="item-val"><span class="chk-item"><span class="chk"></span>なし</span><span class="chk-item"><span class="chk"></span>聞こえた</span></div></div>
-                <div class="row"><div class="item-name">子供同士の関係</div><div class="item-val"><span class="chk-item"><span class="chk"></span>良好</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">落ち着き具合</div><div class="item-val"><span class="chk-item"><span class="chk"></span>落ち着いてる</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>落着きない</span></div></div>
-                <div class="row"><div class="item-name">活発さ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>活発</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>大人しすぎ</span></div></div>
-                <div class="row"><div class="item-name">全体の空気感</div><div class="item-val"><span class="chk-item"><span class="chk"></span>温かい</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-            </div>
-
-            <div class="section col-green">
-                <div class="section-title">🧑‍🏫 ⑨ 先生・人員体制</div>
-                <div class="row"><div class="item-name">保育士人数</div><div class="item-val"><span class="blank"></span>名</div></div>
-                <div class="row"><div class="item-name">配置基準</div><div class="item-val"><span class="chk-item"><span class="chk"></span>遵守</span><span class="chk-item"><span class="chk"></span>説明有</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">経験年齢バランス</div><div class="item-val"><span class="chk-item"><span class="chk"></span>バランス良</span><span class="chk-item"><span class="chk"></span>若手多</span><span class="chk-item"><span class="chk"></span>ベテ多</span></div></div>
-                <div class="row"><div class="item-name">離職率</div><div class="item-val"><span class="chk-item"><span class="chk"></span>低そう</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>高そう</span></div></div>
-                <div class="row"><div class="item-name">体制</div><div class="item-val"><span class="chk-item"><span class="chk"></span>担任制</span><span class="chk-item"><span class="chk"></span>チーム制</span><span class="chk-item"><span class="chk"></span>他<span class="blank"></span></span></div></div>
-                <div class="row"><div class="item-name">先生の雰囲気挨拶</div><div class="item-val"><span class="chk-item"><span class="chk"></span>明るい</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">子供への声掛け</div><div class="item-val"><span class="chk-item"><span class="chk"></span>丁寧優しい</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">言葉遣い</div><div class="item-val"><span class="chk-item"><span class="chk"></span>丁寧</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">先生同士の関係</div><div class="item-val"><span class="chk-item"><span class="chk"></span>良好</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>ピリピリ</span></div></div>
-                <div class="row"><div class="item-name">忙しさ・余裕</div><div class="item-val"><span class="chk-item"><span class="chk"></span>余裕あり</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>忙しそう</span></div></div>
-                <div class="row"><div class="item-name">男性保育士有無</div><div class="item-val text-left"><span class="chk-item"><span class="chk"></span>あり <span class="blank"></span>名</span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-            </div>
-
-            <div class="section col-blue">
-                <div class="section-title">📱 ⑩ 運用・保護者との関係</div>
-                <div class="row"><div class="item-name">連絡手段</div><div class="item-val"><span class="chk-item"><span class="chk"></span>アプリ</span><span class="chk-item"><span class="chk"></span>紙の連絡帳</span></div></div>
-                <div class="row"><div class="item-name">連絡頻度</div><div class="item-val"><span class="chk-item"><span class="chk"></span>毎日</span><span class="chk-item"><span class="chk"></span>必要時のみ</span></div></div>
-                <div class="row"><div class="item-name">写真共有</div><div class="item-val text-left"><span class="chk-item"><span class="chk"></span>あり<span class="blank"></span></span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">面談</div><div class="item-val text-left"><span class="chk-item"><span class="chk"></span>あり<span class="blank"></span></span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">保護者会・役員</div><div class="item-val text-left"><span class="chk-item"><span class="chk"></span>あり<span class="blank"></span></span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">保護者参加行事</div><div class="item-val"><span class="chk-item"><span class="chk"></span>多い</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>少ない</span></div></div>
-                <div class="row"><div class="item-name">クレーム対応姿勢</div><div class="item-val"><span class="chk-item"><span class="chk"></span>誠実</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>気になる</span></div></div>
-                <div class="row"><div class="item-name">相談しやすさ</div><div class="item-val"><span class="chk-item"><span class="chk"></span>しやすい</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>しにくい</span></div></div>
-                <div class="row"><div class="item-name">慣らし保育期間</div><div class="item-val">約<span class="blank"></span>日〜<span class="blank"></span>週 <span class="chk-item"><span class="chk"></span>OK</span></div></div>
-                <div class="row"><div class="item-name">慣らし保育進め方</div><div class="item-val"><span class="chk-item"><span class="chk"></span>段階的</span><span class="chk-item"><span class="chk"></span>一律</span><span class="chk-item"><span class="chk"></span>柔軟</span></div></div>
-                <div class="row"><div class="item-name">遅刻欠席連絡</div><div class="item-val"><span class="chk-item"><span class="chk"></span>アプリ可</span><span class="chk-item"><span class="chk"></span>電話必須</span></div></div>
-                <div class="row"><div class="item-name">お迎えルール</div><div class="item-val"><span class="chk-item"><span class="chk"></span>柔軟</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>厳しい</span></div></div>
-                <div class="row"><div class="item-name">代理送迎の可否</div><div class="item-val text-left"><span class="chk-item"><span class="chk"></span>可 <span class="blank"></span></span><span class="chk-item"><span class="chk"></span>不可</span></div></div>
-                <div class="row"><div class="item-name">登園基準(発熱等)</div><div class="item-val"><span class="chk-item"><span class="chk"></span>明確説明有</span><span class="chk-item"><span class="chk"></span>不明確</span></div></div>
-                <div class="row"><div class="item-name">休園基準</div><div class="item-val"><span class="chk-item"><span class="chk"></span>明確説明有</span><span class="chk-item"><span class="chk"></span>不明確</span></div></div>
-            </div>
-
-            <div class="section col-orange">
-                <div class="section-title">🎒 ⑪ 持ち物・保護者負担</div>
-                <div class="row"><div class="item-name">毎日の持ち物量</div><div class="item-val"><span class="chk-item"><span class="chk"></span>少ない</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>多い</span></div></div>
-                <div class="row"><div class="item-name"><span class="req-badge">重要</span>おむつサブスク</div><div class="item-val text-left">
-                    <span class="chk-item"><span class="chk"></span>サブスク有</span>
-                    <span class="chk-item full-width" style="margin-top:4px;"><span class="chk"></span>持参 <span class="blank">(記名/スタンプ)</span></span>
-                </div></div>
-                <div class="row"><div class="item-name">布団リース有無</div><div class="item-val"><span class="chk-item"><span class="chk"></span>リース有</span><span class="chk-item"><span class="chk"></span>持参</span><span class="chk-item"><span class="chk"></span>園用意</span></div></div>
-                <div class="row"><div class="item-name">洗濯頻度・予洗い</div><div class="item-val">週<span class="blank"></span>回 / 予洗: <span class="chk-item"><span class="chk"></span>有</span><span class="chk-item"><span class="chk"></span>無</span></div></div>
-                <div class="row"><div class="item-name">名前付けの負担</div><div class="item-val"><span class="chk-item"><span class="chk"></span>少ない</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>多い</span></div></div>
-                <div class="row"><div class="item-name">手作り品の有無</div><div class="item-val text-left"><span class="chk-item"><span class="chk"></span>あり<span class="blank"></span></span><span class="chk-item"><span class="chk"></span>なし</span></div></div>
-                <div class="row"><div class="item-name">行事準備の負担</div><div class="item-val"><span class="chk-item"><span class="chk"></span>少ない</span><span class="chk-item"><span class="chk"></span>普通</span><span class="chk-item"><span class="chk"></span>多い</span></div></div>
-            </div>
-
-            <div class="section col-green">
-                <div class="section-title">💰 ⑫ 費用</div>
-                <div class="row"><div class="item-name">保育料</div><div class="item-val">¥<span class="blank"></span> /月</div></div>
-                <div class="row"><div class="item-name">延長保育料</div><div class="item-val">¥<span class="blank"></span> /月</div></div>
-                <div class="row"><div class="item-name">給食費</div><div class="item-val">¥<span class="blank"></span> /月</div></div>
-                <div class="row"><div class="item-name">教材費</div><div class="item-val">¥<span class="blank"></span> /月</div></div>
-                <div class="row"><div class="item-name">行事費</div><div class="item-val">¥<span class="blank"></span> /年</div></div>
-                <div class="row"><div class="item-name">入園時費用</div><div class="item-val">¥<span class="blank"></span></div></div>
-                <div class="row"><div class="item-name">その他追加費用</div><div class="item-val">¥<span class="blank"></span> <span class="blank">(内容:　)</span></div></div>
-                <div class="row" style="background: #f0f8ff;"><div class="item-name">合計目安 (年間)</div><div class="item-val" style="font-weight:bold;">¥<span class="blank"></span></div></div>
-            </div>
-
-            <div class="section col-yellow" style="background: #fffcf0;">
-                <div class="section-title" style="background: #ffecb3; color: #f57f17; justify-content: space-between;">
-                    <span>🏅 ⑬ 総合評価 (★5段階評価)</span>
-                </div>
-                <div class="row"><div class="item-name">安全性</div><div class="item-val"><span class="star"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></span></div></div>
-                <div class="row"><div class="item-name">保育内容・方針</div><div class="item-val"><span class="star"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></span></div></div>
-                <div class="row"><div class="item-name">先生の質雰囲気</div><div class="item-val"><span class="star"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></span></div></div>
-                <div class="row"><div class="item-name">子供の様子雰囲気</div><div class="item-val"><span class="star"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></span></div></div>
-                <div class="row"><div class="item-name">通い易さ利便性</div><div class="item-val"><span class="star"><span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span></span></div></div>
-                <div class="row"><div class="item-name">コスパ</div><div class="item-val"><span class="star">☆☆☆☆☆</span></div></div>
-                <div class="row"><div class="item-name">直感(預けたいか)</div><div class="item-val"><span class="star">☆☆☆☆☆</span></div></div>
-                <div class="row" style="background: #fff0b3;"><div class="item-name" style="background: #fff0b3; font-weight: bold; color: #e65100;">総合満足度</div><div class="item-val"><span class="star" style="color: #e65100;">☆☆☆☆☆</span></div></div>
-            </div>
-            
-            <div class="section" style="border: 1px dashed #ccc; background: #fafafa; margin-bottom: 0;">
-                <div class="section-title" style="color: #666; background: #eee;">📝 自由メモ・推しや懸念点など</div>
-                <div class="blank full-width" style="height: 160px; padding: 10px; border:none; background:white; font-weight:normal;" id="field-free-memo"></div>
-            </div>
-        </div>
+<!-- Modal -->
+<div class="modal-overlay" id="modal" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-title">🏫 園を追加</div>
+    <input class="modal-input" id="modal-input" placeholder="例：○○保育園" maxlength="30"
+      oninput="" onkeydown="if(event.key==='Enter')addSchool()">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
+      <button class="btn-primary" onclick="addSchool()">追加する</button>
     </div>
+  </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDp3gfZF9zCp-8-3GbAvvYcE_ay-DJoW7I",
-            authDomain: "visitns-2ae92.firebaseapp.com",
-            projectId: "visitns-2ae92",
-            storageBucket: "visitns-2ae92.firebasestorage.app",
-            messagingSenderId: "928762461498",
-            appId: "1:928762461498:web:412cf739327963d6b36403"
-        };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+// ============ FIREBASE CONFIG ============
+const firebaseConfig = {
+  apiKey: "AIzaSyDp3gfZF9zCp-8-3GbAvvYcE_ay-DJoW7I",
+  authDomain: "visitns-2ae92.firebaseapp.com",
+  projectId: "visitns-2ae92",
+  storageBucket: "visitns-2ae92.firebasestorage.app",
+  messagingSenderId: "928762461498",
+  appId: "1:928762461498:web:412cf739327963d6b36403"
+};
 
-        // UI要素の取得
-        const loginOverlay = document.getElementById('login-overlay');
-        const errorEl = document.getElementById('login-error');
-        const statusEl = document.getElementById('sync-status');
-        const nameInput = document.getElementById('field-nursery-name');
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-        // アプリ起動時のID付与と初期化
-        const checkboxes = document.querySelectorAll('.chk');
-        checkboxes.forEach((chk, i) => chk.dataset.id = `chk_${i}`);
-        
-        const blanks = document.querySelectorAll('.blank');
-        blanks.forEach((blank, i) => {
-            if (!blank.id) blank.id = `blank_${i}`;
-            blank.setAttribute('contenteditable', 'true');
+// ============ SCHEMA ============
+const SECTIONS = [
+  { id:"s01", e:"🏢", n:"①", t:"基本情報・立地", c:"blue",
+    rows:[
+      {id:"r001",l:"運営主体",b:"事前",opts:["公立","私立","企業","その他"]},
+      {id:"r002",l:"所在地",b:"事前",type:"text",ph:"〒 住所を入力"},
+      {id:"r003",l:"最寄駅・バス停",b:"事前",type:"text",ph:"最寄駅・バス停名"},
+      {id:"r004",l:"自宅からの時間",b:"事前",type:"text",ph:"約○分"},
+      {id:"r005",l:"通園手段",opts:["徒歩","自転車","車","電車/バス"]},
+      {id:"r006",l:"通園ルート安全",opts:["歩道有","交通量多","信号横断あり"]},
+      {id:"r007",l:"危険箇所",opts:["坂道","その他"],hasNote:true,np:"具体的に"},
+      {id:"r008",l:"周辺環境",opts:["騒音","治安注意","車通り多","公園有"]},
+      {id:"r009",l:"駐車場",opts:["あり","なし"]},
+      {id:"r010",l:"駐輪場",opts:["あり","なし"]},
+      {id:"r011",l:"ベビーカー置場",b:"重要",opts:["あり(雨よけ有)","あり(雨よけ無)","なし"]},
+    ]},
+  { id:"s02", e:"🕒", n:"②", t:"園の基本運営", c:"blue",
+    rows:[
+      {id:"r012",l:"開園時間",type:"text",ph:"○○:○○ 〜 ○○:○○"},
+      {id:"r013",l:"延長保育",opts:["あり","なし"],hasNote:true,np:"〜何時まで"},
+      {id:"r014",l:"土曜保育",opts:["あり","なし"]},
+      {id:"r015",l:"日祝保育",opts:["あり","なし"]},
+      {id:"r016",l:"休園日",opts:["日曜","祝日","年末年始","その他"]},
+      {id:"r017",l:"定員",type:"text",ph:"○名"},
+      {id:"r018",l:"年齢別構成",type:"text",ph:"0歳○ 1歳○ 2歳○ 3歳○ 4歳○ 5歳○"},
+      {id:"r019",l:"待機児童状況",opts:["多い","普通","少ない"]},
+      {id:"r020",l:"入園難易度",opts:["高い","普通","低い"]},
+      {id:"r021",l:"兄弟枠の有無",b:"事前",opts:["あり","なし"]},
+    ]},
+  { id:"s03", e:"🧸", n:"③", t:"施設・設備", c:"green",
+    rows:[
+      {id:"r022",l:"園内清潔・ニオイ",b:"重要",opts:["良い","普通","気になる"]},
+      {id:"r023",l:"整理整頓状況",opts:["良い","普通","気になる"]},
+      {id:"r024",l:"保育室の広さ",opts:["十分","普通","狭い"]},
+      {id:"r025",l:"1人当りスペース",opts:["十分","普通","狭い"]},
+      {id:"r026",l:"採光状況",opts:["明るい","普通","暗い"]},
+      {id:"r027",l:"換気状況",opts:["良い","普通","悪い"]},
+      {id:"r028",l:"冷暖房・床暖房",opts:["設定適切","床暖有","なし"]},
+      {id:"r029",l:"トイレの数・清潔",opts:["十分・綺麗","普通","気になる"]},
+      {id:"r030",l:"手洗い場使い易さ",opts:["使い易い","普通","気になる"]},
+      {id:"r031",l:"おむつ替えスペース",opts:["あり","なし"]},
+      {id:"r032",l:"調乳スペース",opts:["あり","なし"]},
+      {id:"r033",l:"調理室の有無",opts:["あり","なし"]},
+      {id:"r034",l:"園庭の有無・広さ",opts:["あり(広)","あり(普通)","あり(狭)","なし"],hasNote:true,np:"代替（公園等）"},
+      {id:"r035",l:"外の遊具玩具",opts:["充実","普通","少ない"]},
+      {id:"r036",l:"室内の遊具玩具",opts:["充実","普通","少ない"]},
+      {id:"r037",l:"午睡寝具",opts:["布団","コット","その他"]},
+      {id:"r038",l:"午睡場所",opts:["別室あり","保育室内","その他"]},
+      {id:"r039",l:"ロッカーの広さ",opts:["十分","普通","狭い"]},
+    ]},
+  { id:"s04", e:"🛡️", n:"④", t:"安全・防犯・防災", c:"red",
+    rows:[
+      {id:"r040",l:"施錠・オートロック",opts:["あり","なし"],hasNote:true,np:"種類"},
+      {id:"r041",l:"防犯カメラ",opts:["あり","なし"]},
+      {id:"r042",l:"不審者対策",opts:["あり","なし"]},
+      {id:"r043",l:"来園者チェック",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r044",l:"避難経路明確さ",opts:["明確","普通","不明確"]},
+      {id:"r045",l:"避難訓練の頻度",type:"text",ph:"月○回 / 年○回"},
+      {id:"r046",l:"災害時対応・場所",opts:["説明有","不明"],hasNote:true,np:"避難場所"},
+      {id:"r047",l:"緊急連絡体制",opts:["明確・説明有","不明確"]},
+      {id:"r048",l:"事故・怪我時の対応",opts:["説明あり","普通","気になる"]},
+      {id:"r049",l:"AEDの有無",opts:["あり","なし"]},
+      {id:"r050",l:"保険加入の有無",opts:["あり","なし"]},
+      {id:"r051",l:"ヒヤリハット共有",b:"重要",opts:["あり","なし"]},
+    ]},
+  { id:"s05", e:"📖", n:"⑤", t:"保育内容・方針", c:"orange",
+    rows:[
+      {id:"r052",l:"保育理念",b:"事前",opts:["共感できる","普通","合わない"]},
+      {id:"r053",l:"教育方針・特色",opts:["共感できる","普通","合わない"]},
+      {id:"r054",l:"子どもへの接し方",opts:["丁寧・温か","普通","気になる"]},
+      {id:"r055",l:"自由/一斉保育",opts:["自由寄り","一斉寄り","バランス"]},
+      {id:"r056",l:"外遊びの頻度",opts:["毎日","週数回","天候次第"]},
+      {id:"r057",l:"散歩の有無・安全",opts:["あり(安全○)","あり(普通)","なし"]},
+      {id:"r058",l:"行事内容・活動",opts:["充実","普通","少ない"]},
+      {id:"r059",l:"英語・体操等活動",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r060",l:"制作活動の頻度",opts:["多い","普通","少ない"]},
+      {id:"r061",l:"テレビ・動画使用",opts:["あり","なし"],hasNote:true,np:"時間"},
+      {id:"r062",l:"発達支援の有無",opts:["あり","なし"]},
+      {id:"r063",l:"異年齢交流",opts:["あり","なし"]},
+    ]},
+  { id:"s06", e:"⏰", n:"⑥", t:"1日の生活", c:"blue",
+    rows:[
+      {id:"r064",l:"登降園の時間帯",type:"text",ph:"登○:○○頃 / 降○:○○頃が多い"},
+      {id:"r065",l:"日程表",opts:["あり(別紙等)","なし"]},
+      {id:"r066",l:"外遊び時間帯",type:"text",ph:"○:○○ 〜 ○:○○"},
+      {id:"r067",l:"昼寝時間・長さ",type:"text",ph:"○:○○ 〜 約○時間"},
+      {id:"r068",l:"午睡見守り体制",b:"重要",opts:["センサー有","目視のみ","5分毎等"]},
+    ]},
+  { id:"s07", e:"🍽️", n:"⑦", t:"食事・健康", c:"yellow",
+    rows:[
+      {id:"r069",l:"給食",b:"事前",opts:["自園調理","外部委託","弁当持参"]},
+      {id:"r070",l:"アレルギー対応",opts:["あり","なし"]},
+      {id:"r071",l:"メニュー・栄養",opts:["工夫あり","普通","気になる"]},
+      {id:"r072",l:"離乳食対応",opts:["丁寧","普通","気になる"]},
+      {id:"r073",l:"食育活動",opts:["あり","なし"]},
+      {id:"r074",l:"食事の様子・完食強要",opts:["楽しそう","普通","強要あり"]},
+      {id:"r075",l:"食事介助の仕方",opts:["丁寧","普通","気になる"]},
+      {id:"r076",l:"検温・健康チェック",opts:["毎日実施","不定期","なし"]},
+      {id:"r077",l:"体調不良時対応",opts:["隔離可・説有","普通","気になる"]},
+      {id:"r078",l:"発熱時呼出基準",opts:["37.5℃〜","38.0℃〜","その他"],hasNote:true,np:"基準値"},
+      {id:"r079",l:"病児・病後児保育",opts:["あり(併設)","なし"]},
+      {id:"r080",l:"使用済おむつ",b:"重要",opts:["園で廃棄","持ち帰り"]},
+    ]},
+  { id:"s08", e:"💖", n:"⑧", t:"雰囲気・子どもの様子", c:"pink",
+    rows:[
+      {id:"r081",l:"子どもの表情",opts:["楽しそう","普通","気になる"]},
+      {id:"r082",l:"泣く子・トラブル対応",opts:["丁寧・仲裁上手","普通","気になる"]},
+      {id:"r083",l:"怒鳴り声の有無",b:"重要",opts:["なし","聞こえた"]},
+      {id:"r084",l:"子供同士の関係",opts:["良好","普通","気になる"]},
+      {id:"r085",l:"落ち着き具合",opts:["落ち着いてる","普通","落ち着きない"]},
+      {id:"r086",l:"活発さ",opts:["活発","普通","大人しすぎ"]},
+      {id:"r087",l:"全体の空気感",opts:["温かい","普通","気になる"]},
+    ]},
+  { id:"s09", e:"🧑‍🏫", n:"⑨", t:"先生・人員体制", c:"green",
+    rows:[
+      {id:"r088",l:"保育士人数",type:"text",ph:"○名"},
+      {id:"r089",l:"配置基準",opts:["遵守","説明有","気になる"]},
+      {id:"r090",l:"経験・年齢バランス",opts:["バランス良","若手多","ベテラン多"]},
+      {id:"r091",l:"離職率",opts:["低そう","普通","高そう"]},
+      {id:"r092",l:"体制",opts:["担任制","チーム制","その他"]},
+      {id:"r093",l:"先生の雰囲気・挨拶",opts:["明るい","普通","気になる"]},
+      {id:"r094",l:"子供への声掛け",opts:["丁寧・優しい","普通","気になる"]},
+      {id:"r095",l:"言葉遣い",opts:["丁寧","普通","気になる"]},
+      {id:"r096",l:"先生同士の関係",opts:["良好","普通","ピリピリ"]},
+      {id:"r097",l:"忙しさ・余裕",opts:["余裕あり","普通","忙しそう"]},
+      {id:"r098",l:"男性保育士有無",opts:["あり","なし"],hasNote:true,np:"○名"},
+    ]},
+  { id:"s10", e:"📱", n:"⑩", t:"運用・保護者との関係", c:"blue",
+    rows:[
+      {id:"r099",l:"連絡手段",opts:["アプリ","紙の連絡帳"]},
+      {id:"r100",l:"連絡頻度",opts:["毎日","必要時のみ"]},
+      {id:"r101",l:"写真共有",opts:["あり","なし"],hasNote:true,np:"サービス名等"},
+      {id:"r102",l:"面談",opts:["あり","なし"],hasNote:true,np:"頻度・形式"},
+      {id:"r103",l:"保護者会・役員",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r104",l:"保護者参加行事",opts:["多い","普通","少ない"]},
+      {id:"r105",l:"クレーム対応姿勢",opts:["誠実","普通","気になる"]},
+      {id:"r106",l:"相談しやすさ",opts:["しやすい","普通","しにくい"]},
+      {id:"r107",l:"慣らし保育期間",type:"text",ph:"約○日〜○週"},
+      {id:"r108",l:"慣らし保育進め方",opts:["段階的","一律","柔軟"]},
+      {id:"r109",l:"遅刻欠席連絡",opts:["アプリ可","電話必須"]},
+      {id:"r110",l:"お迎えルール",opts:["柔軟","普通","厳しい"]},
+      {id:"r111",l:"代理送迎の可否",opts:["可","不可"],hasNote:true,np:"条件"},
+      {id:"r112",l:"登園基準(発熱等)",opts:["明確説明有","不明確"]},
+      {id:"r113",l:"休園基準",opts:["明確説明有","不明確"]},
+    ]},
+  { id:"s11", e:"🎒", n:"⑪", t:"持ち物・保護者負担", c:"orange",
+    rows:[
+      {id:"r114",l:"毎日の持ち物量",opts:["少ない","普通","多い"]},
+      {id:"r115",l:"おむつサブスク",b:"重要",opts:["サブスク有","持参(記名)","持参(スタンプ可)"]},
+      {id:"r116",l:"布団リース有無",opts:["リース有","持参","園用意"]},
+      {id:"r117",l:"洗濯頻度・予洗い",type:"text",ph:"週○回 / 予洗い有無"},
+      {id:"r118",l:"名前付けの負担",opts:["少ない","普通","多い"]},
+      {id:"r119",l:"手作り品の有無",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r120",l:"行事準備の負担",opts:["少ない","普通","多い"]},
+    ]},
+  { id:"s12", e:"💰", n:"⑫", t:"費用", c:"green",
+    rows:[
+      {id:"r121",l:"保育料",type:"text",ph:"¥ /月"},
+      {id:"r122",l:"延長保育料",type:"text",ph:"¥ /月"},
+      {id:"r123",l:"給食費",type:"text",ph:"¥ /月"},
+      {id:"r124",l:"教材費",type:"text",ph:"¥ /月"},
+      {id:"r125",l:"行事費",type:"text",ph:"¥ /年"},
+      {id:"r126",l:"入園時費用",type:"text",ph:"¥"},
+      {id:"r127",l:"その他追加費用",type:"text",ph:"¥ 内容:"},
+      {id:"r128",l:"合計目安(年間)",type:"text",ph:"¥"},
+    ]},
+  { id:"s13", e:"🏅", n:"⑬", t:"総合評価（タップで選択）", c:"yellow",
+    rows:[
+      {id:"r129",l:"安全性",type:"stars"},
+      {id:"r130",l:"保育内容・方針",type:"stars"},
+      {id:"r131",l:"先生の質・雰囲気",type:"stars"},
+      {id:"r132",l:"子どもの様子・雰囲気",type:"stars"},
+      {id:"r133",l:"通いやすさ・利便性",type:"stars"},
+      {id:"r134",l:"コスパ",type:"stars"},
+      {id:"r135",l:"直感（預けたいか）",type:"stars"},
+      {id:"r136",l:"✨ 総合満足度",type:"stars",highlight:true},
+    ]},
+  { id:"s14", e:"📝", n:"", t:"自由メモ・推しや懸念点など", c:"gray",
+    rows:[
+      {id:"r137",l:"メモ欄",type:"textarea",ph:"気になった点、良かった点、懸念点など自由に記入..."},
+    ]},
+];
+
+const COLOR_MAP = {
+  blue:{color:"var(--blue)",bg:"var(--blue-bg)"},
+  green:{color:"var(--green)",bg:"var(--green-bg)"},
+  red:{color:"var(--red)",bg:"var(--red-bg)"},
+  orange:{color:"var(--orange)",bg:"var(--orange-bg)"},
+  yellow:{color:"var(--yellow)",bg:"var(--yellow-bg)"},
+  pink:{color:"var(--pink)",bg:"var(--pink-bg)"},
+  gray:{color:"var(--gray)",bg:"var(--gray-bg)"},
+};
+
+// ============ STATE ============
+let schools = [];
+let currentId = null;
+let openSections = {};
+let saveTimer = null;
+let currentUser = null;
+let unsubscribeSnapshot = null;
+let currentViewMode = 'toggle';
+
+// ============ VIEW MODE CONTROLLER ============
+window.setViewMode = function(mode) {
+  currentViewMode = mode;
+  document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
+  document.getElementById('mode-a3-btn').classList.toggle('active', mode === 'a3');
+  document.body.className = mode === 'a3' ? 'mode-a3' : '';
+  renderMain();
+};
+
+// ============ FIREBASE SYNC ============
+const statusEl = document.getElementById('sync-status');
+
+function bindRealtimeSync() {
+  if(unsubscribeSnapshot) unsubscribeSnapshot();
+  if(!currentUser || !currentId) return;
+
+  const docRef = doc(db, "users", currentUser.uid, "checklists", currentId);
+  unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
+    if (snapshot.exists() && snapshot.metadata.hasPendingWrites === false) {
+      const serverData = snapshot.data();
+      const sc = schools.find(x => x.id === currentId);
+      if(sc) {
+          sc.name = serverData.name || sc.name;
+          sc.date = serverData.date || "";
+          sc.data = serverData.data || makeEmptyData();
+          renderMain();
+          renderTabs();
+      }
+      statusEl.textContent = "クラウド同期済";
+      statusEl.className = "status-saved";
+    }
+  });
+}
+
+async function firebaseLoadData() {
+  if(!currentUser) return;
+  statusEl.textContent = "読込中...";
+  try {
+    const qSnap = await getDocs(collection(db, "users", currentUser.uid, "checklists"));
+    schools = [];
+    qSnap.forEach(docSnap => {
+        const d = docSnap.data();
+        schools.push({
+            id: docSnap.id,
+            name: d.name || docSnap.id,
+            date: d.date || "",
+            data: d.data || makeEmptyData()
         });
+    });
+    if (schools.length > 0) {
+        currentId = schools[0].id;
+    } else {
+        currentId = null;
+    }
+    renderAll();
+    if(currentId) bindRealtimeSync();
+  } catch(e) {
+    console.error(e);
+  }
+}
 
-        const starRows = document.querySelectorAll('.star');
-        starRows.forEach((starContainer, i) => {
-            starContainer.id = `star_${i}`;
-            // 星5段階評価に対応（インナー要素がある場合のみ）
-            if(starContainer.children.length === 5) {
-                Array.from(starContainer.children).forEach((span, score) => {
-                    span.dataset.score = score + 1;
-                });
-            }
-        });
+function scheduleSave(id) {
+  statusEl.textContent = "保存中...";
+  statusEl.className = "status-saving";
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+      const s = schools.find(x=>x.id===id);
+      if (!s || !currentUser) return;
+      try {
+          await setDoc(doc(db, "users", currentUser.uid, "checklists", id), {
+              name: s.name,
+              date: s.date || "",
+              data: s.data
+          }, { merge: true });
+          statusEl.textContent = "クラウド保存完了";
+          statusEl.className = "status-saved";
+      } catch(e){
+          statusEl.textContent = "保存失敗";
+          statusEl.className = "";
+          console.error(e);
+      }
+  }, 400); // 400msディバウンス
+}
 
-        let currentUser = null;
-        let unsubscribeSnapshot = null;
-        let currentNursery = 'default_nursery';
+// ============ AUTH TRIGGER ============
+const loginOverlay = document.getElementById('login-overlay');
+const errorEl = document.getElementById('login-error');
 
-        // 🔐 認証イベント
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                loginOverlay.style.display = 'none';
-                statusEl.textContent = "同期中";
-                statusEl.className = "status-saved";
-                bindRealtimeSync();
-            } else {
-                currentUser = null;
-                loginOverlay.style.display = 'flex';
-                if(unsubscribeSnapshot) unsubscribeSnapshot();
-            }
-        });
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        currentUser = user;
+        loginOverlay.style.display = 'none';
+        firebaseLoadData();
+    } else {
+        currentUser = null;
+        loginOverlay.style.display = 'flex';
+        if(unsubscribeSnapshot) unsubscribeSnapshot();
+    }
+});
 
-        // ログイン処理
-        document.getElementById('login-submit-btn').addEventListener('click', async () => {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            try {
-                errorEl.textContent = "";
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                errorEl.textContent = "認証に失敗しました。ID/PWを確認してください。";
-            }
-        });
+document.getElementById('login-submit-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    try {
+        errorEl.textContent = "";
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        errorEl.textContent = "認証失敗。アドレスやPWを確認してください。";
+    }
+});
 
-        // ログアウト処理
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-        // 🔄 即時・双方向リアルタイム同期のロジック
-        function bindRealtimeSync() {
-            if(unsubscribeSnapshot) unsubscribeSnapshot();
+// ============ DATA UTILS ============
+function makeEmptyData() {
+  const d = {};
+  for (const sec of SECTIONS) {
+    for (const row of sec.rows) {
+      if (row.type === "stars") d[row.id] = {stars:0};
+      else if (row.type === "text" || row.type === "textarea") d[row.id] = {value:""};
+      else d[row.id] = {selected:[],note:""};
+    }
+  }
+  return d;
+}
 
-            const docRef = doc(db, "users", currentUser.uid, "checklists", currentNursery);
-            
-            // クラウドから端末へリアルタイムにデータを反映
-            unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
-                if (snapshot.exists() && snapshot.metadata.hasPendingWrites === false) {
-                    const data = snapshot.data();
-                    
-                    // チェックボックスの復元
-                    if(data.checkboxes) {
-                        checkboxes.forEach(chk => {
-                            if(data.checkboxes[chk.dataset.id]) chk.classList.add('is-checked');
-                            else chk.classList.remove('is-checked');
-                        });
-                    }
-                    // テキスト入力の復元 (現在編集中以外の要素のみ上書き)
-                    if(data.blanks) {
-                        blanks.forEach(blank => {
-                            if(document.activeElement !== blank && data.blanks[blank.id] !== undefined) {
-                                blank.innerText = data.blanks[blank.id];
-                            }
-                        });
-                    }
-                    // 星評価の復元
-                    if(data.stars) {
-                        starRows.forEach(starContainer => {
-                            const score = data.stars[starContainer.id] || 0;
-                            if(starContainer.children.length === 5) {
-                                Array.from(starContainer.children).forEach((span, idx) => {
-                                    if(idx < score) span.classList.add('active');
-                                    else span.classList.remove('active');
-                                    span.textContent = idx < score ? '★' : '☆';
-                                });
-                            } else {
-                                starContainer.innerText = '★'.repeat(score) + '☆'.repeat(5-score);
-                            }
-                        });
-                    }
-                    statusEl.textContent = "クラウドと同期済";
-                    statusEl.className = "status-saved";
-                }
-            });
-        }
+function currentSchool() { return schools.find(s=>s.id===currentId); }
 
-        // 📥 端末の編集データをFirebaseへ保存
-        let saveDebounceTimer;
-        function queueSave() {
-            statusEl.textContent = "保存中...";
-            statusEl.className = "status-saving";
+// ============ SCHOOL MANAGEMENT ============
+window.openModal = function() {
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal-input").value = "";
+  setTimeout(() => document.getElementById("modal-input").focus(), 50);
+};
+window.closeModal = function() { document.getElementById("modal").style.display = "none"; };
 
-            clearTimeout(saveDebounceTimer);
-            saveDebounceTimer = setTimeout(async () => {
-                if (!currentUser) return;
+window.addSchool = async function() {
+  const name = document.getElementById("modal-input").value.trim();
+  if (!name || !currentUser) return;
+  
+  // ドキュメント名＝園名にするため、重複チェック
+  if (schools.some(s => s.id === name)) {
+      alert("すでに同じ名前の園が登録されています。");
+      return;
+  }
+  
+  const id = name; // ドキュメントIDを園名にする
+  const school = {id, name, date:"", data: makeEmptyData()};
+  schools.push(school);
+  currentId = id;
+  closeModal();
+  
+  try {
+      await setDoc(doc(db, "users", currentUser.uid, "checklists", id), {
+          name: name,
+          date: "",
+          data: school.data
+      });
+      renderAll();
+      bindRealtimeSync();
+  } catch(e) { console.error(e); }
+};
 
-                const chkState = {};
-                checkboxes.forEach(chk => chkState[chk.dataset.id] = chk.classList.contains('is-checked'));
+window.deleteSchool = async function(id) {
+  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？
+（クラウド上のデータも完全に消えます）`)) return;
+  if(!currentUser) return;
+  
+  try { 
+      await deleteDoc(doc(db, "users", currentUser.uid, "checklists", id));
+  } catch(e){ console.error(e); }
+  
+  schools = schools.filter(s=>s.id!==id);
+  if (currentId === id) currentId = schools.length > 0 ? schools[0].id : null;
+  renderAll();
+  if(currentId) bindRealtimeSync();
+};
 
-                const blankState = {};
-                blanks.forEach(blank => blankState[blank.id] = blank.innerText);
+window.switchSchool = function(id) {
+  currentId = id;
+  renderMain();
+  renderTabs();
+  bindRealtimeSync();
+};
 
-                const starState = {};
-                starRows.forEach(starContainer => {
-                    if(starContainer.children.length === 5) {
-                        const activeCount = starContainer.querySelectorAll('.active').length;
-                        starState[starContainer.id] = activeCount;
-                    } else {
-                        const match = starContainer.innerText.match(/★/g);
-                        starState[starContainer.id] = match ? match.length : 0;
-                    }
-                });
+// ★要望1: 園名変更に合わせたFirestoreリネーム処理★
+window.handleSchoolNameChange = async function(oldId, newName) {
+  newName = newName.trim();
+  if (!newName || oldId === newName || !currentUser) return;
+  
+  if (schools.some(s => s.id === newName)) {
+      alert("その園名はすでに別のデータで使用されています。");
+      renderMain();
+      return;
+  }
+  
+  statusEl.textContent = "園名変更中...";
+  statusEl.className = "status-saving";
+  
+  try {
+      const oldDocRef = doc(db, "users", currentUser.uid, "checklists", oldId);
+      const newDocRef = doc(db, "users", currentUser.uid, "checklists", newName);
+      
+      const oldSnap = await getDoc(oldDocRef);
+      if (oldSnap.exists()) {
+          const oldData = oldSnap.data();
+          // 新しい名前のドキュメントを作成
+          await setDoc(newDocRef, {
+              ...oldData,
+              name: newName,
+              updatedAt: new Date()
+          });
+          // 古いドキュメントを消去
+          await deleteDoc(oldDocRef);
+          
+          // メモリ上のローカル状態を修正
+          const idx = schools.findIndex(s => s.id === oldId);
+          if (idx !== -1) {
+              schools[idx].id = newName;
+              schools[idx].name = newName;
+          }
+          currentId = newName;
+          renderAll();
+          bindRealtimeSync();
+      }
+  } catch(e) {
+      console.error(e);
+      alert("名前の変更に失敗しました。");
+      renderMain();
+  }
+};
 
-                try {
-                    await setDoc(doc(db, "users", currentUser.uid, "checklists", currentNursery), {
-                        checkboxes: chkState,
-                        blanks: blankState,
-                        stars: starState,
-                        updatedAt: new Date()
-                    }, { merge: true });
-                    statusEl.textContent = "保存完了";
-                    statusEl.className = "status-saved";
-                } catch (e) {
-                    statusEl.textContent = "同期エラー";
-                    statusEl.className = "";
-                    console.error(e);
-                }
-            }, 300); // 300msのディバウンス（連打時の負荷軽減）
-        }
+// ============ FIELD UPDATES ============
+window.toggleChip = function(secId, rowId, opt) {
+  const sc = currentSchool(); if (!sc) return;
+  const d = sc.data[rowId] || {selected:[],note:""};
+  const sel = d.selected || [];
+  sc.data[rowId] = {...d, selected: sel.includes(opt) ? sel.filter(o=>o!==opt) : [...sel,opt]};
+  scheduleSave(currentId);
+  
+  const sec = SECTIONS.find(s=>s.id===secId);
+  const col = COLOR_MAP[sec.c];
+  document.querySelectorAll(`[data-row="${rowId}"] .chip`).forEach(el => {
+    const isSelected = sc.data[rowId].selected.includes(el.dataset.opt);
+    el.className = "chip" + (isSelected ? " selected" : "");
+    el.style.background = isSelected ? col.color : "#fff";
+    el.style.color = isSelected ? "#fff" : col.color;
+    el.style.borderColor = col.color;
+  });
+  updateProgress(secId);
+};
 
-        // ⚡ 各種イベントリスナーの設定
-        // チェックボックスクリック
-        document.querySelectorAll('.chk-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                const chk = item.querySelector('.chk');
-                if(chk) {
-                    chk.classList.toggle('is-checked');
-                    queueSave();
-                }
-            });
-        });
+window.updateTextField = function(rowId, value) {
+  const sc = currentSchool(); if (!sc) return;
+  sc.data[rowId] = {value};
+  scheduleSave(currentId);
+  updateProgress(SECTIONS.find(sec=>sec.rows.some(r=>r.id===rowId))?.id);
+};
 
-        // テキスト入力（文字入力されるたびに即反映）
-        blanks.forEach(blank => {
-            blank.addEventListener('input', () => {
-                // 園名が変わったら、参照するFirebaseのファイルを瞬時に切り替える
-                if (blank.id === 'field-nursery-name') {
-                    const cleanName = blank.innerText.trim().replace(/[\/##$\\[\\]]/g, "_");
-                    currentNursery = cleanName || 'default_nursery';
-                    bindRealtimeSync();
-                }
-                queueSave();
-            });
-        });
+window.updateNote = function(rowId, note) {
+  const sc = currentSchool(); if (!sc) return;
+  const d = sc.data[rowId] || {selected:[],note:""};
+  sc.data[rowId] = {...d, note};
+  scheduleSave(currentId);
+};
 
-        // 星5段階のインタラクティブタップ処理
-        document.querySelectorAll('.star').forEach(starContainer => {
-            starContainer.addEventListener('click', (e) => {
-                if(e.target.dataset.score) {
-                    const targetScore = parseInt(e.target.dataset.score);
-                    Array.from(starContainer.children).forEach((span, idx) => {
-                        if(idx < targetScore) span.classList.add('active');
-                        else span.classList.remove('active');
-                        span.textContent = idx < targetScore ? '★' : '☆';
-                    });
-                    queueSave();
-                }
-            });
-        });
-    </script>
+window.setStars = function(secId, rowId, n, highlight) {
+  const sc = currentSchool(); if (!sc) return;
+  const cur = sc.data[rowId]?.stars || 0;
+  sc.data[rowId] = {stars: cur === n ? 0 : n};
+  scheduleSave(currentId);
+  
+  const col = highlight ? "#e65100" : "#f59e0b";
+  document.querySelectorAll(`[data-row="${rowId}"] .star-btn`).forEach((el,i) => {
+    el.style.color = (i < sc.data[rowId].stars) ? col : "#ddd";
+  });
+  updateProgress(secId);
+};
+
+// ============ PROGRESS ============
+function calcProgress(secId) {
+  const sc = currentSchool(); if (!sc) return {filled:0, total:0};
+  const sec = SECTIONS.find(s=>s.id===secId); if (!sec) return {filled:0,total:0};
+  let filled=0, total=sec.rows.length;
+  for (const row of sec.rows) {
+    const d = sc.data?.[row.id];
+    if (!d) continue;
+    if (row.type==="stars" && (d.stars||0)>0) filled++;
+    else if ((row.type==="text"||row.type==="textarea") && d.value?.trim()) filled++;
+    else if (!row.type && (d.selected?.length>0||d.note?.trim())) filled++;
+  }
+  return {filled, total};
+}
+
+function updateProgress(secId) {
+  if (!secId) return;
+  const {filled, total} = calcProgress(secId);
+  const pct = total>0 ? (filled/total*100) : 0;
+  const bar = document.querySelector(`[data-sec="${secId}"] .progress-fill`);
+  const tag = document.querySelector(`[data-sec="${secId}"] .progress-tag`);
+  if (bar) bar.style.width = pct + "%";
+  if (tag) tag.textContent = `${filled}/${total}`;
+}
+
+// ============ TOGGLE SECTION ============
+window.toggleSection = function(secId) {
+  if (currentViewMode === 'a3') return; // A3印刷モード時は閉じさせない
+  openSections[secId] = !openSections[secId];
+  const body = document.querySelector(`[data-sec="${secId}"] .section-body`);
+  const arrow = document.querySelector(`[data-sec="${secId}"] .section-arrow`);
+  const hdr = document.querySelector(`[data-sec="${secId}"] .section-header`);
+  if (body) body.style.display = openSections[secId] ? "" : "none";
+  if (arrow) { arrow.textContent = openSections[secId] ? "▲" : "▼"; arrow.className = "section-arrow" + (openSections[secId]?" open":""); }
+  if (hdr) { hdr.className = "section-header" + (openSections[secId]?" open":""); }
+};
+
+window.expandAll = function() {
+  for (const s of SECTIONS) if (!openSections[s.id]) toggleSection(s.id);
+};
+
+// ============ RENDER ============
+function renderTabs() {
+  const cont = document.getElementById("school-tabs");
+  if(!cont) return;
+  let html = schools.map(s => `
+    <button class="tab-btn ${s.id===currentId?'active':'inactive'}" onclick="switchSchool('${escJ(s.id)}')">${escH(s.name)}</button>
+  `).join("");
+  html += `<button class="tab-add" onclick="openModal()">＋ 園を追加</button>`;
+  cont.innerHTML = html;
+}
+
+function renderSchoolHeader(sc) {
+  return `
+  <div class="school-header">
+    <div class="school-name-row">
+      <!-- oninputをonchangeに変更し、確定時にFirestoreを更新 -->
+      <input class="school-name-input" value="${escH(sc.name)}" placeholder="園名"
+        onchange="handleSchoolNameChange('${escJ(sc.id)}', this.value)" maxlength="30">
+      <button class="delete-btn" onclick="deleteSchool('${escJ(sc.id)}')" title="この園を削除">🗑</button>
+    </div>
+    <div class="date-row">
+      📅 見学日：
+      <input type="date" class="date-input" value="${sc.date||''}"
+        onchange="updateSchoolMeta('date',this.value)">
+    </div>
+  </div>`;
+}
+
+window.updateSchoolMeta = function(field, value) {
+  const sc = currentSchool(); if (!sc) return;
+  sc[field] = value;
+  scheduleSave(currentId);
+  if (field === "name") renderTabs();
+};
+
+function renderRow(row, sc, col) {
+  const d = sc.data?.[row.id] || {};
+  let inner = "";
+  if (row.type === "stars") {
+    const stars = d.stars||0;
+    const starColor = row.highlight ? "#e65100" : "#f59e0b";
+    const btns = [1,2,3,4,5].map(n =>
+      `<button class="star-btn" style="color:${n<=stars?starColor:'#ddd'}" onclick="setStars('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}',${n},${!!row.highlight})">★</button>`
+    ).join("");
+    inner = `<div class="stars" data-row="${row.id}">${btns}</div>`;
+  } else if (row.type==="text") {
+    inner = `<input class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}" placeholder="${escH(row.ph||'')}"
+      oninput="updateTextField('${row.id}',this.value)">`;
+  } else if (row.type==="textarea") {
+    inner = `<textarea class="textarea" style="--sec-color:${col.color}" placeholder="${escH(row.ph||'')}"
+      oninput="updateTextField('${row.id}',this.value)">${escH(d.value||'')}</textarea>`;
+  } else {
+    const chips = (row.opts||[]).map(opt => {
+      const sel = (d.selected||[]).includes(opt);
+      return `<button class="chip ${sel?'selected':''}" data-opt="${escH(opt)}"
+        style="border-color:${col.color};background:${sel?col.color:'#fff'};color:${sel?'#fff':col.color}"
+        onclick="toggleChip('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}','${escJ(opt)}')">${escH(opt)}</button>`;
+    }).join("");
+    const note = row.hasNote ? `<input class="note-input" value="${escH(d.note||'')}" placeholder="${escH(row.np||'メモ')}"
+      oninput="updateNote('${row.id}',this.value)">` : "";
+    inner = `<div class="chips" data-row="${row.id}">${chips}</div>${note}`;
+  }
+
+  const badge = row.b==="重要" ? `<span class="badge badge-req">重要</span>` :
+                row.b==="事前" ? `<span class="badge badge-pre">事前</span>` : "";
+  return `
+    <div class="row" data-row="${row.id}">
+      <div class="row-label">${badge}<span class="label-text">${escH(row.l)}</span></div>
+      ${inner}
+    </div>`;
+}
+
+function renderSection(sec, sc) {
+  const col = COLOR_MAP[sec.c];
+  const {filled,total} = calcProgress(sec.id);
+  const pct = total>0?(filled/total*100):0;
+  const isOpen = currentViewMode === 'a3' ? true : !!openSections[sec.id];
+  const rows = sec.rows.map(r => renderRow(r, sc, col)).join("");
+  return `
+  <div class="section" data-sec="${sec.id}">
+    <button class="section-header ${isOpen?'open':''}" style="--sec-color:${col.color};--sec-bg:${col.bg}" onclick="toggleSection('${sec.id}')">
+      <span class="section-title" style="color:${col.color}">${sec.e} ${sec.n?sec.n+' ':''}${escH(sec.t)}<span class="progress-tag">${filled}/${total}</span></span>
+      <span class="section-arrow ${isOpen?'open':''}">${isOpen?'▲':'▼'}</span>
+    </button>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${col.color}"></div></div>
+    <div class="section-body" style="${isOpen?'':'display:none'}">
+      ${rows}
+    </div>
+  </div>`;
+}
+
+function renderMain() {
+  const cont = document.getElementById("main-content");
+  if(!cont) return;
+  const sc = currentSchool();
+  if (!sc) {
+    cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🏫</div><div class="empty-text">上の「＋ 園を追加」から<br>見学する園を登録してください</div></div>`;
+    return;
+  }
+  let html = renderSchoolHeader(sc);
+  if(currentViewMode === 'a3') {
+      html += '<div class="main-container-grid">';
+  }
+  html += SECTIONS.map(sec => renderSection(sec, sc)).join("");
+  if(currentViewMode === 'a3') {
+      html += '</div>';
+  }
+  cont.innerHTML = html;
+}
+
+function renderAll() { renderTabs(); renderMain(); }
+
+window.exportSummary = function() {
+  const sc = currentSchool();
+  if (!sc) { alert("園が選択されていません"); return; }
+  let txt = `【${sc.name}】見学まとめ
+`;
+  if (sc.date) txt += `見学日：${sc.date}
+`;
+  txt += "
+";
+  for (const sec of SECTIONS) {
+    let secTxt = "";
+    for (const row of sec.rows) {
+      const d = sc.data?.[row.id]||{};
+      if (row.type==="stars") {
+        if (d.stars>0) secTxt += `  ${row.l}：${"★".repeat(d.stars)}${"☆".repeat(5-d.stars)}
+`;
+      } else if (row.type==="text"||row.type==="textarea") {
+        if (d.value?.trim()) secTxt += `  ${row.l}：${d.value}
+`;
+      } else {
+        const parts = [];
+        if (d.selected?.length>0) parts.push(d.selected.join("・"));
+        if (d.note?.trim()) parts.push(`(${d.note})`);
+        if (parts.length>0) secTxt += `  ${row.l}：${parts.join(" ")}
+`;
+      }
+    }
+    if (secTxt) txt += `${sec.e}${sec.n?sec.n+" ":""}${sec.t}
+${secTxt}
+`;
+  }
+  navigator.clipboard.writeText(txt).then(()=>{
+    alert("クリップボードにコピーしました！
+メモアプリやLINEに貼り付けてご利用ください📋");
+  }).catch(()=>{
+    prompt("テキストをコピーしてください:", txt);
+  });
+};
+
+function escH(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function escJ(s) { return String(s).replace(/'/g,"\'"); }
+</script>
+
 </body>
 </html>
