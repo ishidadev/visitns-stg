@@ -17,125 +17,108 @@
     --gray:#555;--gray-bg:#f5f5f5;
     --surface:#fff;--bg:#f2f4f7;
     --text:#222;--sub:#666;--border:#e4e7ec;
-    --radius:14px;--shadow:0 2px 8px rgba(0,0,0,0.08);
+    --radius:10px;--shadow:0 1px 4px rgba(0,0,0,0.05);
   }
-  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;}
 
-  /* ===== HEADER ===== */
-  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 14px 8px;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
-  .app-title{font-size:13px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-  .school-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+  /* ===== HEADER (スリム化) ===== */
+  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+  .app-title{font-size:12px;font-weight:700;color:#333;display:flex;align-items:center;gap:6px;}
+  .school-tabs{display:flex;gap:6px;overflow-x:auto;padding-top:4px;scrollbar-width:none;}
   .school-tabs::-webkit-scrollbar{display:none;}
-  .tab-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
+  .tab-btn{flex-shrink:0;padding:4px 12px;border-radius:15px;border:none;cursor:pointer;font-size:11px;font-family:inherit;transition:all .2s;}
   .tab-btn.active{background:var(--blue);color:#fff;font-weight:700;}
   .tab-btn.inactive{background:#e8ecf0;color:#555;font-weight:500;}
-  .tab-add{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1.5px dashed #aaa;background:transparent;color:#888;font-size:12px;cursor:pointer;font-family:inherit;}
-  .tab-add:hover{border-color:#666;color:#555;}
+  .tab-add{flex-shrink:0;padding:3px 10px;border-radius:15px;border:1.5px dashed #aaa;background:transparent;color:#888;font-size:11px;cursor:pointer;font-family:inherit;}
 
   /* ===== MODAL ===== */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .modal-box{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
-  .modal-title{font-size:15px;font-weight:700;margin-bottom:14px;}
-  .modal-input{width:100%;padding:11px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border .2s;}
+  .modal-box{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.15);}
+  .modal-title{font-size:14px;font-weight:700;margin-bottom:10px;}
+  .modal-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;outline:none;}
   .modal-input:focus{border-color:var(--blue);}
-  .modal-btns{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;}
-  .btn-cancel{padding:9px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;}
-  .btn-primary{padding:9px 18px;border-radius:10px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;}
+  .modal-btns{display:flex;gap:6px;margin-top:12px;justify-content:flex-end;}
+  .btn-cancel, .btn-primary{padding:7px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;}
+  .btn-cancel{border:1px solid #ddd;background:#fff;}
+  .btn-primary{border:none;background:var(--blue);color:#fff;font-weight:700;}
 
   /* ===== MAIN CONTENT ===== */
-  .main{padding:12px 12px 90px;}
-  .school-header{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);}
-  .school-name-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-  .school-name-input{flex:1;font-size:17px;font-weight:700;border:none;border-bottom:2px solid #e0e0e0;padding:4px 0;outline:none;font-family:inherit;background:transparent;color:var(--text);transition:border .2s;}
+  .main{padding:8px 8px 70px;}
+  .school-header{background:#fff;border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow);}
+  .school-name-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .school-name-input{flex:1;font-size:15px;font-weight:700;border:none;border-bottom:2px solid #e0e0e0;padding:2px 0;outline:none;font-family:inherit;background:transparent;}
   .school-name-input:focus{border-color:var(--blue);}
-  .delete-btn{background:none;border:none;color:#e57373;font-size:22px;cursor:pointer;padding:2px;flex-shrink:0;}
-  .date-row{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:13px;}
-  .date-input{border:none;border-bottom:1px solid #ddd;font-size:13px;color:#444;outline:none;font-family:inherit;background:transparent;padding:2px 0;}
+  .delete-btn{background:none;border:none;color:#e57373;font-size:18px;cursor:pointer;padding:2px;}
+  .date-row{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;}
+  .date-input{border:none;border-bottom:1px solid #ddd;font-size:12px;color:#444;outline:none;font-family:inherit;background:transparent;}
 
-  /* ===== SECTION ===== */
-  .section{background:#fff;border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
-  .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:none;cursor:pointer;text-align:left;background:var(--surface);transition:background .2s;font-family:inherit;}
+  /* ===== SECTION (スリム化) ===== */
+  .section{background:#fff;border-radius:var(--radius);margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow);}
+  .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:none;cursor:pointer;text-align:left;background:var(--surface);font-family:inherit;}
   .section-header.open{background:var(--sec-bg);}
-  .section-title{font-weight:700;font-size:13px;color:var(--sec-color);}
-  .section-arrow{font-size:12px;color:#bbb;transition:transform .2s;}
-  .section-arrow.open{transform:rotate(180deg);}
-  .section-body{border-top:2px solid var(--sec-bg);}
-  .progress-bar{height:3px;background:#f0f0f0;margin:0 15px 0;}
-  .progress-fill{height:3px;border-radius:2px;background:var(--sec-color);transition:width .3s;}
+  .section-title{font-weight:700;font-size:12px;color:var(--sec-color);}
+  .section-arrow{font-size:11px;color:#bbb;}
+  .section-body{border-top:1px solid var(--sec-bg);}
+  .progress-bar{height:2px;background:#f0f0f0;margin:0 12px;}
+  .progress-fill{height:2px;border-radius:1px;background:var(--sec-color);transition:width .3s;}
 
-  /* ===== ROWS ===== */
-  .row{padding:11px 14px;border-bottom:1px solid #f2f2f4;}
+  /* ===== ROWS (極限までコンパクトに) ===== */
+  .row{padding:8px 12px;border-bottom:1px solid #f2f2f4;}
   .row:last-child{border-bottom:none;}
-  .row-label{display:flex;align-items:center;gap:5px;margin-bottom:7px;}
-  .badge{font-size:9px;padding:2px 5px;border-radius:4px;color:#fff;font-weight:700;flex-shrink:0;}
+  .row-label{display:flex;align-items:center;gap:4px;margin-bottom:4px;}
+  .badge{font-size:8px;padding:1px 4px;border-radius:3px;color:#fff;font-weight:700;}
   .badge-req{background:#e65100;}
   .badge-pre{background:#1e5a8c;}
-  .label-text{font-size:12px;font-weight:600;color:#444;}
+  .label-text{font-size:11.5px;font-weight:600;color:#444;}
 
   /* ===== CHIPS ===== */
-  .chips{display:flex;flex-wrap:wrap;gap:6px;}
-  .chip{padding:6px 12px;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:#fff;color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
+  .chips{display:flex;flex-wrap:wrap;gap:4px;}
+  .chip{padding:4px 10px;border-radius:15px;font-size:11px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:#fff;color:var(--sec-color);font-weight:500;}
   .chip.selected{background:var(--sec-color);color:#fff;font-weight:700;}
-  .chip:active{opacity:0.7;transform:scale(0.96);}
 
   /* ===== INPUTS ===== */
-  .text-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;color:var(--text);}
+  .text-input{width:100%;padding:5px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--text);}
   .text-input:focus{border-color:var(--sec-color);}
-  .note-input{margin-top:7px;width:100%;padding:7px 11px;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:#555;background:#fafafa;}
-  .note-input:focus{border-color:var(--sec-color);background:#fff;}
-  .textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:100px;transition:border .2s;}
-  .textarea:focus{border-color:var(--sec-color);}
+  .text-input[type="time"] { max-width: 130px; padding: 4px 8px; font-weight: bold; color: var(--blue); }
+  .note-input{margin-top:5px; width:100%;padding:5px 8px;border:1px solid #e0e0e0;border-radius:6px;font-size:11px;font-family:inherit;outline:none;color:#555;background:#fafafa;}
+  .textarea{width:100%;padding:6px 10px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none;resize:vertical;min-height:80px;}
 
   /* ===== STARS ===== */
-  .stars{display:flex;gap:6px;}
-  .star-btn{background:none;border:none;cursor:pointer;font-size:30px;padding:2px;line-height:1;transition:color .1s, transform .1s;}
-  .star-btn:active{transform:scale(0.85);}
-  .star-filled{color:#f59e0b;}
-  .star-empty{color:#ddd;}
-  .star-filled.highlight{color:#e65100;}
+  .stars{display:flex;gap:4px;}
+  .star-btn{background:none;border:none;cursor:pointer;font-size:24px;line-height:1;}
+  .star-filled{color:#f59e0b;} .star-empty{color:#ddd;} .star-filled.highlight{color:#e65100;}
 
-  /* ===== EMPTY STATE ===== */
-  .empty-state{padding:60px 20px;text-align:center;color:#aaa;}
-  .empty-icon{font-size:56px;margin-bottom:12px;}
-  .empty-text{font-size:14px;line-height:1.6;}
-
-  /* ===== PROGRESS TAG ===== */
-  .progress-tag{font-size:10px;color:var(--sec-color);opacity:.7;margin-left:6px;font-weight:500;}
-
-  /* ===== EXPORT BTN ===== */
-  .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;}
-  .export-btn{flex:1;padding:12px;border-radius:12px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
-  .btn-export{background:var(--green);color:#fff;}
-  .btn-expand{background:var(--blue-bg);color:var(--blue);}
+  /* ===== EXPORT area ===== */
+  .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:6px;}
+  .export-btn{flex:1;padding:10px;border-radius:10px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+  .btn-export{background:var(--green);color:#fff;} .btn-expand{background:var(--blue-bg);color:var(--blue);}
 
   /* ===== VIEW MODE SELECTOR ===== */
-  .mode-selector-container { display: flex; align-items: center; gap: 4px; background: #e8ecf0; padding: 3px; border-radius: 20px; margin-left: auto; }
-  .mode-btn { padding: 5px 12px; border-radius: 16px; border: none; font-size: 11px; font-family: inherit; cursor: pointer; background: transparent; color: #555; font-weight: 500; transition: all .2s; }
-  .mode-btn.active { background: #fff; color: var(--text); font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .mode-selector-container { display: flex; align-items: center; gap: 4px; background: #e8ecf0; padding: 2px; border-radius: 20px; }
+  .mode-btn { padding: 4px 10px; border-radius: 16px; border: none; font-size: 10.5px; font-family: inherit; cursor: pointer; background: transparent; color: #555; }
+  .mode-btn.active { background: #fff; color: var(--text); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
   /* ===== A3 MODE LAYOUT ===== */
-  body.mode-a3 { background: #ffffff; padding: 15px; }
-  body.mode-a3 .main { max-width: 100% !important; padding: 10px 0 40px 0; }
-  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 16px; width: 100%; }
-  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 14px; border-radius: 6px; }
+  body.mode-a3 { background: #ffffff; padding: 10px; }
+  body.mode-a3 .main { max-width: 100% !important; padding: 5px 0 40px 0; }
+  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 12px; width: 100%; }
+  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 10px; border-radius: 6px; }
   body.mode-a3 .section-body { display: block !important; }
-  body.mode-a3 .section-arrow, body.mode-a3 .progress-bar { display: none !important; }
-  body.mode-a3 .export-area { display: none !important; }
-  body.mode-a3 .chip { padding: 4px 8px; font-size: 11px; }
+  body.mode-a3 .section-arrow, body.mode-a3 .progress-bar, body.mode-a3 .export-area { display: none !important; }
+  body.mode-a3 .row { padding: 5px 8px; }
+  body.mode-a3 .item-name { flex: 0 0 38%; }
 
-  /* ===== LOGIN OVERLAY ===== */
+  /* ===== GOOGLE LOGIN OVERLAY ===== */
   #login-overlay { position: fixed; inset: 0; background: #f4f7f9; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-  .login-box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 24 rgba(0,0,0,0.08); width: 100%; max-width: 360px; text-align: center; }
-  .login-box h2 { font-size: 18px; color: #333; margin-bottom: 6px; font-weight: 700; }
-  .login-box p { font-size: 12px; color: #666; margin-bottom: 20px; }
-  .login-box input { width: 100%; padding: 11px 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; font-family: inherit; }
-  .login-box input:focus { border-color: #1e5a8c; }
-  .login-box button { width: 100%; padding: 12px; background: #1e5a8c; color: white; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; font-weight: 700; margin-top: 12px; box-shadow: 0 2px 6px rgba(30,90,140,0.2); font-family: inherit; }
+  .login-box { background: white; padding: 35px 25px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); width: 100%; max-width: 340px; text-align: center; }
+  .login-box h2 { font-size: 17px; color: #333; margin-bottom: 6px; font-weight: 700; }
+  .login-box p { font-size: 12px; color: #666; margin-bottom: 24px; }
+  .google-login-btn { width: 100%; padding: 12px; background: white; color: #444; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-family: inherit; }
+  .google-login-btn:hover { background: #f9f9f9; }
   
-  #sync-status { font-size: 10px; padding: 4px 10px; border-radius: 12px; color: white; background: #777; font-weight: bold; }
-  .status-saved { background: #2e7d32 !important; }
-  .status-saving { background: #f57f17 !important; }
-  #logout-btn { padding: 5px 10px; font-size: 11px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: 500; }
+  #sync-status { font-size: 10px; padding: 3px 8px; border-radius: 12px; color: white; background: #777; font-weight: bold; }
+  .status-saved { background: #2e7d32 !important; } .status-saving { background: #f57f17 !important; }
+  #logout-btn { padding: 4px 10px; font-size: 10.5px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-family: inherit; }
 </style>
 </head>
 <body>
@@ -143,24 +126,25 @@
 <div id="login-overlay">
     <div class="login-box">
         <h2>保育園見学チェックリスト</h2>
-        <p>閲覧・編集には認証が必要です</p>
-        <input type="email" id="login-email" placeholder="メールアドレス">
-        <input type="password" id="login-password" placeholder="パスワード">
-        <button onclick="window.handleLogin()">ログイン</button>
-        <p id="login-error" style="color:red; font-size:12px; margin-top:10px; font-weight:500;"></p>
+        <p>セキュリティ保護のためサインインが必要です</p>
+        <button class="google-login-btn" onclick="window.handleLogin()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
+            Googleアカウントでログイン
+        </button>
+        <p id="login-error" style="color:red; font-size:11px; margin-top:12px; font-weight:500;"></p>
     </div>
 </div>
 
 <div id="app-header" class="app-header">
-  <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
-    <div class="app-title" style="margin-bottom:0;">🏫 保育園見学チェックリスト</div>
+  <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+    <div class="app-title">🏫 保育園見学チェックリスト</div>
     
     <div class="mode-selector-container">
-      <button id="mode-toggle-btn" class="mode-btn active" onclick="window.setViewMode('toggle')">📱 トグル形式</button>
-      <button id="mode-a3-btn" class="mode-btn" onclick="window.setViewMode('a3')">📄 A3印刷形式</button>
+      <button id="mode-toggle-btn" class="mode-btn active" onclick="window.setViewMode('toggle')">📱 トグル</button>
+      <button id="mode-a3-btn" class="mode-btn" onclick="window.setViewMode('a3')">📄 A3印刷</button>
     </div>
 
-    <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
+    <div style="display:flex; align-items:center; gap:6px;">
         <div id="sync-status">接続中...</div>
         <button id="logout-btn" onclick="window.handleLogout()">ログアウト</button>
     </div>
@@ -171,12 +155,12 @@
 <div class="main" id="main-content">
   <div class="empty-state">
     <div class="empty-icon">🏫</div>
-    <div class="empty-text">下の「＋ 園を追加」から<br>見学する園を登録してください</div>
+    <div class="empty-text">上の「＋ 園を追加」から<br>見学する園を登録してください</div>
   </div>
 </div>
 
 <div class="export-area">
-  <button class="export-btn btn-expand" onclick="expandAll()">📂 全セクション展開</button>
+  <button class="export-btn btn-expand" onclick="expandAll()">📂 全展開</button>
   <button class="export-btn btn-export" onclick="exportSummary()">📋 サマリーコピー</button>
 </div>
 
@@ -186,14 +170,14 @@
     <input class="modal-input" id="modal-input" placeholder="例：○○保育園" maxlength="30" onkeydown="if(event.key==='Enter')window.addSchool()">
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
-      <button class="btn-primary" onclick="window.addSchool()">追加する</button>
+      <button class="btn-primary" onclick="window.addSchool()">追加</button>
     </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -209,6 +193,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// 細分化・時間指定タイプに対応した新データスキーマ
 const SECTIONS = [
   { id:"s01", e:"🏢", n:"①", t:"基本情報・立地", c:"blue",
     rows:[
@@ -226,13 +211,15 @@ const SECTIONS = [
     ]},
   { id:"s02", e:"🕒", n:"②", t:"園の基本運営", c:"blue",
     rows:[
-      {id:"r012",l:"開園時間",type:"text",ph:"○○:○○ 〜 ○○:○○"},
-      {id:"r013",l:"延長保育",opts:["あり","なし"],hasNote:true,np:"〜何時まで"},
+      {id:"r012_s",l:"開園時間 (開始)",type:"time"},
+      {id:"r012_e",l:"開園時間 (終了)",type:"time"},
+      {id:"r013",l:"延長保育の有無",opts:["あり","なし"]},
+      {id:"r013_t",l:"延長保育 (終了時間)",type:"time"},
       {id:"r014",l:"土曜保育",opts:["あり","なし"]},
       {id:"r015",l:"日祝保育",opts:["あり","なし"]},
       {id:"r016",l:"休園日",opts:["日曜","祝日","年末年始","その他"]},
       {id:"r017",l:"定員",type:"text",ph:"○名"},
-      {id:"r018",l:"年齢別構成",type:"text",ph:"0歳○ 1歳○ 2歳○ 3歳○ 4歳○ 5歳○"},
+      {id:"r018",l:"年齢・月齢別クラス構成",type:"textarea",ph:"例：\\n0歳児 (生後57日〜) ○名\\n1歳児 ○名\\n2歳児 ○名..."},
       {id:"r019",l:"待機児童状況",opts:["多い","普通","少ない"]},
       {id:"r020",l:"入園難易度",opts:["高い","普通","低い"]},
       {id:"r021",l:"兄弟枠の有無",b:"事前",opts:["あり","なし"]},
@@ -265,7 +252,8 @@ const SECTIONS = [
       {id:"r042",l:"不審者対策",opts:["あり","なし"]},
       {id:"r043",l:"来園者チェック",opts:["あり","なし"],hasNote:true,np:"内容"},
       {id:"r044",l:"避難経路明確さ",opts:["明確","普通","不明確"]},
-      {id:"r045",l:"避難訓練の頻度",type:"text",ph:"月○回 / 年○回"},
+      {id:"r045_m",l:"避難訓練の頻度 (月単位)",type:"text",ph:"例：月1回"},
+      {id:"r045_y",l:"避難訓練の頻度 (年単位)",type:"text",ph:"例：年2回"},
       {id:"r046",l:"災害時対応・場所",opts:["説明有","不明"],hasNote:true,np:"避難場所"},
       {id:"r047",l:"緊急連絡体制",opts:["明確・説明有","不明確"]},
       {id:"r048",l:"事故・怪我時の対応",opts:["説明あり","普通","気になる"]},
@@ -290,7 +278,8 @@ const SECTIONS = [
     ]},
   { id:"s06", e:"⏰", n:"⑥", t:"1日の生活", c:"blue",
     rows:[
-      {id:"r064",l:"登降園の時間帯",type:"text",ph:"登○:○○頃 / 降○:○○頃が多い"},
+      {id:"r064_s",l:"希望登園時間帯",type:"time"},
+      {id:"r064_e",l:"希望降園時間帯",type:"time"},
       {id:"r065",l:"日程表",opts:["あり(別紙等)","なし"]},
       {id:"r066",l:"外遊び時間帯",type:"text",ph:"○:○○ 〜 ○:○○"},
       {id:"r067",l:"昼寝時間・長さ",type:"text",ph:"○:○○ 〜 約○時間"},
@@ -328,7 +317,7 @@ const SECTIONS = [
       {id:"r090",l:"経験・年齢バランス",opts:["バランス良","若手多","ベテラン多"]},
       {id:"r091",l:"離職率",opts:["低そう","普通","高そう"]},
       {id:"r092",l:"体制",opts:["担任制","チーム制","その他"]},
-      {id:"r093",l:"先生の雰囲気・挨拶",opts:["明るい開快","普通","気になる"]},
+      {id:"r093",l:"先生の雰囲気・挨拶",opts:["明るい","普通","気になる"]},
       {id:"r094",l:"子供への声掛け",opts:["丁寧・優しい","普通","気になる"]},
       {id:"r095",l:"言葉遣い",opts:["丁寧","普通","気になる"]},
       {id:"r096",l:"先生同士の関係",opts:["良好","普通","ピリピリ"]},
@@ -377,7 +366,6 @@ const SECTIONS = [
   { id:"s13", e:"🏅", n:"⑬", t:"総合評価（タップで選択）", c:"yellow",
     rows:[
       {id:"r129",l:"安全性",type:"stars"},
-      {id:"r130",l:"保育内容・方針",type:"stars"},
       {id:"r131",l:"先生の質・雰囲気",type:"stars"},
       {id:"r132",l:"子どもの様子・雰囲気",type:"stars"},
       {id:"r133",l:"通いやすさ・利便性",type:"stars"},
@@ -413,7 +401,7 @@ const statusEl = document.getElementById('sync-status');
 const loginOverlay = document.getElementById('login-overlay');
 const errorEl = document.getElementById('login-error');
 
-// グローバル関数へのバインド（インラインHTML属性から呼び出せるように強制紐付け）
+// グローバル関数設定
 window.setViewMode = function(mode) {
   currentViewMode = mode;
   document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
@@ -423,19 +411,18 @@ window.setViewMode = function(mode) {
 };
 
 window.handleLogin = async function() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
     try {
         errorEl.textContent = "";
-        await signInWithEmailAndPassword(auth, email, password);
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
     } catch (error) {
-        errorEl.textContent = "認証失敗。アドレスやパスワードを確認してください。";
+        errorEl.textContent = "Googleアカウントによるサインインに失敗しました。";
+        console.error(error);
     }
 };
 
 window.handleLogout = () => signOut(auth);
 
-// Firebase同期
 function bindRealtimeSync() {
   if(unsubscribeSnapshot) unsubscribeSnapshot();
   if(!currentUser || !currentId) return;
@@ -519,7 +506,7 @@ function makeEmptyData() {
   for (const sec of SECTIONS) {
     for (const row of sec.rows) {
       if (row.type === "stars") d[row.id] = {stars:0};
-      else if (row.type === "text" || row.type === "textarea") d[row.id] = {value:""};
+      else if (row.type === "text" || row.type === "textarea" || row.type === "time") d[row.id] = {value:""};
       else d[row.id] = {selected:[],note:""};
     }
   }
@@ -554,7 +541,7 @@ window.addSchool = async function() {
 };
 
 window.deleteSchool = async function(id) {
-  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\\n（クラウド上のデータも完全に消えます）`)) return;
+  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\n（クラウド上のデータも完全に消えます）`)) return;
   if(!currentUser) return;
   try { await deleteDoc(doc(db, "users", currentUser.uid, "checklists", id)); } catch(e){ console.error(e); }
   schools = schools.filter(s=>s.id!==id);
@@ -646,7 +633,7 @@ function calcProgress(secId) {
     const d = sc.data?.[row.id];
     if (!d) continue;
     if (row.type==="stars" && (d.stars||0)>0) filled++;
-    else if ((row.type==="text"||row.type==="textarea") && d.value?.trim()) filled++;
+    else if ((row.type==="text"||row.type==="textarea"||row.type==="time") && d.value?.trim()) filled++;
     else if (!row.type && (d.selected?.length>0||d.note?.trim())) filled++;
   }
   return {filled, total};
@@ -716,6 +703,9 @@ function renderRow(row, sc, col) {
   } else if (row.type==="text") {
     inner = `<input class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}" placeholder="${escH(row.ph||'')}"
       oninput="window.updateTextField('${row.id}',this.value)">`;
+  } else if (row.type==="time") {
+    inner = `<input type="time" class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}"
+      oninput="window.updateTextField('${row.id}',this.value)">`;
   } else if (row.type==="textarea") {
     inner = `<textarea class="textarea" style="--sec-color:${col.color}" placeholder="${escH(row.ph||'')}"
       oninput="window.updateTextField('${row.id}',this.value)">${escH(d.value||'')}</textarea>`;
@@ -740,25 +730,6 @@ function renderRow(row, sc, col) {
     </div>`;
 }
 
-function renderSection(sec, sc) {
-  const col = COLOR_MAP[sec.c];
-  const {filled,total} = calcProgress(sec.id);
-  const pct = total>0?(filled/total*100):0;
-  const isOpen = currentViewMode === 'a3' ? true : !!openSections[sec.id];
-  const rows = sec.rows.map(r => renderRow(r, sc, col)).join("");
-  return `
-  <div class="section" data-sec="${sec.id}">
-    <button class="section-header ${isOpen?'open':''}" style="--sec-color:${col.color};--sec-bg:${col.bg}" onclick="window.toggleSection('${sec.id}')">
-      <span class="section-title" style="color:${col.color}">${sec.e} ${sec.n?sec.n+' ':''}${escH(sec.t)}<span class="progress-tag">${filled}/${total}</span></span>
-      <span class="section-arrow ${isOpen?'open':''}">${isOpen?'▲':'▼'}</span>
-    </button>
-    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${col.color}"></div></div>
-    <div class="section-body" style="${isOpen?'':'display:none'}">
-      ${rows}
-    </div>
-  </div>`;
-}
-
 function renderMain() {
   const cont = document.getElementById("main-content");
   if(!cont) return;
@@ -779,16 +750,16 @@ function renderAll() { renderTabs(); renderMain(); }
 window.exportSummary = function() {
   const sc = currentSchool();
   if (!sc) { alert("園が選択されていません"); return; }
-  let txt = `【${sc.name}】見学まとめ\\n`;
-  if (sc.date) txt += `見学日：${sc.date}\\n`;
-  txt += "\\n";
+  let txt = `【${sc.name}】見学まとめ\n`;
+  if (sc.date) txt += `見学日：${sc.date}\n`;
+  txt += "\n";
   for (const sec of SECTIONS) {
     let secTxt = "";
     for (const row of sec.rows) {
       const d = sc.data?.[row.id]||{};
       if (row.type==="stars") {
         if (d.stars>0) secTxt += `  ${row.l}：${"★".repeat(d.stars)}${"☆".repeat(5-d.stars)}\n`;
-      } else if (row.type==="text"||row.type==="textarea") {
+      } else if (row.type==="text"||row.type==="textarea"||row.type==="time") {
         if (d.value?.trim()) secTxt += `  ${row.l}：${d.value}\n`;
       } else {
         const parts = [];
@@ -797,13 +768,11 @@ window.exportSummary = function() {
         if (parts.length>0) secTxt += `  ${row.l}：${parts.join(" ")}\n`;
       }
     }
-    if (secTxt) txt += `${sec.e}${sec.n?sec.n+" ":""}${sec.t}\\n${secTxt}\\n`;
+    if (secTxt) txt += `${sec.e}${sec.n?sec.n+" ":""}${sec.t}\n${secTxt}\n`;
   }
   navigator.clipboard.writeText(txt).then(()=>{
-    alert("クリップボードにコピーしました！\\nメモアプリやLINEに貼り付けてご利用ください📋");
-  }).catch(()=>{
-    prompt("テキストをコピーしてください:", txt);
-  });
+    alert("コピー完了！メモ等に貼り付けてください📋");
+  }).catch(()=>{ prompt("コピーしてください:", txt); });
 };
 
 function escH(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
