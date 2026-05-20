@@ -17,75 +17,76 @@
     --gray:#555;--gray-bg:#f5f5f5;
     --surface:#fff;--bg:#f2f4f7;
     --text:#222;--sub:#666;--border:#e4e7ec;
-    --radius:14px;--shadow:0 2px 8px rgba(0,0,0,0.08);
+    --radius:10px;--shadow:0 1px 4px rgba(0,0,0,0.05);
   }
-  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;}
 
-  /* ===== HEADER ===== */
-  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,0.05);}
-  .app-title{font-size:13px;font-weight:700;color:#333;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-  .school-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
+  /* ===== HEADER (スリム化) ===== */
+  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+  .app-title{font-size:12px;font-weight:700;color:#333;display:flex;align-items:center;gap:6px;}
+  .school-tabs{display:flex;gap:6px;overflow-x:auto;padding-top:4px;scrollbar-width:none;}
   .school-tabs::-webkit-scrollbar{display:none;}
-  .tab-btn{flex-shrink:0;padding:5px 14px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
+  .tab-btn{flex-shrink:0;padding:4px 12px;border-radius:15px;border:none;cursor:pointer;font-size:11px;font-family:inherit;transition:all .2s;}
   .tab-btn.active{background:var(--blue);color:#fff;font-weight:700;}
   .tab-btn.inactive{background:#e8ecf0;color:#555;font-weight:500;}
-  .tab-add{flex-shrink:0;padding:5px 12px;border-radius:20px;border:1.5px dashed #aaa;background:transparent;color:#888;font-size:12px;cursor:pointer;font-family:inherit;}
+  .tab-add{flex-shrink:0;padding:3px 10px;border-radius:15px;border:1.5px dashed #aaa;background:transparent;color:#888;font-size:11px;cursor:pointer;font-family:inherit;}
 
   /* ===== MODAL ===== */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .modal-box{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
-  .modal-title{font-size:15px;font-weight:700;margin-bottom:14px;}
-  .modal-input{width:100%;padding:11px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;outline:none;}
+  .modal-box{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.15);}
+  .modal-title{font-size:14px;font-weight:700;margin-bottom:10px;}
+  .modal-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;outline:none;}
   .modal-input:focus{border-color:var(--blue);}
-  .modal-btns{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;}
-  .btn-cancel, .btn-primary{padding:9px 18px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;}
+  .modal-btns{display:flex;gap:6px;margin-top:12px;justify-content:flex-end;}
+  .btn-cancel, .btn-primary{padding:7px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;}
   .btn-cancel{border:1px solid #ddd;background:#fff;}
   .btn-primary{border:none;background:var(--blue);color:#fff;font-weight:700;}
 
   /* ===== MAIN CONTENT ===== */
-  .main{padding:12px 12px 90px;}
-  .school-header{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);}
-  .school-name-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-  .school-name-input{flex:1;font-size:17px;font-weight:700;border:none;border-bottom:2px solid #e0e0e0;padding:4px 0;outline:none;font-family:inherit;background:transparent;}
+  .main{padding:8px 8px 70px;}
+  .school-header{background:#fff;border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow);}
+  .school-name-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .school-name-input{flex:1;font-size:15px;font-weight:700;border:none;border-bottom:2px solid #e0e0e0;padding:2px 0;outline:none;font-family:inherit;background:transparent;color:var(--text);transition:border .2s;}
   .school-name-input:focus{border-color:var(--blue);}
-  .delete-btn{background:none;border:none;color:#e57373;font-size:22px;cursor:pointer;padding:2px;}
-  .date-row{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:13px;}
-  .date-input{border:none;border-bottom:1px solid #ddd;font-size:13px;color:#444;outline:none;font-family:inherit;background:transparent;}
+  .delete-btn{background:none;border:none;color:#e57373;font-size:18px;cursor:pointer;padding:2px;flex-shrink:0;}
+  .date-row{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:12px;}
+  .date-input{border:none;border-bottom:1px solid #ddd;font-size:12px;color:#444;outline:none;font-family:inherit;background:transparent;padding:2px 0;}
 
-  /* ===== SECTION ===== */
-  .section{background:#fff;border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
-  .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:none;cursor:pointer;text-align:left;background:var(--surface);font-family:inherit;}
+  /* ===== SECTION (スリム化) ===== */
+  .section{background:#fff;border-radius:var(--radius);margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow);}
+  .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:none;cursor:pointer;text-align:left;background:var(--surface);font-family:inherit;}
   .section-header.open{background:var(--sec-bg);}
-  .section-title{font-weight:700;font-size:13px;color:var(--sec-color);}
-  .section-arrow{font-size:12px;color:#bbb;}
-  .section-body{border-top:2px solid var(--sec-bg);}
-  .progress-bar{height:3px;background:#f0f0f0;margin:0 15px;}
-  .progress-fill{height:3px;border-radius:2px;background:var(--sec-color);transition:width .3s;}
+  .section-title{font-weight:700;font-size:12px;color:var(--sec-color);}
+  .section-arrow{font-size:11px;color:#bbb;}
+  .section-body{border-top:1px solid var(--sec-bg);}
+  .progress-bar{height:2px;background:#f0f0f0;margin:0 12px;}
+  .progress-fill{height:2px;border-radius:1px;background:var(--sec-color);transition:width .3s;}
 
   /* ===== ROWS ===== */
-  .row{padding:11px 14px;border-bottom:1px solid #f2f2f4;}
+  .row{padding:8px 12px;border-bottom:1px solid #f2f2f4;}
   .row:last-child{border-bottom:none;}
-  .row-label{display:flex;align-items:center;gap:5px;margin-bottom:7px;}
-  .badge{font-size:9px;padding:2px 5px;border-radius:4px;color:#fff;font-weight:700;}
+  .row-label{display:flex;align-items:center;gap:4px;margin-bottom:4px;}
+  .badge{font-size:8px;padding:1px 4px;border-radius:3px;color:#fff;font-weight:700;flex-shrink:0;}
   .badge-req{background:#e65100;}
   .badge-pre{background:#1e5a8c;}
-  .label-text{font-size:12px;font-weight:600;color:#444;}
+  .label-text{font-size:11.5px;font-weight:600;color:#444;}
 
   /* ===== CHIPS ===== */
-  .chips{display:flex;flex-wrap:wrap;gap:6px;}
-  .chip{padding:6px 12px;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:#fff;color:var(--sec-color);font-weight:500;}
+  .chips{display:flex;flex-wrap:wrap;gap:4px;}
+  .chip{padding:4px 10px;border-radius:15px;font-size:11px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:#fff;color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
   .chip.selected{background:var(--sec-color);color:#fff;font-weight:700;}
 
   /* ===== INPUTS ===== */
-  .text-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;color:var(--text);}
+  .text-input{width:100%;padding:5px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;font-family:inherit;outline:none;transition:border .2s;color:var(--text);}
   .text-input:focus{border-color:var(--sec-color);}
-  .text-input[type="time"] { max-width: 140px; padding: 6px 10px; font-weight: bold; color: var(--blue); }
-  .note-input{margin-top:7px;width:100%;padding:7px 11px;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:#555;background:#fafafa;}
-  .textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:100px;}
+  .text-input[type="time"] { max-width: 130px; padding: 4px 8px; font-weight: bold; color: var(--blue); }
+  .note-input{margin-top:5px;width:100%;padding:5px 8px;border:1px solid #e0e0e0;border-radius:6px;font-size:11px;font-family:inherit;outline:none;color:#555;background:#fafafa;}
+  .note-input:focus{border-color:var(--sec-color);background:#fff;}
+  .textarea{width:100%;padding:6px 10px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none;resize:vertical;min-height:80px;}
 
   /* ===== STARS ===== */
-  .stars{display:flex;gap:6px;}
-  .star-btn{background:none;border:none;cursor:pointer;font-size:30px;padding:2px;line-height:1;}
+  .stars{display:flex;gap:4px;}
+  .star-btn{background:none;border:none;cursor:pointer;font-size:24px;line-height:1;}
   .star-filled{color:#f59e0b;} .star-empty{color:#ddd;} .star-filled.highlight{color:#e65100;}
 
   /* ===== EMPTY STATE ===== */
@@ -96,38 +97,40 @@
   /* ===== PROGRESS TAG ===== */
   .progress-tag{font-size:10px;color:var(--sec-color);opacity:.7;margin-left:6px;font-weight:500;}
 
-  /* ===== EXPORT area ===== */
-  .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;}
-  .export-btn{flex:1;padding:12px;border-radius:12px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
+  /* ===== EXPORT BTN ===== */
+  .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:6px;}
+  .export-btn{flex:1;padding:10px;border-radius:10px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
   .btn-export{background:var(--green);color:#fff;} .btn-expand{background:var(--blue-bg);color:var(--blue);}
 
   /* ===== VIEW MODE SELECTOR ===== */
-  .mode-selector-container { display: flex; align-items: center; gap: 4px; background: #e8ecf0; padding: 3px; border-radius: 20px; }
-  .mode-btn { padding: 5px 12px; border-radius: 16px; border: none; font-size: 11px; font-family: inherit; cursor: pointer; background: transparent; color: #555; }
-  .mode-btn.active { background: #fff; color: var(--text); font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .mode-selector-container { display: flex; align-items: center; gap: 4px; background: #e8ecf0; padding: 2px; border-radius: 20px; }
+  .mode-btn { padding: 4px 10px; border-radius: 16px; border: none; font-size: 10.5px; font-family: inherit; cursor: pointer; background: transparent; color: #555; }
+  .mode-btn.active { background: #fff; color: var(--text); font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
   /* ===== A3 MODE LAYOUT ===== */
-  body.mode-a3 { background: #ffffff; padding: 15px; }
-  body.mode-a3 .main { max-width: 100% !important; padding: 10px 0 40px 0; }
-  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 16px; width: 100%; }
-  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 14px; border-radius: 6px; }
+  body.mode-a3 { background: #ffffff; padding: 10px; }
+  body.mode-a3 .main { max-width: 100% !important; padding: 5px 0 40px 0; }
+  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 12px; width: 100%; }
+  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 10px; border-radius: 6px; }
   body.mode-a3 .section-body { display: block !important; }
   body.mode-a3 .section-arrow, body.mode-a3 .progress-bar, body.mode-a3 .export-area { display: none !important; }
+  body.mode-a3 .row { padding: 5px 8px; }
+  body.mode-a3 .item-name { flex: 0 0 38%; }
 
-  /* ===== AUTH OVERLAY UI (Google & メールリンク) ===== */
+  /* ===== LOGIN OVERLAY UI ===== */
   #login-overlay { position: fixed; inset: 0; background: #f4f7f9; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-  .login-box { background: white; padding: 35px 24px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); width: 100%; max-width: 340px; text-align: center; }
-  .login-box h2 { font-size: 17px; color: #333; margin-bottom: 6px; font-weight: 700; }
+  .login-box { background: white; padding: 30px 24px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); width: 100%; max-width: 340px; text-align: center; }
+  .login-box h2 { font-size: 16px; color: #333; margin-bottom: 6px; font-weight: 700; }
   .login-box p { font-size: 12px; color: #666; margin-bottom: 20px; }
-  .google-login-btn { width: 100%; padding: 12px; background: white; color: #444; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-family: inherit; margin-bottom: 18px; }
+  .google-login-btn { width: 100%; padding: 11px; background: white; color: #444; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-family: inherit; margin-bottom: 18px; }
   .divider { display: flex; align-items: center; margin: 15px 0; color: #aaa; font-size: 11px; }
   .divider::before, .divider::after { content: ""; flex: 1; border-bottom: 1px solid #eee; margin: 0 10px; }
-  .login-box input { width: 100%; padding: 11px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; font-family: inherit; margin-bottom: 8px; text-align: left; }
+  .login-box input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; font-family: inherit; margin-bottom: 8px; text-align: left; }
   .email-link-btn { width: 100%; padding: 11px; background: #1e5a8c; color: white; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 700; font-family: inherit; }
   
-  #sync-status { font-size: 10px; padding: 4px 10px; border-radius: 12px; color: white; background: #777; font-weight: bold; }
+  #sync-status { font-size: 10px; padding: 3px 8px; border-radius: 12px; color: white; background: #777; font-weight: bold; }
   .status-saved { background: #2e7d32 !important; } .status-saving { background: #f57f17 !important; }
-  #logout-btn { padding: 5px 10px; font-size: 11px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-family: inherit; }
+  #logout-btn { padding: 4px 10px; font-size: 10.5px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-family: inherit; }
 </style>
 </head>
 <body>
@@ -176,8 +179,8 @@
 </div>
 
 <div class="export-area">
-  <button class="export-btn btn-expand" onclick="expandAll()">📂 全セクション展開</button>
-  <button class="export-btn btn-export" onclick="exportSummary()">📋 サマリーコピー</button>
+  <button class="export-btn btn-expand" onclick="window.expandAll()">📂 全展開</button>
+  <button class="export-btn btn-export" onclick="window.exportSummary()">📋 サマリーコピー</button>
 </div>
 
 <div class="modal-overlay" id="modal" style="display:none;">
@@ -185,7 +188,7 @@
     <div class="modal-title">🏫 園を追加</div>
     <input class="modal-input" id="modal-input" placeholder="例：○○保育園" maxlength="30" onkeydown="if(event.key==='Enter')window.addSchool()">
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
+      <button class="btn-cancel" onclick="window.closeModal()">キャンセル</button>
       <button class="btn-primary" onclick="window.addSchool()">追加する</button>
     </div>
   </div>
@@ -234,7 +237,7 @@ const SECTIONS = [
       {id:"r015",l:"日祝保育",opts:["あり","なし"]},
       {id:"r016",l:"休園日",opts:["日曜","祝日","年末年始","その他"]},
       {id:"r017",l:"定員",type:"text",ph:"○名"},
-      {id:"r018",l:"年齢・月齢別クラス構成",type:"textarea",ph:"例：\\n0歳児 (生後57日〜) ○名\\n1歳児 ○名\\n2歳児 ○名..."},
+      {id:"r018",l:"年齢・月齢別クラス構成",type:"textarea",ph:"例：\n0歳児 (生後57日〜) ○名\n1歳児 ○名\n2歳児 ○名..."},
       {id:"r019",l:"待機児童状況",opts:["多い","普通","少ない"]},
       {id:"r020",l:"入園難易度",opts:["高い","普通","低い"]},
       {id:"r021",l:"兄弟枠の有無",b:"事前",opts:["あり","なし"]},
@@ -390,7 +393,7 @@ const SECTIONS = [
     ]},
   { id:"s14", e:"📝", n:"", t:"自由メモ・推しや懸念点など", c:"gray",
     rows:[
-      {id:"r137",l:"メモ欄",type:"textarea",ph:"気になった点、良かった点、懸念点など自由に記入..."},
+      {id:"r137",l:"メモ欄",type:"textarea",ph:"気なった点、良かった点、懸念点など自由に記入..."},
     ]},
 ];
 
@@ -412,7 +415,11 @@ let currentUser = null;
 let unsubscribeSnapshot = null;
 let currentViewMode = 'toggle';
 
-// 全ての命令をwindow直下に定義（インラインonclick対応）
+const statusEl = document.getElementById('sync-status');
+const loginOverlay = document.getElementById('login-overlay');
+const errorEl = document.getElementById('login-error');
+
+// 🔑 全てのグローバル関数を明示的にwindowに紐付け (モジュール化によるバグを鉄壁に防ぐ)
 window.setViewMode = function(mode) {
   currentViewMode = mode;
   document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
@@ -427,7 +434,7 @@ window.handleGoogleLogin = async function() {
         const provider = new GoogleAuthProvider();
         await signInWithPopup(auth, provider);
     } catch (error) {
-        errorEl.textContent = "Google認証に失敗しました。承認済みドメイン等の設定を再確認してください。";
+        errorEl.textContent = "Google認証に失敗しました。承認済みドメイン設定をご確認ください。";
         console.error(error);
     }
 };
@@ -440,7 +447,7 @@ window.handleEmailLinkLogin = async function() {
         errorEl.textContent = "送信中...";
         await sendSignInLinkToEmail(auth, email, actionCodeSettings);
         window.localStorage.setItem('emailForSignIn', email);
-        alert("ログイン用リンクをメールで送信しました！受信トレイを確認してください。");
+        alert("ログインリンクをメール送信しました！");
         errorEl.textContent = "メールを送信しました。";
     } catch (error) {
         errorEl.textContent = "メール送信に失敗しました。";
@@ -452,10 +459,10 @@ window.handleLogout = () => signOut(auth);
 async function checkEmailLinkSignIn() {
     if (isSignInWithEmailLink(auth, window.location.href)) {
         let email = window.localStorage.getItem('emailForSignIn');
-        if (!email) email = window.prompt('確認のためメールアドレスを再入力してください：');
+        if (!email) email = window.prompt('セキュリティ確認のためメールアドレスを再入力してください：');
         if(email) {
             try {
-                statusEl.textContent = "認証完了中...";
+                statusEl.textContent = "認証中...";
                 await signInWithEmailLink(auth, email, window.location.href);
                 window.localStorage.removeItem('emailForSignIn');
             } catch (error) { alert("ログインに失敗しました。"); }
@@ -496,7 +503,6 @@ async function firebaseLoadData() {
         schools.push({ id: docSnap.id, name: d.name || docSnap.id, date: d.date || "", data: d.data || makeEmptyData() });
     });
     
-    // ★データが0件の時もフリーズしないようにバグを修正★
     if (schools.length > 0) {
         currentId = schools[0].id;
         statusEl.textContent = "クラウド同期済";
@@ -667,30 +673,6 @@ window.setStars = function(secId, rowId, n, highlight) {
   updateProgress(secId);
 };
 
-function calcProgress(secId) {
-  const sc = currentSchool(); if (!sc) return {filled:0, total:0};
-  const sec = SECTIONS.find(s=>s.id===secId); if (!sec) return {filled:0,total:0};
-  let filled=0, total=sec.rows.length;
-  for (const row of sec.rows) {
-    const d = sc.data?.[row.id];
-    if (!d) continue;
-    if (row.type==="stars" && (d.stars||0)>0) filled++;
-    else if ((row.type==="text"||row.type==="textarea"||row.type==="time") && d.value?.trim()) filled++;
-    else if (!row.type && (d.selected?.length>0||d.note?.trim())) filled++;
-  }
-  return {filled, total};
-}
-
-function updateProgress(secId) {
-  if (!secId) return;
-  const {filled, total} = calcProgress(secId);
-  const pct = total>0 ? (filled/total*100) : 0;
-  const bar = document.querySelector(`[data-sec="${secId}"] .progress-fill`);
-  const tag = document.querySelector(`[data-sec="${secId}"] .progress-tag`);
-  if (bar) bar.style.width = pct + "%";
-  if (tag) tag.textContent = `${filled}/${total}`;
-}
-
 window.toggleSection = function(secId) {
   if (currentViewMode === 'a3') return;
   openSections[secId] = !openSections[secId];
@@ -703,7 +685,7 @@ window.toggleSection = function(secId) {
 };
 
 window.expandAll = function() {
-  for (const s of SECTIONS) if (!openSections[s.id]) toggleSection(s.id);
+  for (const s of SECTIONS) if (!openSections[s.id]) window.toggleSection(s.id);
 };
 
 function renderTabs() {
@@ -731,6 +713,13 @@ function renderSchoolHeader(sc) {
     </div>
   </div>`;
 }
+
+window.updateSchoolMeta = function(field, value) {
+  const sc = currentSchool(); if (!sc) return;
+  sc[field] = value;
+  scheduleSave(currentId);
+  if (field === "name") renderTabs();
+};
 
 function renderRow(row, sc, col) {
   const d = sc.data?.[row.id] || {};
