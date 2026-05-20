@@ -7,6 +7,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  
   :root{
     --blue:#1e5a8c;--blue-bg:#eef5fc;
     --green:#2e7d32;--green-bg:#edf7ee;
@@ -19,79 +20,104 @@
     --text:#222;--sub:#666;--border:#e4e7ec;
     --radius:14px;--shadow:0 2px 8px rgba(0,0,0,0.08);
   }
-  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+
+  body.dark-theme {
+    --bg:#121212;--surface:#1e1e1e;--text:#e0e0e0;--sub:#aaa;--border:#333;
+    --blue-bg:#142c42;--green-bg:#163818;--red-bg:#3d1919;--orange-bg:#3d2011;
+    --yellow-bg:#383211;--pink-bg:#3d1624;--gray-bg:#2d2d2d;--shadow:0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;transition: background 0.2s, color 0.2s;}
 
   /* ===== HEADER ===== */
   .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 14px 8px;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
-  .app-title{font-size:13px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .app-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
   .school-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .school-tabs::-webkit-scrollbar{display:none;}
   .tab-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
   .tab-btn.active{background:var(--blue);color:#fff;font-weight:700;}
   .tab-btn.inactive{background:#e8ecf0;color:#555;font-weight:500;}
+  body.dark-theme .tab-btn.inactive { background:#333; color:#aaa; }
   .tab-add{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1.5px dashed #aaa;background:transparent;color:#888;font-size:12px;cursor:pointer;font-family:inherit;}
   .tab-add:hover{border-color:#666;color:#555;}
 
+  /* ===== DRAWER (☰ MENU) ===== */
+  .drawer-toggle { background:none; border:none; font-size:22px; cursor:pointer; color:var(--text); padding-right:4px; display:flex; align-items:center; }
+  .drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999; display:none; }
+  .drawer { position:fixed; top:0; left:-280px; width:280px; height:100%; background:var(--surface); box-shadow:2px 0 12px rgba(0,0,0,0.15); z-index:1000; display:flex; flex-direction:column; transition: left 0.2s ease; color:var(--text); }
+  .drawer-section { padding:16px; border-bottom:1px solid var(--border); }
+  .drawer-item-title { font-weight:700; font-size:11px; color:var(--sub); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+  .drawer-menu-btn { width:100%; padding:10px 12px; border-radius:8px; border:none; text-align:left; cursor:pointer; font-family:inherit; font-size:13px; font-weight:500; background:transparent; color:var(--text); transition:background 0.2s; }
+  .drawer-menu-btn.active { background:var(--blue-bg); color:var(--blue); font-weight:700; }
+  .drawer-select { width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-family:inherit; font-size:13px; outline:none; }
+
   /* ===== MODAL ===== */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .modal-box{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1300;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-box{background:var(--surface);border-radius:18px;padding:24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2);color:var(--text);}
   .modal-title{font-size:15px;font-weight:700;margin-bottom:14px;}
-  .modal-input{width:100%;padding:11px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border .2s;}
+  .modal-input{width:100%;padding:11px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border .2s;background:var(--bg);color:var(--text);}
+  body.dark-theme .modal-input { border-color:#444; }
   .modal-input:focus{border-color:var(--blue);}
   .modal-btns{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;}
-  .btn-cancel{padding:9px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;}
+  .btn-cancel{padding:9px 18px;border-radius:10px;border:1px solid #ddd;background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;}
+  body.dark-theme .btn-cancel { border-color:#444; }
   .btn-primary{padding:9px 18px;border-radius:10px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;}
 
   /* ===== MAIN CONTENT ===== */
   .main{padding:12px 12px 90px;}
-  .school-header{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .school-header{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);}
   .school-name-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
   .school-name-input{flex:1;font-size:17px;font-weight:700;border:none;border-bottom:2px solid #e0e0e0;padding:4px 0;outline:none;font-family:inherit;background:transparent;color:var(--text);transition:border .2s;}
+  body.dark-theme .school-name-input { border-bottom-color:#444; }
   .school-name-input:focus{border-color:var(--blue);}
   .delete-btn{background:none;border:none;color:#e57373;font-size:22px;cursor:pointer;padding:2px;flex-shrink:0;}
   .date-row{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:13px;}
-  .date-input{border:none;border-bottom:1px solid #ddd;font-size:13px;color:#444;outline:none;font-family:inherit;background:transparent;padding:2px 0;}
+  .date-input{border:none;border-bottom:1px solid #ddd;font-size:13px;color:var(--text);outline:none;font-family:inherit;background:transparent;padding:2px 0;}
+  body.dark-theme .date-input { border-bottom-color:#444; }
 
   /* ===== SECTION ===== */
-  .section{background:#fff;border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
+  .section{background:var(--surface);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
   .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:none;cursor:pointer;text-align:left;background:var(--surface);transition:background .2s;font-family:inherit;}
   .section-header.open{background:var(--sec-bg);}
   .section-title{font-weight:700;font-size:13px;color:var(--sec-color);}
   .section-arrow{font-size:12px;color:#bbb;transition:transform .2s;}
   .section-arrow.open{transform:rotate(180deg);}
   .section-body{border-top:2px solid var(--sec-bg);}
-  .progress-bar{height:3px;background:#f0f0f0;margin:0 15px 0;}
+  .progress-bar{height:3px;background:var(--border);margin:0 15px 0;}
   .progress-fill{height:3px;border-radius:2px;background:var(--sec-color);transition:width .3s;}
 
   /* ===== ROWS ===== */
-  .row{padding:11px 14px;border-bottom:1px solid #f2f2f4;}
+  .row{padding:11px 14px;border-bottom:1px solid #f2f2f4;background:var(--surface);}
+  body.dark-theme .row { border-bottom-color:#2d2d2d; }
   .row:last-child{border-bottom:none;}
   .row-label{display:flex;align-items:center;gap:5px;margin-bottom:7px;}
   .badge{font-size:9px;padding:2px 5px;border-radius:4px;color:#fff;font-weight:700;flex-shrink:0;}
   .badge-req{background:#e65100;}
   .badge-pre{background:#1e5a8c;}
-  .label-text{font-size:12px;font-weight:600;color:#444;}
+  .label-text{font-size:12px;font-weight:600;color:var(--text);opacity:0.9;}
 
   /* ===== CHIPS ===== */
   .chips{display:flex;flex-wrap:wrap;gap:6px;}
-  .chip{padding:6px 12px;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:#fff;color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
+  .chip{padding:6px 12px;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:var(--surface);color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
   .chip.selected{background:var(--sec-color);color:#fff;font-weight:700;}
-  .chip:active{opacity:0.7;transform:scale(0.96);}
+  .chip:active{opacity:0.7;transform:scale(0.966);}
 
   /* ===== INPUTS ===== */
-  .text-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;color:var(--text);}
+  .text-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;color:var(--text);background:var(--bg);}
+  body.dark-theme .text-input { border-color:#444; }
   .text-input:focus{border-color:var(--sec-color);}
-  .note-input{margin-top:7px;width:100%;padding:7px 11px;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:#555;background:#fafafa;}
-  .note-input:focus{border-color:var(--sec-color);background:#fff;}
-  .textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:100px;transition:border .2s;}
+  .note-input{margin-top:7px;width:100%;padding:7px 11px;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--text);background:var(--bg);}
+  body.dark-theme .note-input { border-color:#444; }
+  .note-input:focus{border-color:var(--sec-color);background:var(--surface);}
+  .textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:100px;transition:border .2s;color:var(--text);background:var(--bg);}
+  body.dark-theme .textarea { border-color:#444; }
   .textarea:focus{border-color:var(--sec-color);}
 
   /* ===== STARS ===== */
   .stars{display:flex;gap:6px;}
-  .star-btn{background:none;border:none;cursor:pointer;font-size:30px;padding:2px;line-height:1;transition:color .1s, transform .1s;}
+  .star-btn{background:none;border:none;cursor:pointer;font-size:30px;padding:2px;line-height:1;transition:color .1s, transform .1s;color:var(--border);}
   .star-btn:active{transform:scale(0.85);}
   .star-filled{color:#f59e0b;}
-  .star-empty{color:#ddd;}
   .star-filled.highlight{color:#e65100;}
 
   /* ===== EMPTY STATE ===== */
@@ -104,66 +130,57 @@
 
   /* ===== EXPORT BTN ===== */
   .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;}
+  body.dark-theme .export-area { background:rgba(255,255,255,0.05); }
   .export-btn{flex:1;padding:12px;border-radius:12px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
   .btn-export{background:var(--green);color:#fff;}
   .btn-expand{background:var(--blue-bg);color:var(--blue);}
 
-  /* ===== VIEW MODE SELECTOR ===== */
-  .mode-selector-container { display: flex; align-items: center; gap: 4px; background: #e8ecf0; padding: 3px; border-radius: 20px; margin-left: auto; }
-  .mode-btn { padding: 5px 12px; border-radius: 16px; border: none; font-size: 11px; font-family: inherit; cursor: pointer; background: transparent; color: #555; font-weight: 500; transition: all .2s; }
-  .mode-btn.active { background: #fff; color: var(--text); font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-
   /* ===== A3 MODE LAYOUT ===== */
-  body.mode-a3 { background: #ffffff; padding: 15px; }
-  body.mode-a3 .main { max-width: 100% !important; padding: 10px 0 40px 0; }
-  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 16px; width: 100%; }
-  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 14px; border-radius: 6px; }
+  body.mode-a3 .main { max-width: 100% !important; padding: 12px 0 90px 0; }
+  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 14px; width: 100%; }
+  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid var(--border); margin-bottom: 12px; }
   body.mode-a3 .section-body { display: block !important; }
   body.mode-a3 .section-arrow, body.mode-a3 .progress-bar { display: none !important; }
-  body.mode-a3 .export-area { display: none !important; }
-  body.mode-a3 .chip { padding: 4px 8px; font-size: 11px; }
-
-  /* ===== LOGIN OVERLAY ===== */
-  #login-overlay { position: fixed; inset: 0; background: #f4f7f9; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-  .login-box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 24 rgba(0,0,0,0.08); width: 100%; max-width: 360px; text-align: center; }
-  .login-box h2 { font-size: 18px; color: #333; margin-bottom: 6px; font-weight: 700; }
-  .login-box p { font-size: 12px; color: #666; margin-bottom: 20px; }
-  .login-box input { width: 100%; padding: 11px 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; font-family: inherit; }
-  .login-box input:focus { border-color: #1e5a8c; }
-  .login-box button { width: 100%; padding: 12px; background: #1e5a8c; color: white; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; font-weight: 700; margin-top: 12px; box-shadow: 0 2px 6px rgba(30,90,140,0.2); font-family: inherit; }
-  
-  #sync-status { font-size: 10px; padding: 4px 10px; border-radius: 12px; color: white; background: #777; font-weight: bold; }
-  .status-saved { background: #2e7d32 !important; }
-  .status-saving { background: #f57f17 !important; }
-  #logout-btn { padding: 5px 10px; font-size: 11px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: 500; }
 </style>
 </head>
 <body>
 
-<div id="login-overlay">
-    <div class="login-box">
-        <h2>保育園見学チェックリスト</h2>
-        <p>閲覧・編集には認証が必要です</p>
-        <input type="email" id="login-email" placeholder="メールアドレス">
-        <input type="password" id="login-password" placeholder="パスワード">
-        <button onclick="window.handleLogin()">ログイン</button>
-        <p id="login-error" style="color:red; font-size:12px; margin-top:10px; font-weight:500;"></p>
+<div id="drawer-overlay" class="drawer-overlay" onclick="window.toggleDrawer(false)">
+  <div id="drawer" class="drawer" onclick="event.stopPropagation()">
+    <div style="padding:16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--blue-bg); color:var(--blue);">
+      <div style="font-weight:bold; font-size:15px;">メニュー</div>
+      <button onclick="window.toggleDrawer(false)" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--sub);">✕</button>
     </div>
+    
+    <div class="drawer-section">
+      <div class="drawer-item-title">ユーザー</div>
+      <div id="menu-user-name" style="font-weight:bold; font-size:14px; word-break:break-all;">ゲストユーザー (ローカル接続)</div>
+    </div>
+    
+    <div class="drawer-section">
+      <div class="drawer-item-title">表示形式</div>
+      <select id="menu-view-mode" class="drawer-select" onchange="window.setViewMode(this.value); window.toggleDrawer(false);">
+        <option value="toggle">📱 トグル形式</option>
+        <option value="a3">📄 A3印刷形式</option>
+      </select>
+    </div>
+    
+    <div class="drawer-section" style="flex-grow:1; overflow-y:auto;">
+      <div class="drawer-item-title" style="margin-bottom:10px;">園の一覧</div>
+      <div id="menu-school-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+    </div>
+    
+    <div style="padding:14px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px; background:var(--bg);">
+      <button class="drawer-menu-btn" style="text-align:center; border:1px solid var(--border); background:var(--surface); border-radius:8px; font-weight:bold;" onclick="window.toggleTheme()">🌓 テーマ切り替え</button>
+      <button class="drawer-menu-btn" style="text-align:center; background:var(--red); color:white; border-radius:8px; font-weight:bold;" onclick="window.handleLogout(); window.toggleDrawer(false);">ログアウト</button>
+    </div>
+  </div>
 </div>
 
 <div id="app-header" class="app-header">
-  <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
-    <div class="app-title" style="margin-bottom:0;">🏫 保育園見学チェックリスト</div>
-    
-    <div class="mode-selector-container">
-      <button id="mode-toggle-btn" class="mode-btn active" onclick="window.setViewMode('toggle')">📱 トグル形式</button>
-      <button id="mode-a3-btn" class="mode-btn" onclick="window.setViewMode('a3')">📄 A3印刷形式</button>
-    </div>
-
-    <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
-        <div id="sync-status">接続中...</div>
-        <button id="logout-btn" onclick="window.handleLogout()">ログアウト</button>
-    </div>
+  <div style="display:flex; align-items:center; gap:6px; margin-bottom:10px;">
+    <button class="drawer-toggle" onclick="window.toggleDrawer(true)">☰</button>
+    <div class="app-title" style="margin-bottom:0;">保育園見学チェックリスト</div>
   </div>
   <div class="school-tabs" id="school-tabs"></div>
 </div>
@@ -183,32 +200,17 @@
 <div class="modal-overlay" id="modal" style="display:none;">
   <div class="modal-box">
     <div class="modal-title">🏫 園を追加</div>
-    <input class="modal-input" id="modal-input" placeholder="例：○○保育園" maxlength="30" onkeydown="if(event.key==='Enter')window.addSchool()">
+    <input class="modal-input" id="modal-input" placeholder="例：○○保育園" maxlength="30"
+      oninput="" onkeydown="if(event.key==='Enter')addSchool()">
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
-      <button class="btn-primary" onclick="window.addSchool()">追加する</button>
+      <button class="btn-primary" onclick="addSchool()">追加する</button>
     </div>
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDp3gfZF9zCp-8-3GbAvvYcE_ay-DJoW7I",
-  authDomain: "visitns-2ae92.firebaseapp.com",
-  projectId: "visitns-2ae92",
-  storageBucket: "visitns-2ae92.firebasestorage.app",
-  messagingSenderId: "928762461498",
-  appId: "1:928762461498:web:412cf739327963d6b36403"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
+<script>
+// ============ SCHEMA (全ローマ字キー) ============
 const SECTIONS = [
   { id:"s01", e:"🏢", n:"①", t:"基本情報・立地", c:"blue",
     rows:[
@@ -328,7 +330,7 @@ const SECTIONS = [
       {id:"keimen_nenrei_bal",l:"経験・年齢バランス",opts:["バランス良","若手多","ベテラン多"]},
       {id:"rishokuritsu",l:"離職率",opts:["低そう","普通","高そう"]},
       {id:"taisei",l:"体制",opts:["担任制","チーム制","その他"]},
-      {id:"sensei_aisatsu",l:"先生の雰囲気・挨拶",opts:["明るい開快","普通","気になる"]},
+      {id:"sensei_aisatsu",l:"先生の雰囲気・挨拶",opts:["明るい","普通","気になる"]},
       {id:"kodomo_koegake",l:"子供への声掛け",opts:["丁寧・優しい","普通","気になる"]},
       {id:"kotobazukai",l:"言葉遣い",opts:["丁寧","普通","気になる"]},
       {id:"sensei_kankei",l:"先生同士の関係",opts:["良好","普通","ピリピリ"]},
@@ -405,121 +407,47 @@ let schools = [];
 let currentId = null;
 let openSections = {};
 let saveTimer = null;
-let currentUser = null;
-let unsubscribeSnapshot = null;
 let currentViewMode = 'toggle';
 
-const statusEl = document.getElementById('sync-status');
-const loginOverlay = document.getElementById('login-overlay');
-const errorEl = document.getElementById('login-error');
-
-// グローバル関数へのバインド（インラインHTML属性から呼び出せるように強制紐付け）
-window.setViewMode = function(mode) {
-  currentViewMode = mode;
-  document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
-  document.getElementById('mode-a3-btn').classList.toggle('active', mode === 'a3');
-  document.body.className = mode === 'a3' ? 'mode-a3' : '';
-  renderMain();
-};
-
-window.handleLogin = async function() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
+// ============ STORAGE ============
+function loadData() {
+  try {
+    const r = localStorage.getItem("hk_schools_meta");
+    if (r) schools = JSON.parse(r);
+  } catch(e) { schools = []; }
+  if (schools.length > 0) currentId = schools[0].id;
+  for (const s of schools) {
     try {
-        errorEl.textContent = "";
-        await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-        errorEl.textContent = "認証失敗。アドレスやパスワードを確認してください。";
-    }
-};
-
-window.handleLogout = () => signOut(auth);
-
-// Firebase同期
-function bindRealtimeSync() {
-  if(unsubscribeSnapshot) unsubscribeSnapshot();
-  if(!currentUser || !currentId) return;
-
-  const docRef = doc(db, "users", currentUser.uid, "checklists", currentId);
-  unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
-    if (snapshot.exists() && snapshot.metadata.hasPendingWrites === false) {
-      const serverData = snapshot.data();
-      const sc = schools.find(x => x.id === currentId);
-      if(sc) {
-          sc.name = serverData.name || sc.name;
-          sc.date = serverData.date || "";
-          sc.data = serverData.data || makeEmptyData();
-          renderMain();
-          renderTabs();
-      }
-      statusEl.textContent = "同期済";
-      statusEl.className = "status-saved";
-    }
-  });
+      const r = localStorage.getItem("hk_data_" + s.id);
+      if (r) s.data = JSON.parse(r);
+    } catch(e) { s.data = makeEmptyData(); }
+    if (!s.data) s.data = makeEmptyData();
+  }
 }
 
-async function firebaseLoadData() {
-  if(!currentUser) return;
-  statusEl.textContent = "読込中...";
-  try {
-    const qSnap = await getDocs(collection(db, "users", currentUser.uid, "checklists"));
-    schools = [];
-    qSnap.forEach(docSnap => {
-        const d = docSnap.data();
-        schools.push({
-            id: docSnap.id,
-            name: d.name || docSnap.id,
-            date: d.date || "",
-            data: d.data || makeEmptyData()
-        });
-    });
-    if (schools.length > 0) currentId = schools[0].id;
-    else currentId = null;
-    renderAll();
-    if(currentId) bindRealtimeSync();
-  } catch(e) { console.error(e); }
+function saveMeta() {
+  const meta = schools.map(s => ({id:s.id,name:s.name,date:s.date||""}));
+  try { localStorage.setItem("hk_schools_meta", JSON.stringify(meta)); } catch(e){}
+}
+
+function saveSchoolData(id) {
+  const s = schools.find(x=>x.id===id);
+  if (!s) return;
+  try { localStorage.setItem("hk_data_" + id, JSON.stringify(s.data)); } catch(e){}
 }
 
 function scheduleSave(id) {
-  statusEl.textContent = "保存中...";
-  statusEl.className = "status-saving";
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(async () => {
-      const s = schools.find(x=>x.id===id);
-      if (!s || !currentUser) return;
-      try {
-          await setDoc(doc(db, "users", currentUser.uid, "checklists", id), {
-              name: s.name,
-              date: s.date || "",
-              data: s.data
-          }, { merge: true });
-          statusEl.textContent = "同期済";
-          statusEl.className = "status-saved";
-      } catch(e){
-          statusEl.textContent = "保存失敗";
-          statusEl.className = "";
-      }
-  }, 400);
+  saveTimer = setTimeout(() => saveSchoolData(id), 600);
 }
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        currentUser = user;
-        loginOverlay.style.display = 'none';
-        firebaseLoadData();
-    } else {
-        currentUser = null;
-        loginOverlay.style.display = 'flex';
-        if(unsubscribeSnapshot) unsubscribeSnapshot();
-    }
-});
-
+// ============ DATA ============
 function makeEmptyData() {
   const d = {};
   for (const sec of SECTIONS) {
     for (const row of sec.rows) {
       if (row.type === "stars") d[row.id] = {stars:0};
-      else if (row.type === "text" || row.type === "textarea") d[row.id] = {value:""};
+      else if (row.type === "text" || row.type === "textarea" || row.type === "time") d[row.id] = {value:""};
       else d[row.id] = {selected:[],note:""};
     }
   }
@@ -528,73 +456,44 @@ function makeEmptyData() {
 
 function currentSchool() { return schools.find(s=>s.id===currentId); }
 
-window.openModal = function() {
+// ============ SCHOOL MANAGEMENT ============
+function openModal() {
   document.getElementById("modal").style.display = "flex";
   document.getElementById("modal-input").value = "";
   setTimeout(() => document.getElementById("modal-input").focus(), 50);
-};
-window.closeModal = function() { document.getElementById("modal").style.display = "none"; };
+}
+function closeModal() { document.getElementById("modal").style.display = "none"; }
 
-window.addSchool = async function() {
+function addSchool() {
   const name = document.getElementById("modal-input").value.trim();
-  if (!name || !currentUser) return;
-  if (schools.some(s => s.id === name)) { alert("同名の園がすでに存在します。"); return; }
-  
-  const id = name;
+  if (!name) return;
+  const id = "s_" + Date.now();
   const school = {id, name, date:"", data: makeEmptyData()};
   schools.push(school);
   currentId = id;
   closeModal();
-  
-  try {
-      await setDoc(doc(db, "users", currentUser.uid, "checklists", id), { name: name, date: "", data: school.data });
-      renderAll();
-      bindRealtimeSync();
-  } catch(e) { console.error(e); }
-};
+  saveMeta();
+  saveSchoolData(id);
+  renderAll();
+}
 
-window.deleteSchool = async function(id) {
-  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\\n（クラウド上のデータも完全に消えます）`)) return;
-  if(!currentUser) return;
-  try { await deleteDoc(doc(db, "users", currentUser.uid, "checklists", id)); } catch(e){ console.error(e); }
+function deleteSchool(id) {
+  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\n（入力済みのデータも消えます）`)) return;
+  try { localStorage.removeItem("hk_data_" + id); } catch(e){}
   schools = schools.filter(s=>s.id!==id);
   if (currentId === id) currentId = schools.length > 0 ? schools[0].id : null;
+  saveMeta();
   renderAll();
-  if(currentId) bindRealtimeSync();
-};
+}
 
-window.switchSchool = function(id) {
+function switchSchool(id) {
   currentId = id;
   renderMain();
   renderTabs();
-  bindRealtimeSync();
-};
+}
 
-window.handleSchoolNameChange = async function(oldId, newName) {
-  newName = newName.trim();
-  if (!newName || oldId === newName || !currentUser) return;
-  if (schools.some(s => s.id === newName)) { alert("その園名はすでに使用されています。"); renderMain(); return; }
-  
-  statusEl.textContent = "園名変更中...";
-  statusEl.className = "status-saving";
-  
-  try {
-      const oldDocRef = doc(db, "users", currentUser.uid, "checklists", oldId);
-      const newDocRef = doc(db, "users", currentUser.uid, "checklists", newName);
-      const oldSnap = await getDoc(oldDocRef);
-      if (oldSnap.exists()) {
-          await setDoc(newDocRef, { ...oldSnap.data(), name: newName, updatedAt: new Date() });
-          await deleteDoc(oldDocRef);
-          const idx = schools.findIndex(s => s.id === oldId);
-          if (idx !== -1) { schools[idx].id = newName; schools[idx].name = newName; }
-          currentId = newName;
-          renderAll();
-          bindRealtimeSync();
-      }
-  } catch(e) { alert("名前の変更に失敗しました。"); renderMain(); }
-};
-
-window.toggleChip = function(secId, rowId, opt) {
+// ============ FIELD UPDATES ============
+function toggleChip(secId, rowId, opt) {
   const sc = currentSchool(); if (!sc) return;
   const d = sc.data[rowId] || {selected:[],note:""};
   const sel = d.selected || [];
@@ -606,47 +505,48 @@ window.toggleChip = function(secId, rowId, opt) {
   document.querySelectorAll(`[data-row="${rowId}"] .chip`).forEach(el => {
     const isSelected = sc.data[rowId].selected.includes(el.dataset.opt);
     el.className = "chip" + (isSelected ? " selected" : "");
-    el.style.background = isSelected ? col.color : "#fff";
+    el.style.background = isSelected ? col.color : "var(--surface)";
     el.style.color = isSelected ? "#fff" : col.color;
   });
   updateProgress(secId);
-};
+}
 
-window.updateTextField = function(rowId, value) {
+function updateTextField(rowId, value) {
   const sc = currentSchool(); if (!sc) return;
   sc.data[rowId] = {value};
   scheduleSave(currentId);
   updateProgress(SECTIONS.find(sec=>sec.rows.some(r=>r.id===rowId))?.id);
-};
+}
 
-window.updateNote = function(rowId, note) {
+function updateNote(rowId, note) {
   const sc = currentSchool(); if (!sc) return;
   const d = sc.data[rowId] || {selected:[],note:""};
   sc.data[rowId] = {...d, note};
   scheduleSave(currentId);
-};
+}
 
-window.setStars = function(secId, rowId, n, highlight) {
+function setStars(secId, rowId, n, highlight) {
   const sc = currentSchool(); if (!sc) return;
-  sc.data[rowId] = {stars: sc.data[rowId]?.stars === n ? 0 : n};
+  const cur = sc.data[rowId]?.stars || 0;
+  sc.data[rowId] = {stars: cur === n ? 0 : n};
   scheduleSave(currentId);
   
-  const col = highlight ? "#e65100" : "#f59e0b";
+  const col = highlight ? "var(--orange)" : "#f59e0b";
   document.querySelectorAll(`[data-row="${rowId}"] .star-btn`).forEach((el,i) => {
-    el.style.color = (i < sc.data[rowId].stars) ? col : "#ddd";
+    el.style.color = (i < sc.data[rowId].stars) ? col : "var(--border)";
   });
   updateProgress(secId);
-};
+}
 
+// ============ PROGRESS ============
 function calcProgress(secId) {
   const sc = currentSchool(); if (!sc) return {filled:0, total:0};
   const sec = SECTIONS.find(s=>s.id===secId); if (!sec) return {filled:0,total:0};
   let filled=0, total=sec.rows.length;
   for (const row of sec.rows) {
-    const d = sc.data?.[row.id];
-    if (!d) continue;
+    const d = sc.data?.[row.id] || {};
     if (row.type==="stars" && (d.stars||0)>0) filled++;
-    else if ((row.type==="text"||row.type==="textarea") && d.value?.trim()) filled++;
+    else if ((row.type==="text"||row.type==="textarea"||row.type==="time") && d.value?.trim()) filled++;
     else if (!row.type && (d.selected?.length>0||d.note?.trim())) filled++;
   }
   return {filled, total};
@@ -673,8 +573,71 @@ window.toggleSection = function(secId) {
   if (hdr) hdr.className = "section-header" + (openSections[secId]?" open":"");
 };
 
+// ☰ ハンバーガー・メニュー表示切り替え
+window.toggleDrawer = function(open) {
+  const overlay = document.getElementById('drawer-overlay');
+  const drawer = document.getElementById('drawer');
+  if(!overlay || !drawer) return;
+  if (open) {
+    overlay.style.display = 'block';
+    setTimeout(() => { drawer.style.left = '0px'; }, 10);
+    const listCont = document.getElementById('drawer-school-list');
+    if(listCont) {
+      listCont.innerHTML = schools.map(s => `
+        <button class="drawer-menu-btn ${s.id===currentId?'active':''}" onclick="window.switchSchool('${escJ(s.id)}'); window.toggleDrawer(false);">${escH(s.name)}</button>
+      `).join("");
+    }
+  } else {
+    drawer.style.left = '-280px';
+    setTimeout(() => { overlay.style.display = 'none'; }, 200);
+  }
+};
+
+window.setViewMode = function(mode) {
+  currentViewMode = mode;
+  document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
+  document.getElementById('mode-a3-btn').classList.toggle('active', mode === 'a3');
+  document.getElementById('drawer-view-mode').value = mode;
+  document.body.className = (mode === 'a3' ? 'mode-a3 ' : '') + (localStorage.getItem('hk_theme') === 'dark' ? 'dark-theme' : '');
+  renderMain();
+};
+
+window.toggleTheme = function() {
+  document.body.classList.toggle('dark-theme');
+  const isDark = document.body.classList.contains('dark-theme');
+  localStorage.setItem('hk_theme', isDark ? 'dark' : 'light');
+  document.body.className = (currentViewMode === 'a3' ? 'mode-a3 ' : '') + (isDark ? 'dark-theme' : '');
+  renderMain();
+};
+
+window.handleLogout = function() {
+  if (confirm("ログアウトしますか？\n(現在はローカル接続です)")) {
+    alert("ログアウト処理（スタブ）を実行しました。");
+  }
+};
+
 window.expandAll = function() {
-  for (const s of SECTIONS) if (!openSections[s.id]) toggleSection(s.id);
+  for (const s of SECTIONS) {
+    openSections[s.id] = true;
+    const body = document.querySelector(`[data-sec="${s.id}"] .section-body`);
+    const arrow = document.querySelector(`[data-sec="${s.id}"] .section-arrow`);
+    const hdr = document.querySelector(`[data-sec="${s.id}"] .section-header`);
+    if (body) body.style.display = "";
+    if (arrow) { arrow.textContent = "▲"; arrow.className = "section-arrow open"; }
+    if (hdr) hdr.className = "section-header open";
+  }
+};
+
+window.collapseAll = function() {
+  for (const s of SECTIONS) {
+    openSections[s.id] = false;
+    const body = document.querySelector(`[data-sec="${s.id}"] .section-body`);
+    const arrow = document.querySelector(`[data-sec="${s.id}"] .section-arrow`);
+    const hdr = document.querySelector(`[data-sec="${s.id}"] .section-header`);
+    if (body) body.style.display = "none";
+    if (arrow) { arrow.textContent = "▼"; arrow.className = "section-arrow"; }
+    if (hdr) hdr.className = "section-header";
+  }
 };
 
 function renderTabs() {
@@ -690,10 +653,10 @@ function renderTabs() {
 function renderSchoolHeader(sc) {
   return `
   <div class="school-header">
-    <div class="school-name-row">
+    <div class="school-name-row" style="display:flex; align-items:center; justify-content:space-between; width:100%; min-width:0;">
       <input class="school-name-input" value="${escH(sc.name)}" placeholder="園名"
-        onchange="window.handleSchoolNameChange('${escJ(sc.id)}', this.value)" maxlength="30">
-      <button class="delete-btn" onclick="window.deleteSchool('${escJ(sc.id)}')" title="この園を削除">🗑</button>
+        onchange="window.handleSchoolNameChange('${escJ(sc.id)}', this.value)" maxlength="30" style="flex:1; min-width:0; margin-right:8px;">
+      <button class="delete-btn" onclick="deleteSchool('${escJ(sc.id)}')" title="この園を削除" style="flex-shrink:0;">🗑</button>
     </div>
     <div class="date-row">
       📅 見学日：
@@ -703,18 +666,28 @@ function renderSchoolHeader(sc) {
   </div>`;
 }
 
+window.updateSchoolMeta = function(field, value) {
+  const sc = currentSchool(); if (!sc) return;
+  sc[field] = value;
+  if (field === "name") renderTabs();
+  saveMeta();
+};
+
 function renderRow(row, sc, col) {
   const d = sc.data?.[row.id] || {};
   let inner = "";
   if (row.type === "stars") {
     const stars = d.stars||0;
-    const starColor = row.highlight ? "#e65100" : "#f59e0b";
+    const starColor = row.highlight ? "var(--orange)" : "#f59e0b";
     const btns = [1,2,3,4,5].map(n =>
-      `<button class="star-btn" style="color:${n<=stars?starColor:'#ddd'}" onclick="window.setStars('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}',${n},${!!row.highlight})">★</button>`
+      `<button class="star-btn" style="color:${n<=stars?starColor:'var(--border)'}" onclick="window.setStars('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}',${n},${!!row.highlight})">★</button>`
     ).join("");
     inner = `<div class="stars" data-row="${row.id}">${btns}</div>`;
   } else if (row.type==="text") {
     inner = `<input class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}" placeholder="${escH(row.ph||'')}"
+      oninput="window.updateTextField('${row.id}',this.value)">`;
+  } else if (row.type==="time") {
+    inner = `<input type="time" class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}"
       oninput="window.updateTextField('${row.id}',this.value)">`;
   } else if (row.type==="textarea") {
     inner = `<textarea class="textarea" style="--sec-color:${col.color}" placeholder="${escH(row.ph||'')}"
@@ -722,8 +695,9 @@ function renderRow(row, sc, col) {
   } else {
     const chips = (row.opts||[]).map(opt => {
       const sel = (d.selected||[]).includes(opt);
+      const bgStyle = sel ? col.color : "var(--surface)";
       return `<button class="chip ${sel?'selected':''}" data-opt="${escH(opt)}"
-        style="border-color:${col.color};background:${sel?col.color:'#fff'};color:${sel?'#fff':col.color}"
+        style="border-color:${col.color};background:${bgStyle};color:${sel?'#fff':col.color}"
         onclick="window.toggleChip('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}','${escJ(opt)}')">${escH(opt)}</button>`;
     }).join("");
     const note = row.hasNote ? `<input class="note-input" value="${escH(d.note||'')}" placeholder="${escH(row.np||'メモ')}"
@@ -772,6 +746,8 @@ function renderMain() {
   html += SECTIONS.map(sec => renderSection(sec, sc)).join("");
   if(currentViewMode === 'a3') html += '</div>';
   cont.innerHTML = html;
+  
+  SECTIONS.forEach(sec => updateProgress(sec.id));
 }
 
 function renderAll() { renderTabs(); renderMain(); }
@@ -779,16 +755,16 @@ function renderAll() { renderTabs(); renderMain(); }
 window.exportSummary = function() {
   const sc = currentSchool();
   if (!sc) { alert("園が選択されていません"); return; }
-  let txt = `【${sc.name}】見学まとめ\\n`;
-  if (sc.date) txt += `見学日：${sc.date}\\n`;
-  txt += "\\n";
+  let txt = `【${sc.name}】見学まとめ\n`;
+  if (sc.date) txt += `見学日：${sc.date}\n`;
+  txt += "\n";
   for (const sec of SECTIONS) {
     let secTxt = "";
     for (const row of sec.rows) {
       const d = sc.data?.[row.id]||{};
       if (row.type==="stars") {
         if (d.stars>0) secTxt += `  ${row.l}：${"★".repeat(d.stars)}${"☆".repeat(5-d.stars)}\n`;
-      } else if (row.type==="text"||row.type==="textarea") {
+      } else if (row.type==="text"||row.type==="textarea"||row.type==="time") {
         if (d.value?.trim()) secTxt += `  ${row.l}：${d.value}\n`;
       } else {
         const parts = [];
@@ -797,17 +773,21 @@ window.exportSummary = function() {
         if (parts.length>0) secTxt += `  ${row.l}：${parts.join(" ")}\n`;
       }
     }
-    if (secTxt) txt += `${sec.e}${sec.n?sec.n+" ":""}${sec.t}\\n${secTxt}\\n`;
+    if (secTxt) txt += `${sec.e}${sec.n?sec.n+" ":""}${sec.t}\n${secTxt}\n`;
   }
   navigator.clipboard.writeText(txt).then(()=>{
-    alert("クリップボードにコピーしました！\\nメモアプリやLINEに貼り付けてご利用ください📋");
-  }).catch(()=>{
-    prompt("テキストをコピーしてください:", txt);
-  });
+    alert("コピー完了！メモ等に貼り付けてください📋");
+  }).catch(()=>{ prompt("コピーしてください:", txt); });
 };
 
 function escH(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function escJ(s) { return String(s).replace(/'/g,"\\'"); }
+
+// ============ INIT ============
+(() => {
+  loadData();
+  renderAll();
+})();
 </script>
 </body>
 </html>
