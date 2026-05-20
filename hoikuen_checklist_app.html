@@ -52,7 +52,7 @@
   .date-row{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:12px;}
   .date-input{border:none;border-bottom:1px solid #ddd;font-size:12px;color:#444;outline:none;font-family:inherit;background:transparent;padding:2px 0;}
 
-  /* ===== SECTION (スリム化) ===== */
+  /* ===== SECTION ===== */
   .section{background:#fff;border-radius:var(--radius);margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow);}
   .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:none;cursor:pointer;text-align:left;background:var(--surface);font-family:inherit;}
   .section-header.open{background:var(--sec-bg);}
@@ -97,7 +97,7 @@
   /* ===== PROGRESS TAG ===== */
   .progress-tag{font-size:10px;color:var(--sec-color);opacity:.7;margin-left:6px;font-weight:500;}
 
-  /* ===== EXPORT BTN ===== */
+  /* ===== EXPORT area ===== */
   .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:6px;}
   .export-btn{flex:1;padding:10px;border-radius:10px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
   .btn-export{background:var(--green);color:#fff;} .btn-expand{background:var(--blue-bg);color:var(--blue);}
@@ -117,7 +117,7 @@
   body.mode-a3 .row { padding: 5px 8px; }
   body.mode-a3 .item-name { flex: 0 0 38%; }
 
-  /* ===== LOGIN OVERLAY UI ===== */
+  /* ===== LOGIN UI ===== */
   #login-overlay { position: fixed; inset: 0; background: #f4f7f9; z-index: 9999; display: flex; justify-content: center; align-items: center; }
   .login-box { background: white; padding: 30px 24px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); width: 100%; max-width: 340px; text-align: center; }
   .login-box h2 { font-size: 16px; color: #333; margin-bottom: 6px; font-weight: 700; }
@@ -139,17 +139,13 @@
     <div class="login-box">
         <h2>保育園見学チェックリスト</h2>
         <p>サインインしてクラウド同期を開始</p>
-        
         <button class="google-login-btn" onclick="window.handleGoogleLogin()">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="16" height="16" alt="Google">
             Googleアカウントでサインイン
         </button>
-
         <div class="divider">またはパスワードなしでログイン</div>
-        
         <input type="email" id="login-email" placeholder="メールアドレスを入力">
         <button class="email-link-btn" onclick="window.handleEmailLinkLogin()">ログインメールを受け取る</button>
-        
         <p id="login-error" style="color:red; font-size:11px; margin-top:12px; font-weight:500; text-align: left;"></p>
     </div>
 </div>
@@ -157,12 +153,10 @@
 <div id="app-header" class="app-header">
   <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
     <div class="app-title" style="margin-bottom:0;">🏫 保育園見学チェックリスト</div>
-    
     <div class="mode-selector-container">
       <button id="mode-toggle-btn" class="mode-btn active" onclick="window.setViewMode('toggle')">📱 トグル形式</button>
       <button id="mode-a3-btn" class="mode-btn" onclick="window.setViewMode('a3')">📄 A3印刷形式</button>
     </div>
-
     <div style="display:flex; align-items:center; gap:6px; margin-left:auto;">
         <div id="sync-status">接続中...</div>
         <button id="logout-btn" onclick="window.handleLogout()">ログアウト</button>
@@ -197,7 +191,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDp3gfZF9zCp-8-3GbAvvYcE_ay-DJoW7I",
@@ -324,7 +318,7 @@ const SECTIONS = [
       {id:"r082",l:"泣く子・トラブル対応",opts:["丁寧・仲裁上手","普通","気になる"]},
       {id:"r083",l:"怒鳴り声の有無",b:"重要",opts:["なし","聞こえた"]},
       {id:"r084",l:"子供同士の関係",opts:["良好","普通","気になる"]},
-      {id:"r085",l:"落ち着き具合",opts:["落ち着いてる","普通","落ち着きない"]},
+      {id:"r085",l:"落ち着き具合",opts:["落ち着いてろ","普通","落ち着きない"]},
       {id:"r086",l:"活発さ",opts:["活発","普通","大人しすぎ"]},
       {id:"r087",l:"全体の空気感",opts:["温かい","普通","気になる"]},
     ]},
@@ -393,7 +387,7 @@ const SECTIONS = [
     ]},
   { id:"s14", e:"📝", n:"", t:"自由メモ・推しや懸念点など", c:"gray",
     rows:[
-      {id:"r137",l:"メモ欄",type:"textarea",ph:"気なった点、良かった点、懸念点など自由に記入..."},
+      {id:"r137",l:"メモ欄",type:"textarea",ph:"気になった点、良かった点、懸念点など自由に記入..."},
     ]},
 ];
 
@@ -419,7 +413,7 @@ const statusEl = document.getElementById('sync-status');
 const loginOverlay = document.getElementById('login-overlay');
 const errorEl = document.getElementById('login-error');
 
-// 🔑 全てのグローバル関数を明示的にwindowに紐付け (モジュール化によるバグを鉄壁に防ぐ)
+// グローバル関数定義 (HTMLから直接呼び出せるように強制配置)
 window.setViewMode = function(mode) {
   currentViewMode = mode;
   document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
@@ -470,21 +464,19 @@ async function checkEmailLinkSignIn() {
     }
 }
 
+// ★エラー防止コアロジック：getDocsを排除し、単一ドキュメントを直接リアルタイム監視★
 function bindRealtimeSync() {
   if(unsubscribeSnapshot) unsubscribeSnapshot();
   if(!currentUser || !currentId) return;
 
-  const docRef = doc(db, "users", currentUser.uid, "checklists", currentId);
+  const docRef = doc(db, "users", currentUser.uid, "checklists", "data_" + currentId);
   unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
     if (snapshot.exists() && snapshot.metadata.hasPendingWrites === false) {
       const serverData = snapshot.data();
       const sc = schools.find(x => x.id === currentId);
       if(sc) {
-          sc.name = serverData.name || sc.name;
-          sc.date = serverData.date || "";
           sc.data = serverData.data || makeEmptyData();
           renderMain();
-          renderTabs();
       }
       statusEl.textContent = "クラウド同期済";
       statusEl.className = "status-saved";
@@ -492,21 +484,30 @@ function bindRealtimeSync() {
   });
 }
 
+// 起動時に「目次用ドキュメント」だけをピンポイント取得（これで読込エラーを完全回避！）
 async function firebaseLoadData() {
   if(!currentUser) return;
   statusEl.textContent = "読込中...";
   try {
-    const qSnap = await getDocs(collection(db, "users", currentUser.uid, "checklists"));
-    schools = [];
-    qSnap.forEach(docSnap => {
-        const d = docSnap.data();
-        schools.push({ id: docSnap.id, name: d.name || docSnap.id, date: d.date || "", data: d.data || makeEmptyData() });
-    });
+    const metaDoc = await getDoc(doc(db, "users", currentUser.uid, "checklists", "app_meta"));
+    if (metaDoc.exists()) {
+        const metaData = metaDoc.data();
+        schools = metaData.schools || [];
+    } else {
+        schools = [];
+    }
     
     if (schools.length > 0) {
         currentId = schools[0].id;
         statusEl.textContent = "クラウド同期済";
         statusEl.className = "status-saved";
+        // 最初に見つかった園の詳細データを監視開始
+        const scDoc = await getDoc(doc(db, "users", currentUser.uid, "checklists", "data_" + currentId));
+        if (scDoc.exists()) {
+            schools[0].data = scDoc.data().data || makeEmptyData();
+        } else {
+            schools[0].data = makeEmptyData();
+        }
         bindRealtimeSync();
     } else {
         currentId = null;
@@ -520,6 +521,14 @@ async function firebaseLoadData() {
   }
 }
 
+async function saveMeta() {
+  if (!currentUser) return;
+  const meta = schools.map(s => ({id:s.id,name:s.name,date:s.date||""}));
+  try {
+      await setDoc(doc(db, "users", currentUser.uid, "checklists", "app_meta"), { schools: meta });
+  } catch(e) { console.error(e); }
+}
+
 function scheduleSave(id) {
   statusEl.textContent = "保存中...";
   statusEl.className = "status-saving";
@@ -528,7 +537,7 @@ function scheduleSave(id) {
       const s = schools.find(x=>x.id===id);
       if (!s || !currentUser) return;
       try {
-          await setDoc(doc(db, "users", currentUser.uid, "checklists", id), { name: s.name, date: s.date || "", data: s.data }, { merge: true });
+          await setDoc(doc(db, "users", currentUser.uid, "checklists", "data_" + id), { data: s.data }, { merge: true });
           statusEl.textContent = "クラウド同期済";
           statusEl.className = "status-saved";
       } catch(e){
@@ -573,16 +582,18 @@ window.closeModal = function() { document.getElementById("modal").style.display 
 window.addSchool = async function() {
   const name = document.getElementById("modal-input").value.trim();
   if (!name || !currentUser) return;
-  if (schools.some(s => s.id === name)) { alert("同名の園がすでに存在します。"); return; }
   
-  const id = name;
+  const id = "s_" + Date.now();
+  if (schools.some(s => s.name === name)) { alert("同名の園がすでに存在します。"); return; }
+  
   const school = {id, name, date:"", data: makeEmptyData()};
   schools.push(school);
   currentId = id;
   closeModal();
   
   try {
-      await setDoc(doc(db, "users", currentUser.uid, "checklists", id), { name: name, date: "", data: school.data });
+      await saveMeta();
+      await setDoc(doc(db, "users", currentUser.uid, "checklists", "data_" + id), { data: school.data });
       renderAll();
       bindRealtimeSync();
   } catch(e) { console.error(e); }
@@ -591,42 +602,47 @@ window.addSchool = async function() {
 window.deleteSchool = async function(id) {
   if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\n（クラウド上のデータも完全に消えます）`)) return;
   if(!currentUser) return;
-  try { await deleteDoc(doc(db, "users", currentUser.uid, "checklists", id)); } catch(e){ console.error(e); }
+  
   schools = schools.filter(s=>s.id!==id);
   if (currentId === id) currentId = schools.length > 0 ? schools[0].id : null;
+  
+  try { 
+      await saveMeta();
+      await deleteDoc(doc(db, "users", currentUser.uid, "checklists", "data_" + id)); 
+  } catch(e){ console.error(e); }
+  
   renderAll();
   if(currentId) bindRealtimeSync();
+  else { statusEl.textContent = "園を追加してください"; statusEl.className = ""; }
 };
 
-window.switchSchool = function(id) {
+window.switchSchool = async function(id) {
   currentId = id;
+  statusEl.textContent = "読込中...";
+  const sc = schools.find(x => x.id === id);
+  if(sc && !sc.data) {
+      try {
+          const scDoc = await getDoc(doc(db, "users", currentUser.uid, "checklists", "data_" + id));
+          sc.data = scDoc.exists() ? scDoc.data().data : makeEmptyData();
+      } catch(e) { sc.data = makeEmptyData(); }
+  }
   renderMain();
   renderTabs();
   bindRealtimeSync();
 };
 
-window.handleSchoolNameChange = async function(oldId, newName) {
+window.handleSchoolNameChange = async function(id, newName) {
   newName = newName.trim();
-  if (!newName || oldId === newName || !currentUser) return;
-  if (schools.some(s => s.id === newName)) { alert("その園名はすでに使用されています。"); renderMain(); return; }
+  if (!newName || !currentUser) return;
   
-  statusEl.textContent = "園名変更中...";
-  statusEl.className = "status-saving";
+  const sc = schools.find(s => s.id === id);
+  if (sc && sc.name === newName) return;
+  if (schools.some(s => s.name === newName)) { alert("その園名はすでに使用されています。"); renderMain(); return; }
   
-  try {
-      const oldDocRef = doc(db, "users", currentUser.uid, "checklists", oldId);
-      const newDocRef = doc(db, "users", currentUser.uid, "checklists", newName);
-      const oldSnap = await getDoc(oldDocRef);
-      if (oldSnap.exists()) {
-          await setDoc(newDocRef, { ...oldSnap.data(), name: newName, updatedAt: new Date() });
-          await deleteDoc(oldDocRef);
-          const idx = schools.findIndex(s => s.id === oldId);
-          if (idx !== -1) { schools[idx].id = newName; schools[idx].name = newName; }
-          currentId = newName;
-          renderAll();
-          bindRealtimeSync();
-      }
-  } catch(e) { alert("名前の変更に失敗しました。"); renderMain(); }
+  sc.name = newName;
+  await saveMeta();
+  renderTabs();
+  scheduleSave(id);
 };
 
 window.toggleChip = function(secId, rowId, opt) {
@@ -673,6 +689,30 @@ window.setStars = function(secId, rowId, n, highlight) {
   updateProgress(secId);
 };
 
+function calcProgress(secId) {
+  const sc = currentSchool(); if (!sc) return {filled:0, total:0};
+  const sec = SECTIONS.find(s=>s.id===secId); if (!sec) return {filled:0,total:0};
+  let filled=0, total=sec.rows.length;
+  for (const row of sec.rows) {
+    const d = sc.data?.[row.id];
+    if (!d) continue;
+    if (row.type==="stars" && (d.stars||0)>0) filled++;
+    else if ((row.type==="text"||row.type==="textarea"||row.type==="time") && d.value?.trim()) filled++;
+    else if (!row.type && (d.selected?.length>0||d.note?.trim())) filled++;
+  }
+  return {filled, total};
+}
+
+function updateProgress(secId) {
+  if (!secId) return;
+  const {filled, total} = calcProgress(secId);
+  const pct = total>0 ? (filled/total*100) : 0;
+  const bar = document.querySelector(`[data-sec="${secId}"] .progress-fill`);
+  const tag = document.querySelector(`[data-sec="${secId}"] .progress-tag`);
+  if (bar) bar.style.width = pct + "%";
+  if (tag) tag.textContent = `${filled}/${total}`;
+}
+
 window.toggleSection = function(secId) {
   if (currentViewMode === 'a3') return;
   openSections[secId] = !openSections[secId];
@@ -717,7 +757,7 @@ function renderSchoolHeader(sc) {
 window.updateSchoolMeta = function(field, value) {
   const sc = currentSchool(); if (!sc) return;
   sc[field] = value;
-  scheduleSave(currentId);
+  saveMeta();
   if (field === "name") renderTabs();
 };
 
