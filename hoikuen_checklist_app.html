@@ -3,12 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>保育園見学チェックリスト・クラウド</title>
+<title>保育園見学チェックリスト</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  
-  /* ===== ライトモード・ダークモード共通変数 ===== */
   :root{
     --blue:#1e5a8c;--blue-bg:#eef5fc;
     --green:#2e7d32;--green-bg:#edf7ee;
@@ -19,110 +17,125 @@
     --gray:#555;--gray-bg:#f5f5f5;
     --surface:#fff;--bg:#f2f4f7;
     --text:#222;--sub:#666;--border:#e4e7ec;
-    --radius:12px;--shadow:0 1px 4px rgba(0,0,0,0.06);
+    --radius:14px;--shadow:0 2px 8px rgba(0,0,0,0.08);
   }
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
 
-  /* 🌗 ダークモード用の配色スタイル定義 */
-  body.dark-theme {
-    --bg:#121212;--surface:#1e1e1e;--text:#e0e0e0;--sub:#aaa;--border:#333;
-    --blue-bg:#142c42;--green-bg:#163818;--red-bg:#3d1919;--orange-bg:#3d2011;
-    --yellow-bg:#383211;--pink-bg:#3d1624;--gray-bg:#2d2d2d;--shadow:0 1px 4px rgba(0,0,0,0.3);
-  }
-
-  body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;transition: background 0.2s, color 0.2s;}
-
-  /* ===== HEADER (余白をさらに減らしてスリム化) ===== */
-  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 5px rgba(0,0,0,0.05);}
-  .app-title{font-size:12.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;}
-  .school-tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:1px;scrollbar-width:none;}
+  /* ===== HEADER ===== */
+  .app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 14px 8px;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+  .app-title{font-size:13px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .school-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;}
   .school-tabs::-webkit-scrollbar{display:none;}
-  .tab-btn{flex-shrink:0;padding:5px 12px;border-radius:15px;border:none;cursor:pointer;font-size:11.5px;font-family:inherit;transition:all .2s;}
+  .tab-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:none;cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s;}
   .tab-btn.active{background:var(--blue);color:#fff;font-weight:700;}
-  .tab-btn.inactive{background:var(--border);color:var(--sub);font-weight:500;}
-  .tab-add{flex-shrink:0;padding:4px 10px;border-radius:15px;border:1.5px dashed var(--sub);background:transparent;color:var(--sub);font-size:11.5px;cursor:pointer;font-family:inherit;}
-
-  /* ===== ☰ ハンバーガー・左ドロワーメニュー ===== */
-  .drawer-toggle { background:none; border:none; font-size:20px; cursor:pointer; color:var(--text); padding:4px 6px; display:flex; align-items:center; }
-  .drawer-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999; display:none; }
-  .drawer { position:fixed; top:0; left:-280px; width:280px; height:100%; background:var(--surface); box-shadow:2px 0 12px rgba(0,0,0,0.15); z-index:1000; display:flex; flex-direction:column; transition: left 0.25s ease; color:var(--text); }
-  .drawer-section { padding:14px; border-bottom:1px solid var(--border); }
-  .drawer-item-title { font-weight:700; font-size:11px; color:var(--sub); margin-bottom:6px; text-transform:uppercase; }
+  .tab-btn.inactive{background:#e8ecf0;color:#555;font-weight:500;}
+  .tab-add{flex-shrink:0;padding:6px 12px;border-radius:20px;border:1.5px dashed #aaa;background:transparent;color:#888;font-size:12px;cursor:pointer;font-family:inherit;}
+  .tab-add:hover{border-color:#666;color:#555;}
 
   /* ===== MODAL ===== */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1300;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .modal-box{background:var(--surface);border-radius:14px;padding:20px;width:100%;max-width:320px;box-shadow:0 6px 24px rgba(0,0,0,.15);color:var(--text);}
-  .modal-title{font-size:14px;font-weight:700;margin-bottom:10px;}
-  .modal-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;background:var(--bg);color:var(--text);}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-box{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+  .modal-title{font-size:15px;font-weight:700;margin-bottom:14px;}
+  .modal-input{width:100%;padding:11px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border .2s;}
+  .modal-input:focus{border-color:var(--blue);}
+  .modal-btns{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;}
+  .btn-cancel{padding:9px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;}
+  .btn-primary{padding:9px 18px;border-radius:10px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;}
 
   /* ===== MAIN CONTENT ===== */
-  .main{padding:8px 8px 75px;}
-  .school-header{background:var(--surface);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;box-shadow:var(--shadow);}
-  
-  /* 📱スマホ縦持ち時でも枠からはみ出さないインテリジェント・レイアウト */
-  .school-name-row{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;}
-  .school-name-input{flex:1;min-width:0;font-size:16px;font-weight:700;border:none;border-bottom:2px solid var(--border);padding:2px 0;outline:none;font-family:inherit;background:transparent;color:var(--text);transition:border .2s;}
+  .main{padding:12px 12px 90px;}
+  .school-header{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .school-name-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .school-name-input{flex:1;font-size:17px;font-weight:700;border:none;border-bottom:2px solid #e0e0e0;padding:4px 0;outline:none;font-family:inherit;background:transparent;color:var(--text);transition:border .2s;}
   .school-name-input:focus{border-color:var(--blue);}
-  .date-row{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;margin-top:6px;}
-  .date-input{border:none;border-bottom:1px solid var(--border);font-size:12px;color:var(--text);outline:none;font-family:inherit;background:transparent;padding:2px 0;}
+  .delete-btn{background:none;border:none;color:#e57373;font-size:22px;cursor:pointer;padding:2px;flex-shrink:0;}
+  .date-row{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:13px;}
+  .date-input{border:none;border-bottom:1px solid #ddd;font-size:13px;color:#444;outline:none;font-family:inherit;background:transparent;padding:2px 0;}
 
   /* ===== SECTION ===== */
-  .section{background:var(--surface);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow);}
-  .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:none;cursor:pointer;text-align:left;background:var(--surface);font-family:inherit;}
+  .section{background:#fff;border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);}
+  .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border:none;cursor:pointer;text-align:left;background:var(--surface);transition:background .2s;font-family:inherit;}
   .section-header.open{background:var(--sec-bg);}
-  .section-title{font-weight:700;font-size:12.5px;color:var(--sec-color);}
-  .section-arrow{font-size:11px;color:var(--sub);transition:transform .2s;}
-  .section-arrow.open { transform:rotate(180deg); }
-  .section-body{border-top:1px solid var(--sec-bg);}
-  .progress-bar{height:2.5px;background:var(--border);margin:0 12px;}
-  .progress-fill{height:2.5px;border-radius:1px;background:var(--sec-color);transition:width .3s;}
+  .section-title{font-weight:700;font-size:13px;color:var(--sec-color);}
+  .section-arrow{font-size:12px;color:#bbb;transition:transform .2s;}
+  .section-arrow.open{transform:rotate(180deg);}
+  .section-body{border-top:2px solid var(--sec-bg);}
+  .progress-bar{height:3px;background:#f0f0f0;margin:0 15px 0;}
+  .progress-fill{height:3px;border-radius:2px;background:var(--sec-color);transition:width .3s;}
 
   /* ===== ROWS ===== */
-  .row{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;}
+  .row{padding:11px 14px;border-bottom:1px solid #f2f2f4;}
   .row:last-child{border-bottom:none;}
-  .row-label{display:flex;align-items:center;gap:4px;margin-bottom:5px;}
-  .badge{font-size:8.5px;padding:1px 4px;border-radius:4px;color:#fff;font-weight:700;flex-shrink:0;}
-  .badge-req{background:var(--orange);}
-  .badge-pre{background:var(--blue);}
-  .label-text{font-size:12px;font-weight:600;color:var(--text);opacity:0.9;}
+  .row-label{display:flex;align-items:center;gap:5px;margin-bottom:7px;}
+  .badge{font-size:9px;padding:2px 5px;border-radius:4px;color:#fff;font-weight:700;flex-shrink:0;}
+  .badge-req{background:#e65100;}
+  .badge-pre{background:#1e5a8c;}
+  .label-text{font-size:12px;font-weight:600;color:#444;}
 
-  /* ===== CHIPS / INPUTS ===== */
-  .chips{display:flex;flex-wrap:wrap;gap:5px;}
-  .chip{padding:4px 11px;border-radius:15px;font-size:11.5px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:var(--surface);color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
+  /* ===== CHIPS ===== */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{padding:6px 12px;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:#fff;color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
   .chip.selected{background:var(--sec-color);color:#fff;font-weight:700;}
-  .text-input{width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;color:var(--text);background:var(--bg);transition:border .2s;}
+  .chip:active{opacity:0.7;transform:scale(0.96);}
+
+  /* ===== INPUTS ===== */
+  .text-input{width:100%;padding:8px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;transition:border .2s;color:var(--text);}
   .text-input:focus{border-color:var(--sec-color);}
-  .text-input[type="time"] { max-width: 120px; padding: 4px 8px; font-weight: bold; color: var(--blue); }
-  .note-input{margin-top:5px;width:100%;padding:5px 9px;border:1px solid var(--border);border-radius:6px;font-size:11.5px;font-family:inherit;outline:none;color:var(--text);background:var(--bg);}
-  .textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12.5px;font-family:inherit;outline:none;resize:vertical;min-height:70px;color:var(--text);background:var(--bg);}
+  .note-input{margin-top:7px;width:100%;padding:7px 11px;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:#555;background:#fafafa;}
+  .note-input:focus{border-color:var(--sec-color);background:#fff;}
+  .textarea{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:100px;transition:border .2s;}
+  .textarea:focus{border-color:var(--sec-color);}
 
   /* ===== STARS ===== */
-  .star-btn{background:none;border:none;cursor:pointer;font-size:26px;padding:2px;line-height:1;}
-  .star-filled{color:#f59e0b;} .star-empty{color:var(--border);} .star-filled.highlight{color:var(--orange);}
+  .stars{display:flex;gap:6px;}
+  .star-btn{background:none;border:none;cursor:pointer;font-size:30px;padding:2px;line-height:1;transition:color .1s, transform .1s;}
+  .star-btn:active{transform:scale(0.85);}
+  .star-filled{color:#f59e0b;}
+  .star-empty{color:#ddd;}
+  .star-filled.highlight{color:#e65100;}
 
-  /* ===== BOTTOM EXPAND AREA ===== */
-  .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:6px;z-index:90;}
-  body.dark-theme .export-area { background: rgba(30,30,30,0.9); }
-  .export-btn{flex:1;padding:9px;border-radius:10px;border:none;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+  /* ===== EMPTY STATE ===== */
+  .empty-state{padding:60px 20px;text-align:center;color:#aaa;}
+  .empty-icon{font-size:56px;margin-bottom:12px;}
+  .empty-text{font-size:14px;line-height:1.6;}
+
+  /* ===== PROGRESS TAG ===== */
+  .progress-tag{font-size:10px;color:var(--sec-color);opacity:.7;margin-left:6px;font-weight:500;}
+
+  /* ===== EXPORT BTN ===== */
+  .export-area{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:8px;}
+  .export-btn{flex:1;padding:12px;border-radius:12px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
   .btn-export{background:var(--green);color:#fff;}
   .btn-expand{background:var(--blue-bg);color:var(--blue);}
-  .btn-collapse{background:var(--gray-bg);color:var(--text);border:1px solid var(--border);}
+
+  /* ===== VIEW MODE SELECTOR ===== */
+  .mode-selector-container { display: flex; align-items: center; gap: 4px; background: #e8ecf0; padding: 3px; border-radius: 20px; margin-left: auto; }
+  .mode-btn { padding: 5px 12px; border-radius: 16px; border: none; font-size: 11px; font-family: inherit; cursor: pointer; background: transparent; color: #555; font-weight: 500; transition: all .2s; }
+  .mode-btn.active { background: #fff; color: var(--text); font-weight: 700; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 
   /* ===== A3 MODE LAYOUT ===== */
-  body.mode-a3 { background:var(--surface); padding: 10px; }
-  body.mode-a3 .main { max-width: 100% !important; padding: 5px 0 40px 0; }
-  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 12px; width: 100%; }
-  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid var(--border); margin-bottom: 10px; }
+  body.mode-a3 { background: #ffffff; padding: 15px; }
+  body.mode-a3 .main { max-width: 100% !important; padding: 10px 0 40px 0; }
+  body.mode-a3 .main-container-grid { column-count: 4; column-gap: 16px; width: 100%; }
+  body.mode-a3 .section { display: inline-block; width: 100%; break-inside: avoid; page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; margin-bottom: 14px; border-radius: 6px; }
   body.mode-a3 .section-body { display: block !important; }
-  body.mode-a3 .section-arrow, body.mode-a3 .progress-bar, body.mode-a3 .export-area { display: none !important; }
+  body.mode-a3 .section-arrow, body.mode-a3 .progress-bar { display: none !important; }
+  body.mode-a3 .export-area { display: none !important; }
+  body.mode-a3 .chip { padding: 4px 8px; font-size: 11px; }
 
-  /* ===== HYBRID AUTH UI ===== */
-  #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-  .login-box { background: var(--surface); padding: 30px 24px; border-radius: 16px; box-shadow: var(--shadow); width: 100%; max-width: 340px; text-align: center; border: 1px solid var(--border); }
-  .login-box h2 { font-size: 16px; color: var(--text); margin-bottom: 4px; font-weight: 700; }
-  .login-box p { font-size: 12px; color: var(--sub); margin-bottom: 18px; }
-  .login-box input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; font-family: inherit; margin-bottom: 8px; background: var(--bg); color: var(--text); }
-  .auth-btn-row { display: flex; gap: 6px; margin-bottom: 14px; }
-  .google-login-btn { width: 100%; padding: 11px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: inherit; }
+  /* ===== LOGIN OVERLAY ===== */
+  #login-overlay { position: fixed; inset: 0; background: #f4f7f9; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+  .login-box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 24 rgba(0,0,0,0.08); width: 100%; max-width: 360px; text-align: center; }
+  .login-box h2 { font-size: 18px; color: #333; margin-bottom: 6px; font-weight: 700; }
+  .login-box p { font-size: 12px; color: #666; margin-bottom: 20px; }
+  .login-box input { width: 100%; padding: 11px 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; font-family: inherit; }
+  .login-box input:focus { border-color: #1e5a8c; }
+  .login-box button { width: 100%; padding: 12px; background: #1e5a8c; color: white; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; font-weight: 700; margin-top: 12px; box-shadow: 0 2px 6px rgba(30,90,140,0.2); font-family: inherit; }
+  
+  #sync-status { font-size: 10px; padding: 4px 10px; border-radius: 12px; color: white; background: #777; font-weight: bold; }
+  .status-saved { background: #2e7d32 !important; }
+  .status-saving { background: #f57f17 !important; }
+  #logout-btn { padding: 5px 10px; font-size: 11px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: 500; }
 </style>
 </head>
 <body>
@@ -130,58 +143,26 @@
 <div id="login-overlay">
     <div class="login-box">
         <h2>保育園見学チェックリスト</h2>
-        <p>サインインしてクラウド同期を開始</p>
+        <p>閲覧・編集には認証が必要です</p>
         <input type="email" id="login-email" placeholder="メールアドレス">
-        <input type="password" id="login-password" placeholder="パスワード (6文字以上)">
-        <div class="auth-btn-row">
-            <button class="email-link-btn" style="flex:1; background:var(--blue); color:white; border:none; padding:10px; border-radius:8px; font-weight:700; cursor:pointer;" onclick="window.handleEmailLogin()">ログイン</button>
-            <button class="email-link-btn" style="flex:1; background:var(--gray-bg); color:var(--text); border:1px solid var(--border); padding:10px; border-radius:8px; font-weight:700; cursor:pointer;" onclick="window.handleEmailRegister()">新規登録</button>
-        </div>
-        <div class="divider" style="display:flex; align-items:center; margin:12px 0; font-size:11px; color:var(--sub);">または</div>
-        <button class="google-login-btn" onclick="window.handleGoogleLogin()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="15" height="15" alt="Google">
-            Googleアカウントでサインイン
-        </button>
-        <p id="login-error" style="color:var(--red); font-size:11px; margin-top:12px; font-weight:500; text-align: left;"></p>
+        <input type="password" id="login-password" placeholder="パスワード">
+        <button onclick="window.handleLogin()">ログイン</button>
+        <p id="login-error" style="color:red; font-size:12px; margin-top:10px; font-weight:500;"></p>
     </div>
-</div>
-
-<div id="drawer-overlay" class="drawer-overlay" onclick="window.toggleDrawer(false)">
-  <div id="drawer" class="drawer" onclick="event.stopPropagation()">
-    <div style="padding:14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--blue-bg);">
-      <div style="font-weight:bold; font-size:13.5px; color:var(--blue);">⚙️ アプリメニュー</div>
-      <button style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--sub);" onclick="window.toggleDrawer(false)">✕</button>
-    </div>
-    <div class="drawer-section" style="background:var(--gray-bg);">
-      <div class="drawer-item-title">👤 アカウント</div>
-      <div id="drawer-user-name" style="font-weight:700; word-break:break-all;">読み込み中...</div>
-    </div>
-    <div class="drawer-section">
-      <div class="drawer-item-title">📄 表示レイアウト形式</div>
-      <select id="drawer-view-mode" class="text-input" style="padding:4px 8px;" onchange="window.setViewMode(this.value); window.toggleDrawer(false);">
-        <option value="toggle">📱 トグル形式</option>
-        <option value="a3">📄 A3印刷形式 (4列配置)</option>
-      </select>
-    </div>
-    <div class="drawer-section" style="flex-grow:1; overflow-y:auto;">
-      <div class="drawer-item-title">🏫 登録園のクイック選択</div>
-      <div id="drawer-school-list" style="display:flex; flex-direction:column; gap:4px; max-height:220px; overflow-y:auto;"></div>
-    </div>
-    <div style="padding:12px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:6px; background:var(--gray-bg);">
-      <button class="google-login-btn" style="background:var(--surface); font-size:11.5px; padding:8px;" onclick="window.toggleTheme()">🌓 テーマ切り替え (明/暗)</button>
-      <button class="email-link-btn" style="background:var(--red); color:white; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:11.5px;" onclick="window.handleLogout(); window.toggleDrawer(false);">ログアウト</button>
-    </div>
-  </div>
 </div>
 
 <div id="app-header" class="app-header">
-  <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:5px; flex-wrap:nowrap; gap:6px;">
-    <div style="display:flex; align-items:center; gap:4px;">
-      <button class="drawer-toggle" onclick="window.toggleDrawer(true)">☰</button>
-      <div class="app-title">保育園見学チェックリスト</div>
+  <div style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+    <div class="app-title" style="margin-bottom:0;">🏫 保育園見学チェックリスト</div>
+    
+    <div class="mode-selector-container">
+      <button id="mode-toggle-btn" class="mode-btn active" onclick="window.setViewMode('toggle')">📱 トグル形式</button>
+      <button id="mode-a3-btn" class="mode-btn" onclick="window.setViewMode('a3')">📄 A3印刷形式</button>
     </div>
-    <div style="display:flex; align-items:center; gap:8px;">
+
+    <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
         <div id="sync-status">接続中...</div>
+        <button id="logout-btn" onclick="window.handleLogout()">ログアウト</button>
     </div>
   </div>
   <div class="school-tabs" id="school-tabs"></div>
@@ -190,14 +171,13 @@
 <div class="main" id="main-content">
   <div class="empty-state">
     <div class="empty-icon">🏫</div>
-    <div class="empty-text">上の「＋ 園を追加」から<br>見学する園を登録してください</div>
+    <div class="empty-text">下の「＋ 園を追加」から<br>見学する園を登録してください</div>
   </div>
 </div>
 
 <div class="export-area">
-  <button class="export-btn btn-expand" onclick="window.expandAll()">📂 全展開</button>
-  <button class="export-btn btn-collapse" onclick="window.collapseAll()">📁 全縮小</button>
-  <button class="export-btn btn-export" onclick="window.exportSummary()">📋 サマリーコピー</button>
+  <button class="export-btn btn-expand" onclick="expandAll()">📂 全セクション展開</button>
+  <button class="export-btn btn-export" onclick="exportSummary()">📋 サマリーコピー</button>
 </div>
 
 <div class="modal-overlay" id="modal" style="display:none;">
@@ -213,7 +193,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -229,190 +209,185 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// 🗄️ ローマ字キーへのフルマッピング構造データ定義
 const SECTIONS = [
   { id:"s01", e:"🏢", n:"①", t:"基本情報・立地", c:"blue",
     rows:[
-      {id:"uneishutai",l:"運営主体",b:"事前",opts:["公立","私立","企業","その他"]},
-      {id:"shozaichi",l:"所在地",b:"事前",type:"text",ph:"〒 住所を入力"},
-      {id:"moyoriki",l:"最寄駅・バス停",b:"事前",type:"text",ph:"最寄駅・バス停名"},
-      {id:"jitakujikan",l:"自宅からの時間",b:"事前",type:"text",ph:"約○分"},
-      {id:"tsuenshudan",l:"通園手段",opts:["徒歩","自転車","車","電車/バス"]},
-      {id:"tsuenroute_anzen",l:"通園ルート安全",opts:["歩道有","交通量多","信号横断あり"]},
-      {id:"kikenkasho",l:"危険箇所",opts:["坂道","その他"],hasNote:true,np:"具体的に"},
-      {id:"shuhenkankyo",l:"周辺環境",opts:["騒音","治安注意","車通り多","公園有"]},
-      {id:"chushajo",l:"駐車場",opts:["あり","なし"]},
-      {id:"churinjo",l:"駐輪場",opts:["あり","なし"]},
-      {id:"babycar_okiba",l:"ベビーカー置場",b:"重要",opts:["あり(雨よけ有)","あり(雨よけ無)","なし"]},
+      {id:"r001",l:"運営主体",b:"事前",opts:["公立","私立","企業","その他"]},
+      {id:"r002",l:"所在地",b:"事前",type:"text",ph:"〒 住所を入力"},
+      {id:"r003",l:"最寄駅・バス停",b:"事前",type:"text",ph:"最寄駅・バス停名"},
+      {id:"r004",l:"自宅からの時間",b:"事前",type:"text",ph:"約○分"},
+      {id:"r005",l:"通園手段",opts:["徒歩","自転車","車","電車/バス"]},
+      {id:"r006",l:"通園ルート安全",opts:["歩道有","交通量多","信号横断あり"]},
+      {id:"r007",l:"危険箇所",opts:["坂道","その他"],hasNote:true,np:"具体的に"},
+      {id:"r008",l:"周辺環境",opts:["騒音","治安注意","車通り多","公園有"]},
+      {id:"r009",l:"駐車場",opts:["あり","なし"]},
+      {id:"r010",l:"駐輪場",opts:["あり","なし"]},
+      {id:"r011",l:"ベビーカー置場",b:"重要",opts:["あり(雨よけ有)","あり(雨よけ無)","なし"]},
     ]},
   { id:"s02", e:"🕒", n:"②", t:"園の基本運営", c:"blue",
     rows:[
-      {id:"kaien_start",l:"開園時間 (開始)",type:"time"},
-      {id:"kaien_end",l:"開園時間 (終了)",type:"time"},
-      {id:"encho_umu",l:"延長保育の有無",opts:["あり","なし"]},
-      {id:"encho_end",l:"延長保育 (終了時間)",type:"time"},
-      {id:"sat_hoiku",l:"土曜保育",opts:["あり","なし"]},
-      {id:"sun_hoiku",l:"日祝保育",opts:["あり","なし"]},
-      {id:"kyuenbi",l:"休園日",opts:["日曜","祝日","年末年始","その他"]},
-      {id:"teiin",l:"定員",type:"text",ph:"○名"},
-      {id:"nyuen_getsuerei",l:"入園可能最少月齢条件",type:"text",ph:"例：生後57日以降など"},
-      {id:"constitution_age",l:"年齢別・クラス構成構成詳細",type:"textarea",ph:"例：\n0歳児: ○名\n1歳児: ○名\n2歳児: ○名..."},
-      {id:"taiki_jokyo",l:"待機児童状況",opts:["多い","普通","少ない"]},
-      {id:"nyuen_nandog",l:"入園難易度",opts:["高い","普通","低い"]},
-      {id:"kyodaiwak",l:"兄弟枠の有無",b:"事前",opts:["あり","なし"]},
+      {id:"r012",l:"開園時間",type:"text",ph:"○○:○○ 〜 ○○:○○"},
+      {id:"r013",l:"延長保育",opts:["あり","なし"],hasNote:true,np:"〜何時まで"},
+      {id:"r014",l:"土曜保育",opts:["あり","なし"]},
+      {id:"r015",l:"日祝保育",opts:["あり","なし"]},
+      {id:"r016",l:"休園日",opts:["日曜","祝日","年末年始","その他"]},
+      {id:"r017",l:"定員",type:"text",ph:"○名"},
+      {id:"r018",l:"年齢別構成",type:"text",ph:"0歳○ 1歳○ 2歳○ 3歳○ 4歳○ 5歳○"},
+      {id:"r019",l:"待機児童状況",opts:["多い","普通","少ない"]},
+      {id:"r020",l:"入園難易度",opts:["高い","普通","低い"]},
+      {id:"r021",l:"兄弟枠の有無",b:"事前",opts:["あり","なし"]},
     ]},
   { id:"s03", e:"🧸", n:"③", t:"施設・設備", c:"green",
     rows:[
-      {id:"seiketsu_nioi",l:"園内清潔・ニオイ",b:"重要",opts:["良い","普通","気になる"]},
-      {id:"seiriseiton",l:"整理整頓状況",opts:["良い","普通","気になる"]},
-      {id:"hoikushitsu_hirosa",l:"保育室の広さ",opts:["十分","普通","狭い"]},
-      {id:"hitoatari_space",l:"1人当りスペース",opts:["十分","普通","狭い"]},
-      {id:"saiko_jokyo",l:"採光状況",opts:["明るい","普通","暗い"]},
-      {id:"kanki_jokyo",l:"換気状況",opts:["良い","普通","悪い"]},
-      {id:"reidanbo_yuka",l:"冷暖房・床暖房",opts:["設定適切","床暖有","なし"]},
-      {id:"toilet_seiketsu",l:"トイレの数・清潔",opts:["十分・綺麗","普通","気になる"]},
-      {id:"tearaiba_tsukaiyas",l:"手洗い場使い易さ",opts:["使い易い","普通","気になる"]},
-      {id:"omutsugae_space",l:"おむつ替えスペース",opts:["あり","なし"]},
-      {id:"chonyu_space",l:"調乳スペース",opts:["あり","なし"]},
-      {id:"chorishitsu_umu",l:"調理室の有無",opts:["あり","なし"]},
-      {id:"entei_hirosa",l:"園庭の有無・広さ",opts:["あり(広)","あり(普通)","あり(狭)","なし"],hasNote:true,np:"代替（公園等）"},
-      {id:"soto_yugu",l:"外の遊具玩具",opts:["充実","普通","少ない"]},
-      {id:"uch_yugu",l:"室内の遊具玩具",opts:["充実","普通","少ない"]},
-      {id:"gosui_shingu",l:"午睡寝具",opts:["布団","コット","その他"]},
-      {id:"gosui_basho",l:"午睡場所",opts:["別室あり","保育室内","その他"]},
-      {id:"locker_hirosa",l:"ロッカーの広さ",opts:["十分","普通","狭い"]},
+      {id:"r022",l:"園内清潔・ニオイ",b:"重要",opts:["良い","普通","気になる"]},
+      {id:"r023",l:"整理整頓状況",opts:["良い","普通","気になる"]},
+      {id:"r024",l:"保育室の広さ",opts:["十分","普通","狭い"]},
+      {id:"r025",l:"1人当りスペース",opts:["十分","普通","狭い"]},
+      {id:"r026",l:"採光状況",opts:["明るい","普通","暗い"]},
+      {id:"r027",l:"換気状況",opts:["良い","普通","悪い"]},
+      {id:"r028",l:"冷暖房・床暖房",opts:["設定適切","床暖有","なし"]},
+      {id:"r029",l:"トイレの数・清潔",opts:["十分・綺麗","普通","気になる"]},
+      {id:"r030",l:"手洗い場使い易さ",opts:["使い易い","普通","気になる"]},
+      {id:"r031",l:"おむつ替えスペース",opts:["あり","なし"]},
+      {id:"r032",l:"調乳スペース",opts:["あり","なし"]},
+      {id:"r033",l:"調理室の有無",opts:["あり","なし"]},
+      {id:"r034",l:"園庭の有無・広さ",opts:["あり(広)","あり(普通)","あり(狭)","なし"],hasNote:true,np:"代替（公園等）"},
+      {id:"r035",l:"外の遊具玩具",opts:["充実","普通","少ない"]},
+      {id:"r036",l:"室内の遊具玩具",opts:["充実","普通","少ない"]},
+      {id:"r037",l:"午睡寝具",opts:["布団","コット","その他"]},
+      {id:"r038",l:"午睡場所",opts:["別室あり","保育室内","その他"]},
+      {id:"r039",l:"ロッカーの広さ",opts:["十分","普通","狭い"]},
     ]},
   { id:"s04", e:"🛡️", n:"④", t:"安全・防犯・防災", c:"red",
     rows:[
-      {id:"shijo_autolock",l:"施錠・オートロック",opts:["あり","なし"],hasNote:true,np:"種類"},
-      {id:"bohan_camera",l:"防犯カメラ",opts:["あり","なし"]},
-      {id:"fushinsha_taisak",l:"不審者対策",opts:["あり","なし"]},
-      {id:"raiensha_check",l:"来園者チェック",opts:["あり","なし"],hasNote:true,np:"内容"},
-      {id:"hinan_keiro",l:"避難経路明確さ",opts:["明確","普通","不明確"]},
-      {id:"hinan_freq_month",l:"避難訓練の頻度 (月単位)",type:"text",ph:"例：月1回"},
-      {id:"hinan_freq_year",l:"避難訓練の頻度 (年単位)",type:"text",ph:"例：年2回"},
-      {id:"saigai_basho",l:"災害時対応・場所",opts:["説明有","不明"],hasNote:true,np:"避難場所"},
-      {id:"kinkyu_renraku",l:"緊急連絡体制",opts:["明確・説明有","不明確"]},
-      {id:"jiko_kega_taio",l:"事故・怪我時の対応",opts:["説明あり","普通","気になる"]},
-      {id:"aed_umu",l:"AEDの有無",opts:["あり","なし"]},
-      {id:"hoken_jokyo",l:"保険加入の有無",opts:["あり","なし"]},
-      {id:"hiyarihat_shoyu",l:"ヒヤリハット共有",b:"重要",opts:["あり","なし"]},
+      {id:"r040",l:"施錠・オートロック",opts:["あり","なし"],hasNote:true,np:"種類"},
+      {id:"r041",l:"防犯カメラ",opts:["あり","なし"]},
+      {id:"r042",l:"不審者対策",opts:["あり","なし"]},
+      {id:"r043",l:"来園者チェック",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r044",l:"避難経路明確さ",opts:["明確","普通","不明確"]},
+      {id:"r045",l:"避難訓練の頻度",type:"text",ph:"月○回 / 年○回"},
+      {id:"r046",l:"災害時対応・場所",opts:["説明有","不明"],hasNote:true,np:"避難場所"},
+      {id:"r047",l:"緊急連絡体制",opts:["明確・説明有","不明確"]},
+      {id:"r048",l:"事故・怪我時の対応",opts:["説明あり","普通","気になる"]},
+      {id:"r049",l:"AEDの有無",opts:["あり","なし"]},
+      {id:"r050",l:"保険加入の有無",opts:["あり","なし"]},
+      {id:"r051",l:"ヒヤリハット共有",b:"重要",opts:["あり","なし"]},
     ]},
   { id:"s05", e:"📖", n:"⑤", t:"保育内容・方針", c:"orange",
     rows:[
-      {id:"hoiku_rinen",l:"保育理念",b:"事前",opts:["共感できる","普通","合わない"]},
-      {id:"kyoiku_hoshin",l:"教育方針・特色",opts:["共感できる","普通","合わない"]},
-      {id:"kodomo_sesshikata",l:"子どもへの接し方",opts:["丁寧・温か","普通","気になる"]},
-      {id:"jiyu_issei_hoiku",l:"自由/一斉保育",opts:["自由寄り","一斉寄り","バランス"]},
-      {id:"sotoasobi_freq",l:"外遊びの頻度",opts:["毎日","週数回","天候次第"]},
-      {id:"sanpo_anzen",l:"散歩の有無・安全",opts:["あり(安全○)","あり(普通)","なし"]},
-      {id:"gyoji_katsudo",l:"行事内容・活動",opts:["充実","普通","少ない"]},
-      {id:"eigo_taiso_katsudo",l:"英語・体操等活動",opts:["あり","なし"],hasNote:true,np:"内容"},
-      {id:"seisaku_freq",l:"制作活動の頻度",opts:["多い","普通","少ない"]},
-      {id:"tv_doga_shiyo",l:"テレビ・動画使用",opts:["あり","なし"],hasNote:true,np:"時間"},
-      {id:"hattatsu_shien",l:"発達支援の有無",opts:["あり","なし"]},
-      {id:"inenrei_koryu",l:"異年齢交流",opts:["あり","なし"]},
+      {id:"r052",l:"保育理念",b:"事前",opts:["共感できる","普通","合わない"]},
+      {id:"r053",l:"教育方針・特色",opts:["共感できる","普通","合わない"]},
+      {id:"r054",l:"子どもへの接し方",opts:["丁寧・温か","普通","気になる"]},
+      {id:"r055",l:"自由/一斉保育",opts:["自由寄り","一斉寄り","バランス"]},
+      {id:"r056",l:"外遊びの頻度",opts:["毎日","週数回","天候次第"]},
+      {id:"r057",l:"散歩の有無・安全",opts:["あり(安全○)","あり(普通)","なし"]},
+      {id:"r058",l:"行事内容・活動",opts:["充実","普通","少ない"]},
+      {id:"r059",l:"英語・体操等活動",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r060",l:"制作活動の頻度",opts:["多い","普通","少ない"]},
+      {id:"r061",l:"テレビ・動画使用",opts:["あり","なし"],hasNote:true,np:"時間"},
+      {id:"r062",l:"発達支援の有無",opts:["あり","なし"]},
+      {id:"r063",l:"異年齢交流",opts:["あり","なし"]},
     ]},
   { id:"s06", e:"⏰", n:"⑥", t:"1日の生活", c:"blue",
     rows:[
-      {id:"toen_jikan",l:"希望登園時間帯",type:"time"},
-      {id:"koen_jikan",l:"希望降園時間帯",type:"time"},
-      {id:"nitteihyo",l:"日程表",opts:["あり(別紙等)","なし"]},
-      {id:"sotoasobi_jikantai",l:"外遊び時間帯",type:"text",ph:"○:○○ 〜 ○:○○"},
-      {id:"hirune_jikan",l:"昼寝時間・長さ",type:"text",ph:"○:○○ 〜 約○時間"},
-      {id:"gosui_mamorai",l:"午睡見守り体制",b:"重要",opts:["センサー有","目視のみ","5分毎等"]},
+      {id:"r064",l:"登降園の時間帯",type:"text",ph:"登○:○○頃 / 降○:○○頃が多い"},
+      {id:"r065",l:"日程表",opts:["あり(別紙等)","なし"]},
+      {id:"r066",l:"外遊び時間帯",type:"text",ph:"○:○○ 〜 ○:○○"},
+      {id:"r067",l:"昼寝時間・長さ",type:"text",ph:"○:○○ 〜 約○時間"},
+      {id:"r068",l:"午睡見守り体制",b:"重要",opts:["センサー有","目視のみ","5分毎等"]},
     ]},
   { id:"s07", e:"🍽️", n:"⑦", t:"食事・健康", c:"yellow",
     rows:[
-      {id:"kyushoku",l:"給食",b:"事前",opts:["自園調理","外部委託","弁当持参"]},
-      {id:"allergy_taio",l:"アレルギー対応",opts:["あり","なし"]},
-      {id:"menu_eiyo",l:"メニュー・栄養",opts:["工夫あり","普通","気になる"]},
-      {id:"ryunyu_taio",l:"離乳食対応",opts:["丁寧","普通","気になる"]},
-      {id:"shokuku_katsudo",l:"食育活動",opts:["あり","なし"]},
-      {id:"shokuji_kyoyo",l:"食事の様子・完食強要",opts:["楽しそう","普通","強要あり"]},
-      {id:"shokuji_kaijo",l:"食事介助の仕方",opts:["丁寧","普通","気になる"]},
-      {id:"kenon_check",l:"検温・健康チェック",opts:["毎日実施","不定期","なし"]},
-      {id:"taicho_furyo_taio",l:"体調不良時対応",opts:["隔離可・説有","普通","気になる"]},
-      {id:"hatsunetsu_yobidashi",l:"発熱時呼出基準",opts:["37.5℃〜","38.0℃〜","その他"],hasNote:true,np:"基準値"},
-      {id:"byoji_hoiku",l:"病児・病後児保育",opts:["あり(併設)","なし"]},
-      {id:"shiyo_omutsu",l:"使用済おむつ",b:"重要",opts:["園で廃棄","持ち帰り"]},
+      {id:"r069",l:"給食",b:"事前",opts:["自園調理","外部委託","弁当持参"]},
+      {id:"r070",l:"アレルギー対応",opts:["あり","なし"]},
+      {id:"r071",l:"メニュー・栄養",opts:["工夫あり","普通","気になる"]},
+      {id:"r072",l:"離乳食対応",opts:["丁寧","普通","気になる"]},
+      {id:"r073",l:"食育活動",opts:["あり","なし"]},
+      {id:"r074",l:"食事の様子・完食強要",opts:["楽しそう","普通","強要あり"]},
+      {id:"r075",l:"食事介助の仕方",opts:["丁寧","普通","気になる"]},
+      {id:"r076",l:"検温・健康チェック",opts:["毎日実施","不定期","なし"]},
+      {id:"r077",l:"体調不良時対応",opts:["隔離可・説有","普通","気になる"]},
+      {id:"r078",l:"発熱時呼出基準",opts:["37.5℃〜","38.0℃〜","その他"],hasNote:true,np:"基準値"},
+      {id:"r079",l:"病児・病後児保育",opts:["あり(併設)","なし"]},
+      {id:"r080",l:"使用済おむつ",b:"重要",opts:["園で廃棄","持ち帰り"]},
     ]},
   { id:"s08", e:"💖", n:"⑧", t:"雰囲気・子どもの様子", c:"pink",
     rows:[
-      {id:"kodomo_hyojo",l:"子どもの表情",opts:["楽しそう","普通","気になる"]},
-      {id:"nakuko_taio",l:"泣く子・トラブル対応",opts:["丁寧・仲裁上手","普通","気になる"]},
-      {id:"donarigoe_umu",l:"怒鳴り声の有無",b:"重要",opts:["なし","聞こえた"]},
-      {id:"kodomo_kankei",l:"子供同士の関係",opts:["良好","普通","気になる"]},
-      {id:"ochitsukiguai",l:"落ち着き具合",opts:["落ち着いてる","普通","落ち着きない"]},
-      {id:"kappatsusa",l:"活発さ",opts:["活発","普通","大人しすぎ"]},
-      {id:"zentai_kukikan",l:"全体の空気感",opts:["温かい","普通","気になる"]},
+      {id:"r081",l:"子どもの表情",opts:["楽しそう","普通","気になる"]},
+      {id:"r082",l:"泣く子・トラブル対応",opts:["丁寧・仲裁上手","普通","気になる"]},
+      {id:"r083",l:"怒鳴り声の有無",b:"重要",opts:["なし","聞こえた"]},
+      {id:"r084",l:"子供同士の関係",opts:["良好","普通","気になる"]},
+      {id:"r085",l:"落ち着き具合",opts:["落ち着いてる","普通","落ち着きない"]},
+      {id:"r086",l:"活発さ",opts:["活発","普通","大人しすぎ"]},
+      {id:"r087",l:"全体の空気感",opts:["温かい","普通","気になる"]},
     ]},
   { id:"s09", e:"🧑‍🏫", n:"⑨", t:"先生・人員体制", c:"green",
     rows:[
-      {id:"hoikushi_ninzu",l:"保育士人数",type:"text",ph:"○名"},
-      {id:"haichi_kijun",l:"配置基準",opts:["遵守","説明有","気になる"]},
-      {id:"keiken_nenrei_bal",l:"経験・年齢バランス",opts:["バランス良","若手多","ベテラン多"]},
-      {id:"rishokuritsu",l:"離職率",opts:["低そう","普通","高そう"]},
-      {id:"taisei",l:"体制",opts:["担任制","チーム制","その他"]},
-      {id:"sensei_aisatsu",l:"先生の雰囲気・挨拶",opts:["明るい","普通","気になる"]},
-      {id:"kodomo_koegake",l:"子供への声掛け",opts:["丁寧・優しい","普通","気になる"]},
-      {id:"kotobazukai",l:"言葉遣い",opts:["丁寧","普通","気になる"]},
-      {id:"sensei_kankei",l:"先生同士の関係",opts:["良好","普通","ピリピリ"]},
-      {id:"isogashisa_yoyu",l:"忙しさ・余裕",opts:["余裕あり","普通","忙しそう"]},
-      {id:"dansei_hoikushi",l:"男性保育士有無",opts:["あり","なし"],hasNote:true,np:"○名"},
+      {id:"r088",l:"保育士人数",type:"text",ph:"○名"},
+      {id:"r089",l:"配置基準",opts:["遵守","説明有","気になる"]},
+      {id:"r090",l:"経験・年齢バランス",opts:["バランス良","若手多","ベテラン多"]},
+      {id:"r091",l:"離職率",opts:["低そう","普通","高そう"]},
+      {id:"r092",l:"体制",opts:["担任制","チーム制","その他"]},
+      {id:"r093",l:"先生の雰囲気・挨拶",opts:["明るい開快","普通","気になる"]},
+      {id:"r094",l:"子供への声掛け",opts:["丁寧・優しい","普通","気になる"]},
+      {id:"r095",l:"言葉遣い",opts:["丁寧","普通","気になる"]},
+      {id:"r096",l:"先生同士の関係",opts:["良好","普通","ピリピリ"]},
+      {id:"r097",l:"忙しさ・余裕",opts:["余裕あり","普通","忙しそう"]},
+      {id:"r098",l:"男性保育士有無",opts:["あり","なし"],hasNote:true,np:"○名"},
     ]},
   { id:"s10", e:"📱", n:"⑩", t:"運用・保護者との関係", c:"blue",
     rows:[
-      {id:"renraku_shudan",l:"連絡手段",opts:["アプリ","紙の連絡帳"]},
-      {id:"renraku_freq",l:"連絡頻度",opts:["毎日","必要時のみ"]},
-      {id:"shashin_shoyu",l:"写真共有",opts:["あり","なし"],hasNote:true,np:"サービス名等"},
-      {id:"mendan",l:"面談",opts:["あり","なし"],hasNote:true,np:"頻度・形式"},
-      {id:"hogoshakai_yakuin",l:"保護者会・役員",opts:["あり","なし"],hasNote:true,np:"内容"},
-      {id:"hogosha_sanka_gyoji",l:"保護者参加行事",opts:["多い","普通","少ない"]},
-      {id:"claim_taio",l:"クレーム対応姿勢",opts:["誠実","普通","気になる"]},
-      {id:"sodan_yasusa",l:"相談しやすさ",opts:["しやすい","普通","しにくい"]},
-      {id:"narashi_hoiku_kikan",l:"慣らし保育期間",type:"text",ph:"約○日〜○週"},
-      {id:"narashi_hoiku_susumekata",l:"慣らし保育進め方",opts:["段階的","一律","柔軟"]},
-      {id:"chikaku_kesseki_renraku",l:"遅刻欠席連絡",opts:["アプリ可","電話必須"]},
-      {id:"omukae_rule",l:"お迎えルール",opts:["柔軟","普通","厳しい"]},
-      {id:"dairi_sogen_kafe",l:"代理送迎の可否",opts:["可","不可"],hasNote:true,np:"条件"},
-      {id:"toen_kijun",l:"登園基準(発熱等)",opts:["明確説明有","不明確"]},
-      {id:"kyuen_kijun",l:"休園基準",opts:["明確説明有","不明確"]},
+      {id:"r099",l:"連絡手段",opts:["アプリ","紙の連絡帳"]},
+      {id:"r100",l:"連絡頻度",opts:["毎日","必要時のみ"]},
+      {id:"r101",l:"写真共有",opts:["あり","なし"],hasNote:true,np:"サービス名等"},
+      {id:"r102",l:"面談",opts:["あり","なし"],hasNote:true,np:"頻度・形式"},
+      {id:"r103",l:"保護者会・役員",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r104",l:"保護者参加行事",opts:["多い","普通","少ない"]},
+      {id:"r105",l:"クレーム対応姿勢",opts:["誠実","普通","気になる"]},
+      {id:"r106",l:"相談しやすさ",opts:["しやすい","普通","しにくい"]},
+      {id:"r107",l:"慣らし保育期間",type:"text",ph:"約○日〜○週"},
+      {id:"r108",l:"慣らし保育進め方",opts:["段階的","一律","柔軟"]},
+      {id:"r109",l:"遅刻欠席連絡",opts:["アプリ可","電話必須"]},
+      {id:"r110",l:"お迎えルール",opts:["柔軟","普通","厳しい"]},
+      {id:"r111",l:"代理送迎の可否",opts:["可","不可"],hasNote:true,np:"条件"},
+      {id:"r112",l:"登園基準(発熱等)",opts:["明確説明有","不明確"]},
+      {id:"r113",l:"休園基準",opts:["明確説明有","不明確"]},
     ]},
   { id:"s11", e:"🎒", n:"⑪", t:"持ち物・保護者負担", c:"orange",
     rows:[
-      {id:"mainichi_mochimono",l:"毎日の持ち物量",opts:["少ない","普通","多い"]},
-      {id:"omutsu_subscription",l:"おむつサブスク",b:"重要",opts:["サブスク有","持参(記名)","持参(スタンプ可)"]},
-      {id:"futon_lease",l:"布団リース有無",opts:["リース有","持参","園用意"]},
-      {id:"sentaku_freq",l:"洗濯頻度・予洗い",type:"text",ph:"週○回 / 予洗い有無"},
-      {id:"namaezuke_futan",l:"名前付けの負担",opts:["少ない","普通","多い"]},
-      {id:"tezukurihin",l:"手作り品の有無",opts:["あり","なし"],hasNote:true,np:"内容"},
-      {id:"gyoji_junbi_futan",l:"行事準備の負担",opts:["少ない","普通","多い"]},
+      {id:"r114",l:"毎日の持ち物量",opts:["少ない","普通","多い"]},
+      {id:"r115",l:"おむつサブスク",b:"重要",opts:["サブスク有","持参(記名)","持参(スタンプ可)"]},
+      {id:"r116",l:"布団リース有無",opts:["リース有","持参","園用意"]},
+      {id:"r117",l:"洗濯頻度・予洗い",type:"text",ph:"週○回 / 予洗い有無"},
+      {id:"r118",l:"名前付けの負担",opts:["少ない","普通","多い"]},
+      {id:"r119",l:"手作り品の有無",opts:["あり","なし"],hasNote:true,np:"内容"},
+      {id:"r120",l:"行事準備の負担",opts:["少ない","普通","多い"]},
     ]},
   { id:"s12", e:"💰", n:"⑫", t:"費用", c:"green",
     rows:[
-      {id:"hoikuryo",l:"保育料",type:"text",ph:"¥ /月"},
-      {id:"encho_hoikuryo",l:"延長保育料",type:"text",ph:"¥ /月"},
-      {id:"kyushokuhi",l:"給食費",type:"text",ph:"¥ /月"},
-      {id:"kyozaihi",l:"教材費",type:"text",ph:"¥ /月"},
-      {id:"gyojihi",l:"行事費",type:"text",ph:"¥ /年"},
-      {id:"nyuentoki_fiyou",l:"入園時費用",type:"text",ph:"¥"},
-      {id:"sonota_tsuka_fiyou",l:"その他追加費用",type:"text",ph:"¥ 内容:"},
-      {id:"gokei_meyasu",l:"合計目安(年間)",type:"text",ph:"¥"},
+      {id:"r121",l:"保育料",type:"text",ph:"¥ /月"},
+      {id:"r122",l:"延長保育料",type:"text",ph:"¥ /月"},
+      {id:"r123",l:"給食費",type:"text",ph:"¥ /月"},
+      {id:"r124",l:"教材費",type:"text",ph:"¥ /月"},
+      {id:"r125",l:"行事費",type:"text",ph:"¥ /年"},
+      {id:"r126",l:"入園時費用",type:"text",ph:"¥"},
+      {id:"r127",l:"その他追加費用",type:"text",ph:"¥ 内容:"},
+      {id:"r128",l:"合計目安(年間)",type:"text",ph:"¥"},
     ]},
   { id:"s13", e:"🏅", n:"⑬", t:"総合評価（タップで選択）", c:"yellow",
     rows:[
-      {id:"star_anzensei",l:"安全性",type:"stars"},
-      {id:"star_sensei_quality",l:"先生の質・雰囲気",type:"stars"},
-      {id:"star_kodomo_yosu",l:"子どもの様子・雰囲気",type:"stars"},
-      {id:"star_kayou_yasusa",l:"通いやすさ・利便性",type:"stars"},
-      {id:"star_cost_perf",l:"コスパ",type:"stars"},
-      {id:"star_chokkan",l:"直感（預けたいか）",type:"stars"},
-      {id:"star_gokei_manzoku",l:"✨ 総合満足度",type:"stars",highlight:true},
+      {id:"r129",l:"安全性",type:"stars"},
+      {id:"r130",l:"保育内容・方針",type:"stars"},
+      {id:"r131",l:"先生の質・雰囲気",type:"stars"},
+      {id:"r132",l:"子どもの様子・雰囲気",type:"stars"},
+      {id:"r133",l:"通いやすさ・利便性",type:"stars"},
+      {id:"r134",l:"コスパ",type:"stars"},
+      {id:"r135",l:"直感（預けたいか）",type:"stars"},
+      {id:"r136",l:"✨ 総合満足度",type:"stars",highlight:true},
     ]},
   { id:"s14", e:"📝", n:"", t:"自由メモ・推しや懸念点など", c:"gray",
     rows:[
-      {id:"free_memo",l:"メモ欄",type:"textarea",ph:"気になった点、良かった点、懸念点など自由に記入..."},
+      {id:"r137",l:"メモ欄",type:"textarea",ph:"気になった点、良かった点、懸念点など自由に記入..."},
     ]},
 ];
 
@@ -438,97 +413,29 @@ const statusEl = document.getElementById('sync-status');
 const loginOverlay = document.getElementById('login-overlay');
 const errorEl = document.getElementById('login-error');
 
-// ☰ ドロワー制御
-window.toggleDrawer = function(open) {
-  const overlay = document.getElementById('drawer-overlay');
-  const drawer = document.getElementById('drawer');
-  if(!overlay || !drawer) return;
-  if (open) {
-    overlay.style.display = 'block';
-    setTimeout(() => { drawer.style.left = '0px'; }, 10);
-    const listCont = document.getElementById('drawer-school-list');
-    if(listCont) {
-      listCont.innerHTML = schools.map(s => `
-        <button class="tab-btn ${s.id===currentId?'active':'inactive'}" style="text-align:left; width:100%; border-radius:8px;" onclick="window.switchSchool('${escJ(s.id)}'); window.toggleDrawer(false);">${escH(s.name)}</button>
-      `).join("");
-    }
-  } else {
-    drawer.style.left = '-280px';
-    setTimeout(() => { overlay.style.display = 'none'; }, 200);
-  }
-};
-
-window.toggleTheme = function() {
-  document.body.classList.toggle('dark-theme');
-  localStorage.setItem('hk_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-};
-
-if (localStorage.getItem('hk_theme') === 'dark') {
-  document.body.classList.add('dark-theme');
-}
-
+// グローバル関数へのバインド（インラインHTML属性から呼び出せるように強制紐付け）
 window.setViewMode = function(mode) {
   currentViewMode = mode;
   document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
   document.getElementById('mode-a3-btn').classList.toggle('active', mode === 'a3');
-  document.getElementById('drawer-view-mode').value = mode;
-  document.body.className = (mode === 'a3' ? 'mode-a3 ' : '') + (localStorage.getItem('hk_theme') === 'dark' ? 'dark-theme' : '');
+  document.body.className = mode === 'a3' ? 'mode-a3' : '';
   renderMain();
 };
 
-window.handleGoogleLogin = async function() {
-    try {
-        errorEl.textContent = "";
-        const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
-    } catch (error) {
-        errorEl.textContent = "Google認証に失敗しました。";
-        console.error(error);
-    }
-};
-
-window.handleEmailLogin = async function() {
-    const email = document.getElementById('login-email').value.trim();
+window.handleLogin = async function() {
+    const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
-    if(!email || !password) { errorEl.textContent = "メールアドレスとパスワードを入力してください。"; return; }
     try {
         errorEl.textContent = "";
         await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-        errorEl.textContent = "ログイン失敗。アドレスかパスワードをご確認ください。";
-    }
-};
-
-window.handleEmailRegister = async function() {
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    if(!email || !password) { errorEl.textContent = "メールアドレスとパスワードを入力してください。"; return; }
-    if(password.length < 6) { errorEl.textContent = "パスワードは6文字以上で入力してください。"; return; }
-    try {
-        errorEl.textContent = "";
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("アカウント作成が成功しました。");
-    } catch (error) {
-        errorEl.textContent = "登録に失敗しました。すでに登録されている可能性があります。";
+        errorEl.textContent = "認証失敗。アドレスやパスワードを確認してください。";
     }
 };
 
 window.handleLogout = () => signOut(auth);
 
-async function checkEmailLinkSignIn() {
-    if (isSignInWithEmailLink(auth, window.location.href)) {
-        let email = window.localStorage.getItem('emailForSignIn');
-        if (!email) email = window.prompt('確認のためメールアドレスを再入力してください：');
-        if(email) {
-            try {
-                statusEl.textContent = "認証中...";
-                await signInWithEmailLink(auth, email, window.location.href);
-                window.localStorage.removeItem('emailForSignIn');
-            } catch (error) { alert("ログインに失敗しました。"); }
-        }
-    }
-}
-
+// Firebase同期
 function bindRealtimeSync() {
   if(unsubscribeSnapshot) unsubscribeSnapshot();
   if(!currentUser || !currentId) return;
@@ -545,7 +452,7 @@ function bindRealtimeSync() {
           renderMain();
           renderTabs();
       }
-      statusEl.textContent = "クラウド同期済";
+      statusEl.textContent = "同期済";
       statusEl.className = "status-saved";
     }
   });
@@ -559,33 +466,18 @@ async function firebaseLoadData() {
     schools = [];
     qSnap.forEach(docSnap => {
         const d = docSnap.data();
-        let schoolData = d.data;
-        if (!schoolData) {
-            schoolData = makeEmptyData();
-            for (const key in d) {
-                if (key !== 'name' && key !== 'date' && key !== 'updatedAt') {
-                    schoolData[key] = d[key];
-                }
-            }
-        }
-        schools.push({ id: docSnap.id, name: d.name || docSnap.id, date: d.date || "", data: schoolData });
+        schools.push({
+            id: docSnap.id,
+            name: d.name || docSnap.id,
+            date: d.date || "",
+            data: d.data || makeEmptyData()
+        });
     });
-    
-    if (schools.length > 0) {
-        currentId = schools[0].id;
-        statusEl.textContent = "クラウド同期済";
-        statusEl.className = "status-saved";
-        bindRealtimeSync();
-    } else {
-        currentId = null;
-        statusEl.textContent = "園を追加してください";
-        statusEl.className = "";
-    }
+    if (schools.length > 0) currentId = schools[0].id;
+    else currentId = null;
     renderAll();
-  } catch(e) { 
-    statusEl.textContent = "読込エラー";
-    console.error("Firebase読み込みエラー: ", e); 
-  }
+    if(currentId) bindRealtimeSync();
+  } catch(e) { console.error(e); }
 }
 
 function scheduleSave(id) {
@@ -601,10 +493,11 @@ function scheduleSave(id) {
               date: s.date || "",
               data: s.data
           }, { merge: true });
-          statusEl.textContent = "クラウド同期済";
+          statusEl.textContent = "同期済";
           statusEl.className = "status-saved";
       } catch(e){
           statusEl.textContent = "保存失敗";
+          statusEl.className = "";
       }
   }, 400);
 }
@@ -613,7 +506,6 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUser = user;
         loginOverlay.style.display = 'none';
-        document.getElementById('drawer-user-name').textContent = user.displayName || user.email;
         firebaseLoadData();
     } else {
         currentUser = null;
@@ -627,7 +519,7 @@ function makeEmptyData() {
   for (const sec of SECTIONS) {
     for (const row of sec.rows) {
       if (row.type === "stars") d[row.id] = {stars:0};
-      else if (row.type === "text" || row.type === "textarea" || row.type === "time") d[row.id] = {value:""};
+      else if (row.type === "text" || row.type === "textarea") d[row.id] = {value:""};
       else d[row.id] = {selected:[],note:""};
     }
   }
@@ -646,34 +538,29 @@ window.closeModal = function() { document.getElementById("modal").style.display 
 window.addSchool = async function() {
   const name = document.getElementById("modal-input").value.trim();
   if (!name || !currentUser) return;
-  if (schools.some(s => s.name === name)) { alert("同名の園がすでに存在します。"); return; }
+  if (schools.some(s => s.id === name)) { alert("同名の園がすでに存在します。"); return; }
   
-  const id = name; 
+  const id = name;
   const school = {id, name, date:"", data: makeEmptyData()};
   schools.push(school);
   currentId = id;
   closeModal();
   
   try {
-      await setDoc(doc(db, "users", currentUser.uid, "checklists", id), {
-          name: name,
-          date: "",
-          data: school.data
-      });
+      await setDoc(doc(db, "users", currentUser.uid, "checklists", id), { name: name, date: "", data: school.data });
       renderAll();
       bindRealtimeSync();
-  } catch(e) { console.error("園の追加エラー: ", e); }
+  } catch(e) { console.error(e); }
 };
 
 window.deleteSchool = async function(id) {
-  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\n（クラウド上のデータも完全に消えます）`)) return;
+  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\\n（クラウド上のデータも完全に消えます）`)) return;
   if(!currentUser) return;
   try { await deleteDoc(doc(db, "users", currentUser.uid, "checklists", id)); } catch(e){ console.error(e); }
   schools = schools.filter(s=>s.id!==id);
   if (currentId === id) currentId = schools.length > 0 ? schools[0].id : null;
   renderAll();
   if(currentId) bindRealtimeSync();
-  else { statusEl.textContent = "園を追加してください"; statusEl.className = ""; }
 };
 
 window.switchSchool = function(id) {
@@ -683,28 +570,28 @@ window.switchSchool = function(id) {
   bindRealtimeSync();
 };
 
-window.handleSchoolNameChange = async function(id, newName) {
+window.handleSchoolNameChange = async function(oldId, newName) {
   newName = newName.trim();
-  if (!newName || !currentUser) return;
+  if (!newName || oldId === newName || !currentUser) return;
+  if (schools.some(s => s.id === newName)) { alert("その園名はすでに使用されています。"); renderMain(); return; }
   
-  const sc = schools.find(s => s.id === id);
-  if (sc && sc.name === newName) return;
-  if (schools.some(s => s.name === newName)) { alert("その園名はすでに使用されています。"); renderMain(); return; }
+  statusEl.textContent = "園名変更中...";
+  statusEl.className = "status-saving";
   
   try {
-      const oldDocRef = doc(db, "users", currentUser.uid, "checklists", id);
+      const oldDocRef = doc(db, "users", currentUser.uid, "checklists", oldId);
       const newDocRef = doc(db, "users", currentUser.uid, "checklists", newName);
       const oldSnap = await getDoc(oldDocRef);
       if (oldSnap.exists()) {
           await setDoc(newDocRef, { ...oldSnap.data(), name: newName, updatedAt: new Date() });
           await deleteDoc(oldDocRef);
-          const idx = schools.findIndex(s => s.id === id);
+          const idx = schools.findIndex(s => s.id === oldId);
           if (idx !== -1) { schools[idx].id = newName; schools[idx].name = newName; }
           currentId = newName;
           renderAll();
           bindRealtimeSync();
       }
-  } catch(e) { alert("園名の変更に失敗しました。"); }
+  } catch(e) { alert("名前の変更に失敗しました。"); renderMain(); }
 };
 
 window.toggleChip = function(secId, rowId, opt) {
@@ -719,11 +606,7 @@ window.toggleChip = function(secId, rowId, opt) {
   document.querySelectorAll(`[data-row="${rowId}"] .chip`).forEach(el => {
     const isSelected = sc.data[rowId].selected.includes(el.dataset.opt);
     el.className = "chip" + (isSelected ? " selected" : "");
-    if (document.body.classList.contains('dark-theme')) {
-        el.style.background = isSelected ? col.color : "var(--surface)";
-    } else {
-        el.style.background = isSelected ? col.color : "#fff";
-    }
+    el.style.background = isSelected ? col.color : "#fff";
     el.style.color = isSelected ? "#fff" : col.color;
   });
   updateProgress(secId);
@@ -748,9 +631,9 @@ window.setStars = function(secId, rowId, n, highlight) {
   sc.data[rowId] = {stars: sc.data[rowId]?.stars === n ? 0 : n};
   scheduleSave(currentId);
   
-  const col = highlight ? "var(--orange)" : "#f59e0b";
+  const col = highlight ? "#e65100" : "#f59e0b";
   document.querySelectorAll(`[data-row="${rowId}"] .star-btn`).forEach((el,i) => {
-    el.style.color = (i < sc.data[rowId].stars) ? col : "var(--border)";
+    el.style.color = (i < sc.data[rowId].stars) ? col : "#ddd";
   });
   updateProgress(secId);
 };
@@ -760,9 +643,10 @@ function calcProgress(secId) {
   const sec = SECTIONS.find(s=>s.id===secId); if (!sec) return {filled:0,total:0};
   let filled=0, total=sec.rows.length;
   for (const row of sec.rows) {
-    const d = sc.data?.[row.id] || {};
+    const d = sc.data?.[row.id];
+    if (!d) continue;
     if (row.type==="stars" && (d.stars||0)>0) filled++;
-    else if ((row.type==="text"||row.type==="textarea"||row.type==="time") && d.value?.trim()) filled++;
+    else if ((row.type==="text"||row.type==="textarea") && d.value?.trim()) filled++;
     else if (!row.type && (d.selected?.length>0||d.note?.trim())) filled++;
   }
   return {filled, total};
@@ -790,27 +674,7 @@ window.toggleSection = function(secId) {
 };
 
 window.expandAll = function() {
-  for (const s of SECTIONS) {
-    openSections[s.id] = true;
-    const body = document.querySelector(`[data-sec="${s.id}"] .section-body`);
-    const arrow = document.querySelector(`[data-sec="${s.id}"] .section-arrow`);
-    const hdr = document.querySelector(`[data-sec="${s.id}"] .section-header`);
-    if (body) body.style.display = "";
-    if (arrow) { arrow.textContent = "▲"; arrow.className = "section-arrow open"; }
-    if (hdr) hdr.className = "section-header open";
-  }
-};
-
-window.collapseAll = function() {
-  for (const s of SECTIONS) {
-    openSections[s.id] = false;
-    const body = document.querySelector(`[data-sec="${s.id}"] .section-body`);
-    const arrow = document.querySelector(`[data-sec="${s.id}"] .section-arrow`);
-    const hdr = document.querySelector(`[data-sec="${s.id}"] .section-header`);
-    if (body) body.style.display = "none";
-    if (arrow) { arrow.textContent = "▼"; arrow.className = "section-arrow"; }
-    if (hdr) hdr.className = "section-header";
-  }
+  for (const s of SECTIONS) if (!openSections[s.id]) toggleSection(s.id);
 };
 
 function renderTabs() {
@@ -839,28 +703,18 @@ function renderSchoolHeader(sc) {
   </div>`;
 }
 
-window.updateSchoolMeta = function(field, value) {
-  const sc = currentSchool(); if (!sc) return;
-  sc[field] = value;
-  if (field === "name") renderTabs();
-  scheduleSave(currentId);
-};
-
 function renderRow(row, sc, col) {
   const d = sc.data?.[row.id] || {};
   let inner = "";
   if (row.type === "stars") {
     const stars = d.stars||0;
-    const starColor = row.highlight ? "var(--orange)" : "#f59e0b";
+    const starColor = row.highlight ? "#e65100" : "#f59e0b";
     const btns = [1,2,3,4,5].map(n =>
-      `<button class="star-btn" style="color:${n<=stars?starColor:'var(--gray-bg)'}" onclick="window.setStars('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}',${n},${!!row.highlight})">★</button>`
+      `<button class="star-btn" style="color:${n<=stars?starColor:'#ddd'}" onclick="window.setStars('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}',${n},${!!row.highlight})">★</button>`
     ).join("");
     inner = `<div class="stars" data-row="${row.id}">${btns}</div>`;
   } else if (row.type==="text") {
     inner = `<input class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}" placeholder="${escH(row.ph||'')}"
-      oninput="window.updateTextField('${row.id}',this.value)">`;
-  } else if (row.type==="time") {
-    inner = `<input type="time" class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}"
       oninput="window.updateTextField('${row.id}',this.value)">`;
   } else if (row.type==="textarea") {
     inner = `<textarea class="textarea" style="--sec-color:${col.color}" placeholder="${escH(row.ph||'')}"
@@ -868,9 +722,8 @@ function renderRow(row, sc, col) {
   } else {
     const chips = (row.opts||[]).map(opt => {
       const sel = (d.selected||[]).includes(opt);
-      const bgStyle = sel ? col.color : "var(--surface)";
       return `<button class="chip ${sel?'selected':''}" data-opt="${escH(opt)}"
-        style="border-color:${col.color};background:${bgStyle};color:${sel?'#fff':col.color}"
+        style="border-color:${col.color};background:${sel?col.color:'#fff'};color:${sel?'#fff':col.color}"
         onclick="window.toggleChip('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}','${escJ(opt)}')">${escH(opt)}</button>`;
     }).join("");
     const note = row.hasNote ? `<input class="note-input" value="${escH(d.note||'')}" placeholder="${escH(row.np||'メモ')}"
@@ -887,6 +740,25 @@ function renderRow(row, sc, col) {
     </div>`;
 }
 
+function renderSection(sec, sc) {
+  const col = COLOR_MAP[sec.c];
+  const {filled,total} = calcProgress(sec.id);
+  const pct = total>0?(filled/total*100):0;
+  const isOpen = currentViewMode === 'a3' ? true : !!openSections[sec.id];
+  const rows = sec.rows.map(r => renderRow(r, sc, col)).join("");
+  return `
+  <div class="section" data-sec="${sec.id}">
+    <button class="section-header ${isOpen?'open':''}" style="--sec-color:${col.color};--sec-bg:${col.bg}" onclick="window.toggleSection('${sec.id}')">
+      <span class="section-title" style="color:${col.color}">${sec.e} ${sec.n?sec.n+' ':''}${escH(sec.t)}<span class="progress-tag">${filled}/${total}</span></span>
+      <span class="section-arrow ${isOpen?'open':''}">${isOpen?'▲':'▼'}</span>
+    </button>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${col.color}"></div></div>
+    <div class="section-body" style="${isOpen?'':'display:none'}">
+      ${rows}
+    </div>
+  </div>`;
+}
+
 function renderMain() {
   const cont = document.getElementById("main-content");
   if(!cont) return;
@@ -900,8 +772,6 @@ function renderMain() {
   html += SECTIONS.map(sec => renderSection(sec, sc)).join("");
   if(currentViewMode === 'a3') html += '</div>';
   cont.innerHTML = html;
-  
-  SECTIONS.forEach(sec => updateProgress(sec.id));
 }
 
 function renderAll() { renderTabs(); renderMain(); }
@@ -909,16 +779,16 @@ function renderAll() { renderTabs(); renderMain(); }
 window.exportSummary = function() {
   const sc = currentSchool();
   if (!sc) { alert("園が選択されていません"); return; }
-  let txt = `【${sc.name}】見学まとめ\n`;
-  if (sc.date) txt += `見学日：${sc.date}\n`;
-  txt += "\n";
+  let txt = `【${sc.name}】見学まとめ\\n`;
+  if (sc.date) txt += `見学日：${sc.date}\\n`;
+  txt += "\\n";
   for (const sec of SECTIONS) {
     let secTxt = "";
     for (const row of sec.rows) {
       const d = sc.data?.[row.id]||{};
       if (row.type==="stars") {
         if (d.stars>0) secTxt += `  ${row.l}：${"★".repeat(d.stars)}${"☆".repeat(5-d.stars)}\n`;
-      } else if (row.type==="text"||row.type==="textarea"||row.type==="time") {
+      } else if (row.type==="text"||row.type==="textarea") {
         if (d.value?.trim()) secTxt += `  ${row.l}：${d.value}\n`;
       } else {
         const parts = [];
@@ -927,17 +797,17 @@ window.exportSummary = function() {
         if (parts.length>0) secTxt += `  ${row.l}：${parts.join(" ")}\n`;
       }
     }
-    if (secTxt) txt += `${sec.e}${sec.n?sec.n+" ":""}${sec.t}\n${secTxt}\n`;
+    if (secTxt) txt += `${sec.e}${sec.n?sec.n+" ":""}${sec.t}\\n${secTxt}\\n`;
   }
   navigator.clipboard.writeText(txt).then(()=>{
-    alert("コピー完了！メモ等に貼り付けてください📋");
-  }).catch(()=>{ prompt("コピーしてください:", txt); });
+    alert("クリップボードにコピーしました！\\nメモアプリやLINEに貼り付けてご利用ください📋");
+  }).catch(()=>{
+    prompt("テキストをコピーしてください:", txt);
+  });
 };
 
 function escH(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function escJ(s) { return String(s).replace(/'/g,"\\'"); }
-
-checkEmailLinkSignIn();
 </script>
 </body>
 </html>
