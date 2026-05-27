@@ -279,7 +279,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,
          onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, deleteDoc,
+// 🛠️ 1. 初期化用に initializeFirestore と persistentLocalCache を新しくインポートに追加
+import { initializeFirestore, persistentLocalCache, doc, setDoc, getDoc, deleteDoc,
          collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -293,7 +294,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+// 🛠️ 2. 「const db = getFirestore(app);」からの変更
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache() // 👈 これだけでブラウザ内に強固なオフライン倉庫（IndexedDB）が作成
+});
 const googleProvider = new GoogleAuthProvider();
 
 // 🗄️ SCHEMA（ローマ字キー）
@@ -993,6 +997,11 @@ window.exportSummary = function() {
 
 function escH(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function escJ(s) { return String(s).replace(/'/g,"\\'"); }
+
+// Service Workerの登録（電波がないときのリロード対策）
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
 </script>
 </body>
 </html>
