@@ -2,7 +2,7 @@ const CACHE_NAME = 'hoikuen-checklist-v1';
 // キャッシュする対象（あなたのHTMLファイル名に書き換えてください）
 const ASSETS = [
   './',
-  './visitns/hoikuen_checklist_app.html' 
+  './hoikuen_checklist_app.html' 
 ];
 
 // インストール時にHTMLをブラウザにガッチリ固定保存
