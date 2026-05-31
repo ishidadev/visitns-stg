@@ -59,7 +59,7 @@
   .drawer-label{font-size:10px;font-weight:700;color:var(--sub);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
   .drawer-item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;color:var(--text);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
   .drawer-item:active{opacity:.6;}
-  .drawer-school-item{padding:7px 10px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .15s;color:var(--text);}
+  .drawer-school-item{padding:7px 10px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .15s;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .drawer-school-item.active{background:var(--blue);color:#fff;font-weight:700;}
   .drawer-school-item:not(.active):hover{background:var(--gray-bg);}
   .drawer-add-btn{color:var(--blue);margin-top:4px;}
@@ -206,6 +206,9 @@
     <input type="email" id="login-email" placeholder="メールアドレス">
     <input type="password" id="login-password" placeholder="パスワード" onkeydown="if(event.key==='Enter')window.handleLogin()">
     <button class="btn-login-email" onclick="window.handleLogin()">メール・PWでログイン</button>
+    <div style="margin-top:20px; font-size:13px;">
+      <a href="#" onclick="window.startTrial(event)" style="color:#1e5a8c; font-weight:bold; text-decoration:underline;">アカウントなしで無料で試用する（2園まで）</a>
+    </div>
     <p id="login-error"></p>
   </div>
 </div>
@@ -225,7 +228,7 @@
     </div>
   </div>
   <div class="drawer-section scrollable">
-    <div class="drawer-label">園一覧</div>
+    <div class="drawer-label">園一覧（▲▼で並び替え）</div>
     <div id="drawer-school-list"></div>
   </div>
   <div class="drawer-section">
@@ -517,10 +520,62 @@ let saveTimer = null;
 let currentUser = null;
 let unsubscribeSnapshot = null;
 let currentViewMode = 'toggle';
+let isTrial = false; // 試用モードフラグ
 
 const statusEl = document.getElementById('sync-status');
 const loginOverlay = document.getElementById('login-overlay');
 const errorEl = document.getElementById('login-error');
+
+// ─── DATA COMPRESSION & DECOMPRESSION ────────────────────────
+function compressData(data) {
+  const clean = {};
+  for (const key in data) {
+    const item = data[key];
+    if (!item) continue;
+    if (item.stars !== undefined && item.stars > 0) {
+      clean[key] = { stars: item.stars };
+    } else if (item.value !== undefined && item.value.trim() !== "") {
+      clean[key] = { value: item.value };
+    } else if (item.ageData !== undefined) {
+      const hasContent = Object.values(item.ageData).some(v => v && v.trim() !== "");
+      if (hasContent) {
+        const cleanAge = {};
+        for (const ageKey in item.ageData) {
+          if (item.ageData[ageKey] && item.ageData[ageKey].trim() !== "") {
+            cleanAge[ageKey] = item.ageData[ageKey];
+          }
+        }
+        clean[key] = { ageData: cleanAge };
+      }
+    } else {
+      const hasSelected = item.selected && item.selected.length > 0;
+      const hasNote = item.note && item.note.trim() !== "";
+      if (hasSelected || hasNote) {
+        clean[key] = {};
+        if (hasSelected) clean[key].selected = item.selected;
+        if (hasNote) clean[key].note = item.note;
+      }
+    }
+  }
+  return clean;
+}
+
+function decompressData(compressed) {
+  const base = makeEmptyData();
+  if (!compressed) return base;
+  for (const key in compressed) {
+    if (base[key]) {
+      if (compressed[key].stars !== undefined) base[key].stars = compressed[key].stars;
+      if (compressed[key].value !== undefined) base[key].value = compressed[key].value;
+      if (compressed[key].note !== undefined) base[key].note = compressed[key].note;
+      if (compressed[key].selected !== undefined) base[key].selected = compressed[key].selected;
+      if (compressed[key].ageData !== undefined) {
+        base[key].ageData = { ...base[key].ageData, ...compressed[key].ageData };
+      }
+    }
+  }
+  return base;
+}
 
 // ─── DARK MODE ─────────────────────────────────────────────
 window.toggleDarkMode = function(on) {
@@ -545,11 +600,27 @@ window.closeDrawer = function() {
 function renderDrawerSchoolList() {
   const el = document.getElementById('drawer-school-list');
   if (!el) return;
-  el.innerHTML = schools.map(s =>
-    `<div class="drawer-school-item ${s.id===currentId?'active':''}"
-      onclick="window.switchSchool('${escJ(s.id)}');window.closeDrawer();">${escH(s.name)}</div>`
+  
+  let purchaseBanner = "";
+  if (isTrial) {
+    purchaseBanner = `
+      <div style="margin: 15px 0 5px; padding: 12px; background: rgba(230,81,0,0.1); border: 1px solid var(--orange); border-radius: 10px; text-align: center;">
+        <div style="font-size: 11px; font-weight: bold; color: var(--orange); margin-bottom: 6px;">💡 お試しモード（2園まで）</div>
+        <a href="https://example.com/purchase" target="_blank" style="display: block; background: var(--orange); color: white; text-align: center; font-weight: bold; padding: 6px; border-radius: 6px; font-size: 11px; text-decoration: none;">有料版を購入（無制限同期）</a>
+      </div>
+    `;
+  }
+
+  el.innerHTML = schools.map((s, index) =>
+    `<div style="display:flex; align-items:center; gap:4px; margin-bottom:4px; width:100%;">
+      <div class="drawer-school-item \${s.id===currentId?'active':''}" style="flex:1; min-width:0;"
+        onclick="window.switchSchool('\${escJ(s.id)}');window.closeDrawer();">\${escH(s.name)}</div>
+      <button onclick="window.moveSchool(\${index}, -1); event.stopPropagation();" style="background:var(--gray-bg); border:none; border-radius:6px; width:26px; height:26px; color:var(--text); cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">▲</button>
+      <button onclick="window.moveSchool(\${index}, 1); event.stopPropagation();" style="background:var(--gray-bg); border:none; border-radius:6px; width:26px; height:26px; color:var(--text); cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">▼</button>
+    </div>`
   ).join('') +
-  `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>`;
+  `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>` +
+  purchaseBanner;
 }
 
 // ─── VIEW MODE ─────────────────────────────────────────────
@@ -561,6 +632,55 @@ window.setViewMode = function(mode) {
   document.body.className = (mode === 'a3' ? 'mode-a3' : '') + (isDark ? ' dark' : '');
   renderMain();
 };
+
+// ─── TRIAL MODE ─────────────────────────────────────────────
+window.startTrial = function(e) {
+  if (e) e.preventDefault();
+  isTrial = true;
+  loginOverlay.style.display = 'none';
+  document.getElementById('drawer-username').textContent = "お試しユーザー（ローカル）";
+  loadTrialData();
+};
+
+function loadTrialData() {
+  try {
+    const r = localStorage.getItem("hk_trial_schools_meta");
+    if (r) {
+      const meta = JSON.parse(r);
+      schools = meta.map(s => {
+        let scData = makeEmptyData();
+        try {
+          const rawData = localStorage.getItem("hk_trial_data_" + s.id);
+          if (rawData) {
+            const parsed = JSON.parse(rawData);
+            scData = decompressData(parsed.data || parsed);
+          }
+        } catch(e) { console.error(e); }
+        return { id: s.id, name: s.name, date: s.date || "", data: scData, orderIndex: s.orderIndex !== undefined ? s.orderIndex : 999 };
+      });
+      schools.sort((a, b) => a.orderIndex - b.orderIndex);
+    } else {
+      schools = [];
+    }
+  } catch(e) { schools = []; }
+  if (schools.length > 0) currentId = schools[0].id;
+  else currentId = null;
+  renderAll();
+}
+
+function saveTrialData(id) {
+  if (!isTrial) return;
+  try {
+    const meta = schools.map((s, idx) => ({id:s.id, name:s.name, date:s.date||"", orderIndex: idx}));
+    localStorage.setItem("hk_trial_schools_meta", JSON.stringify(meta));
+    if (id) {
+      const s = schools.find(x => x.id === id);
+      if (s) {
+        localStorage.setItem("hk_trial_data_" + id, JSON.stringify({ name: s.name, date: s.date||"", data: compressData(s.data) }));
+      }
+    }
+  } catch(e) { console.error(e); }
+}
 
 // ─── AUTH ──────────────────────────────────────────────────
 window.handleGoogleLogin = async function() {
@@ -583,10 +703,19 @@ window.handleLogin = async function() {
   }
 };
 
-window.handleLogout = () => { window.closeDrawer(); signOut(auth); };
+window.handleLogout = () => { 
+  window.closeDrawer(); 
+  if (isTrial) {
+    isTrial = false;
+    location.reload();
+  } else {
+    signOut(auth); 
+  }
+};
 
 // ─── FIREBASE SYNC ─────────────────────────────────────────
 function bindRealtimeSync() {
+  if (isTrial) return;
   if(unsubscribeSnapshot) unsubscribeSnapshot();
   if(!currentUser || !currentId) return;
   const docRef = doc(db, "users", currentUser.uid, "checklists", currentId);
@@ -597,7 +726,7 @@ function bindRealtimeSync() {
       if(sc) {
         sc.name = serverData.name || sc.name;
         sc.date = serverData.date || "";
-        sc.data = serverData.data || makeEmptyData();
+        sc.data = decompressData(serverData.data);
         renderMain();
         renderTabs();
       }
@@ -615,8 +744,15 @@ async function firebaseLoadData() {
     schools = [];
     qSnap.forEach(docSnap => {
       const d = docSnap.data();
-      schools.push({ id: docSnap.id, name: d.name || docSnap.id, date: d.date || "", data: d.data || makeEmptyData() });
+      schools.push({ 
+        id: docSnap.id, 
+        name: d.name || docSnap.id, 
+        date: d.date || "", 
+        data: decompressData(d.data),
+        orderIndex: d.orderIndex !== undefined ? d.orderIndex : 999
+      });
     });
+    schools.sort((a, b) => a.orderIndex - b.orderIndex);
     if (schools.length > 0) currentId = schools[0].id;
     else currentId = null;
     renderAll();
@@ -625,6 +761,15 @@ async function firebaseLoadData() {
 }
 
 function scheduleSave(id) {
+  if (isTrial) {
+    statusEl.textContent = "お試しモード";
+    statusEl.className = "status-saved";
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveTrialData(id);
+    }, 400);
+    return;
+  }
   statusEl.textContent = "保存中...";
   statusEl.className = "status-saving";
   clearTimeout(saveTimer);
@@ -635,7 +780,8 @@ function scheduleSave(id) {
       await setDoc(doc(db, "users", currentUser.uid, "checklists", id), {
         name: s.name,
         date: s.date || "",
-        data: s.data
+        data: compressData(s.data),
+        orderIndex: schools.indexOf(s)
       }, { merge: true });
       statusEl.textContent = "同期済";
       statusEl.className = "status-saved";
@@ -648,14 +794,17 @@ function scheduleSave(id) {
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    isTrial = false;
     currentUser = user;
     loginOverlay.style.display = 'none';
     document.getElementById('drawer-username').textContent = user.displayName || user.email;
     firebaseLoadData();
   } else {
-    currentUser = null;
-    loginOverlay.style.display = 'flex';
-    if(unsubscribeSnapshot) unsubscribeSnapshot();
+    if (!isTrial) {
+      currentUser = null;
+      loginOverlay.style.display = 'flex';
+      if(unsubscribeSnapshot) unsubscribeSnapshot();
+    }
   }
 });
 
@@ -685,22 +834,47 @@ window.closeModal = function() { document.getElementById("modal").style.display 
 
 window.addSchool = async function() {
   const name = document.getElementById("modal-input").value.trim();
-  if (!name || !currentUser) return;
+  if (!name) return;
+  
+  if (isTrial && schools.length >= 2) {
+    alert("お試しモードで追加できるのは2園までです。\\n3園以上の追加や、デバイス間の自動リアルタイム同期機能を利用するには有料版をご購入ください。\\n\\n【有料版購入ページ】\\nhttps://example.com/purchase");
+    window.closeModal();
+    return;
+  }
+  
+  if (!currentUser && !isTrial) return;
   if (schools.some(s => s.id === name)) { alert("同名の園がすでに存在します。"); return; }
   const id = name;
   const school = {id, name, date:"", data: makeEmptyData()};
   schools.push(school);
   currentId = id;
   window.closeModal();
+  
+  if (isTrial) {
+    saveTrialData(id);
+    renderAll();
+    return;
+  }
+  
   try {
-    await setDoc(doc(db, "users", currentUser.uid, "checklists", id), { name, date: "", data: school.data });
+    await setDoc(doc(db, "users", currentUser.uid, "checklists", id), { name, date: "", data: compressData(school.data), orderIndex: schools.indexOf(school) });
     renderAll();
     bindRealtimeSync();
   } catch(e) { console.error(e); }
 };
 
 window.deleteSchool = async function(id) {
-  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？\n（クラウド上のデータも完全に消えます）`)) return;
+  if (!confirm(`「\${schools.find(s=>s.id===id)?.name}」を削除しますか？\\n（データが完全に消えます）`)) return;
+  
+  if (isTrial) {
+    try { localStorage.removeItem("hk_trial_data_" + id); } catch(e){}
+    schools = schools.filter(s=>s.id!==id);
+    if (currentId === id) currentId = schools.length > 0 ? schools[0].id : null;
+    saveTrialData();
+    renderAll();
+    return;
+  }
+
   if(!currentUser) return;
   try { await deleteDoc(doc(db, "users", currentUser.uid, "checklists", id)); } catch(e){ console.error(e); }
   schools = schools.filter(s=>s.id!==id);
@@ -713,13 +887,32 @@ window.switchSchool = function(id) {
   currentId = id;
   renderMain();
   renderTabs();
-  bindRealtimeSync();
+  if (!isTrial) bindRealtimeSync();
 };
 
 window.handleSchoolNameChange = async function(oldId, newName) {
   newName = newName.trim();
-  if (!newName || oldId === newName || !currentUser) return;
+  if (!newName || oldId === newName) return;
   if (schools.some(s => s.id === newName)) { alert("その園名はすでに使用されています。"); renderMain(); return; }
+  
+  if (isTrial) {
+    const idx = schools.findIndex(s => s.id === oldId);
+    if (idx !== -1) {
+      try {
+        const rawData = localStorage.getItem("hk_trial_data_" + oldId);
+        localStorage.setItem("hk_trial_data_" + newName, rawData);
+        localStorage.removeItem("hk_trial_data_" + oldId);
+      } catch(e){}
+      schools[idx].id = newName;
+      schools[idx].name = newName;
+      currentId = newName;
+      saveTrialData(newName);
+      renderAll();
+    }
+    return;
+  }
+
+  if (!currentUser) return;
   statusEl.textContent = "園名変更中...";
   statusEl.className = "status-saving";
   try {
@@ -736,6 +929,27 @@ window.handleSchoolNameChange = async function(oldId, newName) {
       bindRealtimeSync();
     }
   } catch(e) { alert("名前の変更に失敗しました。"); renderMain(); }
+};
+
+window.moveSchool = function(index, direction) {
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= schools.length) return;
+  
+  const temp = schools[index];
+  schools[index] = schools[targetIndex];
+  schools[targetIndex] = temp;
+  
+  if (isTrial) {
+    saveTrialData();
+  } else {
+    schools.forEach(s => {
+      scheduleSave(s.id);
+    });
+  }
+  renderTabs();
+  if (document.getElementById('drawer').classList.contains('open')) {
+    renderDrawerSchoolList();
+  }
 };
 
 // ─── FIELD UPDATES ─────────────────────────────────────────
@@ -949,6 +1163,10 @@ function renderMain() {
   const cont = document.getElementById("main-content");
   if(!cont) return;
   const sc = currentSchool();
+  if (isTrial) {
+    statusEl.textContent = "お試しモード";
+    statusEl.className = "status-saved";
+  }
   if (!sc) {
     cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🏫</div><div class="empty-text">上の「＋ 園を追加」から<br>見学する園を登録してください</div></div>`;
     return;
