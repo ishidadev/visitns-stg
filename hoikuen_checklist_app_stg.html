@@ -45,6 +45,7 @@
   #sync-status{font-size:10px;padding:3px 8px;border-radius:10px;color:white;background:#777;font-weight:bold;white-space:nowrap;flex-shrink:0;}
   .status-saved{background:#2e7d32!important;}
   .status-saving{background:#f57f17!important;}
+  .status-trial{background:#7b1fa2!important;}
 
   /* ===== DRAWER ===== */
   .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;}
@@ -59,10 +60,15 @@
   .drawer-label{font-size:10px;font-weight:700;color:var(--sub);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
   .drawer-item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;color:var(--text);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
   .drawer-item:active{opacity:.6;}
-  .drawer-school-item{padding:7px 10px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .15s;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .drawer-school-item.active{background:var(--blue);color:#fff;font-weight:700;}
-  .drawer-school-item:not(.active):hover{background:var(--gray-bg);}
-  .drawer-add-btn{color:var(--blue);margin-top:4px;}
+  /* 園一覧アイテム（並び替えボタン付き） */
+  .drawer-school-row{display:flex;align-items:center;gap:4px;padding:4px 0;}
+  .drawer-school-name{flex:1;padding:5px 8px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .15s;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .drawer-school-name.active{background:var(--blue);color:#fff;font-weight:700;}
+  .drawer-school-name:not(.active):hover{background:var(--gray-bg);}
+  .sort-btn{background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;padding:3px 5px;line-height:1;color:var(--sub);flex-shrink:0;transition:background .15s;}
+  .sort-btn:hover{background:var(--gray-bg);}
+  .sort-btn:disabled{opacity:.3;cursor:default;}
+  .drawer-add-btn{color:var(--blue);margin-top:4px;padding:6px 8px;font-size:13px;}
   .mode-row{display:flex;gap:4px;background:#e8ecf0;padding:3px;border-radius:20px;}
   body.dark .mode-row{background:#2a2a3a;}
   .mode-btn{flex:1;padding:5px 0;border-radius:16px;border:none;font-size:11px;font-family:inherit;cursor:pointer;background:transparent;color:#555;font-weight:500;transition:all .2s;}
@@ -77,6 +83,11 @@
   input:checked+.toggle-slider{background:var(--blue);}
   input:checked+.toggle-slider:before{transform:translateX(19px);}
 
+  /* ===== UPGRADE BANNER ===== */
+  .upgrade-banner{background:linear-gradient(135deg,#7b1fa2,#e65100);color:#fff;padding:10px 14px;border-radius:12px;font-size:12px;text-decoration:none;display:block;text-align:center;font-weight:700;margin:8px 16px;}
+  .upgrade-banner:hover{opacity:.9;}
+  .upgrade-section{padding:10px 0;border-top:1px solid var(--border);}
+
   /* ===== MODAL ===== */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
   .modal-box{background:var(--surface);border-radius:18px;padding:22px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2);}
@@ -87,7 +98,7 @@
   .btn-cancel{padding:8px 16px;border-radius:10px;border:1px solid #ddd;background:var(--surface);cursor:pointer;font-family:inherit;font-size:13px;color:var(--text);}
   .btn-primary{padding:8px 16px;border-radius:10px;border:none;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;}
 
-  /* ===== MAIN CONTENT (スリム化) ===== */
+  /* ===== MAIN CONTENT ===== */
   .main{padding:8px 10px 80px;}
   .school-header{background:var(--surface);border-radius:var(--radius);padding:10px 13px;margin-bottom:8px;box-shadow:var(--shadow);}
   .school-name-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;min-width:0;}
@@ -97,7 +108,7 @@
   .date-row{display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px;}
   .date-input{border:none;border-bottom:1px solid #ddd;font-size:12px;color:var(--text);outline:none;font-family:inherit;background:transparent;padding:2px 0;}
 
-  /* ===== SECTION (スリム化) ===== */
+  /* ===== SECTION ===== */
   .section{background:var(--surface);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;box-shadow:var(--shadow);}
   .section-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:none;cursor:pointer;text-align:left;background:var(--surface);transition:background .2s;font-family:inherit;}
   .section-header.open{background:var(--sec-bg);}
@@ -107,7 +118,7 @@
   .progress-bar{height:3px;background:#f0f0f0;}
   .progress-fill{height:3px;border-radius:2px;background:var(--sec-color);transition:width .3s;}
 
-  /* ===== ROWS (スリム化) ===== */
+  /* ===== ROWS ===== */
   .row{padding:8px 12px;border-bottom:1px solid var(--border);}
   .row:last-child{border-bottom:none;}
   .row-label{display:flex;align-items:center;gap:5px;margin-bottom:5px;}
@@ -116,7 +127,7 @@
   .badge-pre{background:#1e5a8c;}
   .label-text{font-size:12px;font-weight:600;color:var(--sub);}
 
-  /* ===== CHIPS (スリム化) ===== */
+  /* ===== CHIPS ===== */
   .chips{display:flex;flex-wrap:wrap;gap:5px;}
   .chip{padding:5px 10px;border-radius:20px;font-size:12px;font-family:inherit;cursor:pointer;border:1.5px solid var(--sec-color);background:var(--surface);color:var(--sec-color);font-weight:500;transition:all .15s;-webkit-user-select:none;}
   .chip.selected{background:var(--sec-color);color:#fff;font-weight:700;}
@@ -138,7 +149,7 @@
   .agegroup-input{flex:1;padding:5px 8px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--text);background:var(--surface);}
   .agegroup-input:focus{border-color:var(--sec-color);}
 
-  /* ===== STARS (スリム化) ===== */
+  /* ===== STARS ===== */
   .stars{display:flex;gap:4px;}
   .star-btn{background:none;border:none;cursor:pointer;font-size:28px;padding:2px;line-height:1;transition:color .1s,transform .1s;}
   .star-btn:active{transform:scale(0.85);}
@@ -171,10 +182,10 @@
   body.mode-a3 .chip{padding:4px 8px;font-size:11px;}
 
   /* ===== LOGIN ===== */
-  #login-overlay{position:fixed;inset:0;background:#f4f7f9;z-index:9999;display:flex;justify-content:center;align-items:center;}
+  #login-overlay{position:fixed;inset:0;background:#f4f7f9;z-index:9999;display:flex;justify-content:center;align-items:center;padding:16px;}
   .login-box{background:white;padding:32px 28px;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.1);width:100%;max-width:360px;text-align:center;}
   .login-box h2{font-size:18px;color:#333;margin-bottom:6px;font-weight:700;}
-  .login-box p{font-size:12px;color:#666;margin-bottom:16px;}
+  .login-box .login-sub{font-size:12px;color:#666;margin-bottom:16px;}
   .login-divider{display:flex;align-items:center;gap:8px;margin:14px 0;color:#ccc;font-size:12px;}
   .login-divider:before,.login-divider:after{content:"";flex:1;height:1px;background:#eee;}
   .login-box input{width:100%;padding:10px 13px;margin:4px 0;border:1px solid #ddd;border-radius:10px;font-size:14px;outline:none;font-family:inherit;}
@@ -184,6 +195,11 @@
   .btn-login-google:active{opacity:.8;}
   .google-logo{width:20px;height:20px;flex-shrink:0;}
   #login-error{color:red;font-size:12px;margin-top:8px;font-weight:500;min-height:18px;}
+  .trial-divider{display:flex;align-items:center;gap:8px;margin:14px 0;color:#ccc;font-size:12px;}
+  .trial-divider:before,.trial-divider:after{content:"";flex:1;height:1px;background:#eee;}
+  .btn-trial{width:100%;padding:11px;background:#f3e5f5;color:#7b1fa2;border:1.5px solid #ce93d8;border-radius:10px;font-size:13px;cursor:pointer;font-weight:700;font-family:inherit;}
+  .btn-trial:hover{background:#e1bee7;}
+  .trial-note{font-size:11px;color:#888;margin-top:6px;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -192,7 +208,7 @@
 <div id="login-overlay">
   <div class="login-box">
     <h2>🏫 保育園見学チェックリスト</h2>
-    <p>閲覧・編集には認証が必要です</p>
+    <p class="login-sub">閲覧・編集には認証が必要です</p>
     <button class="btn-login-google" onclick="window.handleGoogleLogin()">
       <svg class="google-logo" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -206,10 +222,10 @@
     <input type="email" id="login-email" placeholder="メールアドレス">
     <input type="password" id="login-password" placeholder="パスワード" onkeydown="if(event.key==='Enter')window.handleLogin()">
     <button class="btn-login-email" onclick="window.handleLogin()">メール・PWでログイン</button>
-    <div style="margin-top:20px; font-size:13px;">
-      <a href="#" onclick="window.startTrial(event)" style="color:#1e5a8c; font-weight:bold; text-decoration:underline;">アカウントなしで無料で試用する（2園まで）</a>
-    </div>
     <p id="login-error"></p>
+    <div class="trial-divider">または</div>
+    <button class="btn-trial" onclick="window.startTrial()">🔍 まず試してみる（無料・2園まで）</button>
+    <p class="trial-note">アカウント登録不要で今すぐ試用できます<br>※データはこの端末にのみ保存されます</p>
   </div>
 </div>
 
@@ -228,7 +244,7 @@
     </div>
   </div>
   <div class="drawer-section scrollable">
-    <div class="drawer-label">園一覧（▲▼で並び替え）</div>
+    <div class="drawer-label">園一覧 <span style="font-weight:400;font-size:9px;opacity:.6;">↑↓で並び替え</span></div>
     <div id="drawer-school-list"></div>
   </div>
   <div class="drawer-section">
@@ -239,7 +255,13 @@
         <span class="toggle-slider"></span>
       </label>
     </div>
-    <button class="drawer-item" onclick="window.handleLogout()">🚪 ログアウト</button>
+    <button class="drawer-item" onclick="window.handleLogout()">🚪 ログアウト / 終了</button>
+  </div>
+  <!-- 試用モード時のみ表示 -->
+  <div id="drawer-upgrade-section" class="upgrade-section" style="display:none;">
+    <a href="https://example.com/upgrade" class="upgrade-banner" target="_blank">
+      🌟 有料版にアップグレード<br><span style="font-size:10px;font-weight:400;">3園以上・クラウド保存・全機能</span>
+    </a>
   </div>
 </div>
 
@@ -303,7 +325,7 @@ const db = initializeFirestore(app, {
 });
 const googleProvider = new GoogleAuthProvider();
 
-// 🗄️ SCHEMA（ローマ字キー）
+// ===== SCHEMA =====
 const SECTIONS = [
   { id:"s01", e:"🏢", n:"①", t:"基本情報・立地", c:"blue",
     rows:[
@@ -502,6 +524,10 @@ const SECTIONS = [
 ];
 
 const AGE_CLASSES = ["0歳児","1歳児","2歳児","3歳児","4歳児","5歳児"];
+const TRIAL_MAX = 2;
+const LS_SCHOOLS_KEY = 'hk_schools';
+const LS_DATA_PREFIX = 'hk_data_';
+const UPGRADE_URL = 'https://example.com/upgrade';
 
 const COLOR_MAP = {
   blue:{color:"var(--blue)",bg:"var(--blue-bg)"},
@@ -518,63 +544,43 @@ let currentId = null;
 let openSections = {};
 let saveTimer = null;
 let currentUser = null;
+let trialMode = false;
 let unsubscribeSnapshot = null;
 let currentViewMode = 'toggle';
-let isTrial = false; // 試用モードフラグ
 
 const statusEl = document.getElementById('sync-status');
 const loginOverlay = document.getElementById('login-overlay');
 const errorEl = document.getElementById('login-error');
 
-// ─── DATA COMPRESSION & DECOMPRESSION ────────────────────────
-function compressData(data) {
-  const clean = {};
-  for (const key in data) {
-    const item = data[key];
-    if (!item) continue;
-    if (item.stars !== undefined && item.stars > 0) {
-      clean[key] = { stars: item.stars };
-    } else if (item.value !== undefined && item.value.trim() !== "") {
-      clean[key] = { value: item.value };
-    } else if (item.ageData !== undefined) {
-      const hasContent = Object.values(item.ageData).some(v => v && v.trim() !== "");
-      if (hasContent) {
-        const cleanAge = {};
-        for (const ageKey in item.ageData) {
-          if (item.ageData[ageKey] && item.ageData[ageKey].trim() !== "") {
-            cleanAge[ageKey] = item.ageData[ageKey];
-          }
-        }
-        clean[key] = { ageData: cleanAge };
-      }
-    } else {
-      const hasSelected = item.selected && item.selected.length > 0;
-      const hasNote = item.note && item.note.trim() !== "";
-      if (hasSelected || hasNote) {
-        clean[key] = {};
-        if (hasSelected) clean[key].selected = item.selected;
-        if (hasNote) clean[key].note = item.note;
-      }
+// ─── SPARSE DATA: 入力済み項目のみ保存 ─────────────────────
+function serializeData(data) {
+  // 空の項目を除外してDBに送る（容量効率化）
+  const sparse = {};
+  for (const [key, val] of Object.entries(data)) {
+    if (!val) continue;
+    if (val.stars > 0) { sparse[key] = val; continue; }
+    if (val.value?.trim()) { sparse[key] = val; continue; }
+    if (val.selected?.length > 0 || val.note?.trim()) {
+      const entry = {};
+      if (val.selected?.length > 0) entry.selected = val.selected;
+      if (val.note?.trim()) entry.note = val.note;
+      sparse[key] = entry;
+      continue;
+    }
+    if (val.ageData && Object.values(val.ageData).some(v => v?.trim())) {
+      sparse[key] = val; continue;
     }
   }
-  return clean;
+  return sparse;
 }
 
-function decompressData(compressed) {
-  const base = makeEmptyData();
-  if (!compressed) return base;
-  for (const key in compressed) {
-    if (base[key]) {
-      if (compressed[key].stars !== undefined) base[key].stars = compressed[key].stars;
-      if (compressed[key].value !== undefined) base[key].value = compressed[key].value;
-      if (compressed[key].note !== undefined) base[key].note = compressed[key].note;
-      if (compressed[key].selected !== undefined) base[key].selected = compressed[key].selected;
-      if (compressed[key].ageData !== undefined) {
-        base[key].ageData = { ...base[key].ageData, ...compressed[key].ageData };
-      }
-    }
+function deserializeData(sparse) {
+  // DBのスパースデータ → 全項目を持つ完全なデータ（未登録項目は空扱い）
+  const full = makeEmptyData();
+  for (const [key, val] of Object.entries(sparse || {})) {
+    if (full[key] !== undefined) full[key] = val;
   }
-  return base;
+  return full;
 }
 
 // ─── DARK MODE ─────────────────────────────────────────────
@@ -597,30 +603,47 @@ window.closeDrawer = function() {
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
 };
+
 function renderDrawerSchoolList() {
   const el = document.getElementById('drawer-school-list');
   if (!el) return;
-  
-  let purchaseBanner = "";
-  if (isTrial) {
-    purchaseBanner = `
-      <div style="margin: 15px 0 5px; padding: 12px; background: rgba(230,81,0,0.1); border: 1px solid var(--orange); border-radius: 10px; text-align: center;">
-        <div style="font-size: 11px; font-weight: bold; color: var(--orange); margin-bottom: 6px;">💡 お試しモード（2園まで）</div>
-        <a href="https://example.com/purchase" target="_blank" style="display: block; background: var(--orange); color: white; text-align: center; font-weight: bold; padding: 6px; border-radius: 6px; font-size: 11px; text-decoration: none;">有料版を購入（無制限同期）</a>
-      </div>
-    `;
-  }
-
-  el.innerHTML = schools.map((s, index) =>
-    `<div style="display:flex; align-items:center; gap:4px; margin-bottom:4px; width:100%;">
-      <div class="drawer-school-item \${s.id===currentId?'active':''}" style="flex:1; min-width:0;"
-        onclick="window.switchSchool('\${escJ(s.id)}');window.closeDrawer();">\${escH(s.name)}</div>
-      <button onclick="window.moveSchool(\${index}, -1); event.stopPropagation();" style="background:var(--gray-bg); border:none; border-radius:6px; width:26px; height:26px; color:var(--text); cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">▲</button>
-      <button onclick="window.moveSchool(\${index}, 1); event.stopPropagation();" style="background:var(--gray-bg); border:none; border-radius:6px; width:26px; height:26px; color:var(--text); cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">▼</button>
+  const n = schools.length;
+  el.innerHTML = schools.map((s, i) =>
+    `<div class="drawer-school-row">
+      <div class="drawer-school-name ${s.id===currentId?'active':''}"
+        onclick="window.switchSchool('${escJ(s.id)}');window.closeDrawer();">${escH(s.name)}</div>
+      <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',-1)" ${i===0?'disabled':''} title="上へ">↑</button>
+      <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',1)"  ${i===n-1?'disabled':''} title="下へ">↓</button>
     </div>`
   ).join('') +
-  `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>` +
-  purchaseBanner;
+  `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>`;
+}
+
+// ─── SCHOOL ORDER ──────────────────────────────────────────
+window.moveSchool = function(id, dir) {
+  const idx = schools.findIndex(s => s.id === id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= schools.length) return;
+  [schools[idx], schools[newIdx]] = [schools[newIdx], schools[idx]];
+  saveSchoolOrder();
+  renderTabs();
+  renderDrawerSchoolList();
+};
+
+async function saveSchoolOrder() {
+  if (trialMode) {
+    // LocalStorage: metaを更新するだけで順序が保存される
+    trialSaveMeta();
+    return;
+  }
+  if (!currentUser) return;
+  // Firebase: 各ドキュメントにorderフィールドを書き込む
+  schools.forEach(async (s, i) => {
+    try {
+      await setDoc(doc(db, "users", currentUser.uid, "checklists", s.id),
+        { order: i }, { merge: true });
+    } catch(e) { console.error(e); }
+  });
 }
 
 // ─── VIEW MODE ─────────────────────────────────────────────
@@ -632,55 +655,6 @@ window.setViewMode = function(mode) {
   document.body.className = (mode === 'a3' ? 'mode-a3' : '') + (isDark ? ' dark' : '');
   renderMain();
 };
-
-// ─── TRIAL MODE ─────────────────────────────────────────────
-window.startTrial = function(e) {
-  if (e) e.preventDefault();
-  isTrial = true;
-  loginOverlay.style.display = 'none';
-  document.getElementById('drawer-username').textContent = "お試しユーザー（ローカル）";
-  loadTrialData();
-};
-
-function loadTrialData() {
-  try {
-    const r = localStorage.getItem("hk_trial_schools_meta");
-    if (r) {
-      const meta = JSON.parse(r);
-      schools = meta.map(s => {
-        let scData = makeEmptyData();
-        try {
-          const rawData = localStorage.getItem("hk_trial_data_" + s.id);
-          if (rawData) {
-            const parsed = JSON.parse(rawData);
-            scData = decompressData(parsed.data || parsed);
-          }
-        } catch(e) { console.error(e); }
-        return { id: s.id, name: s.name, date: s.date || "", data: scData, orderIndex: s.orderIndex !== undefined ? s.orderIndex : 999 };
-      });
-      schools.sort((a, b) => a.orderIndex - b.orderIndex);
-    } else {
-      schools = [];
-    }
-  } catch(e) { schools = []; }
-  if (schools.length > 0) currentId = schools[0].id;
-  else currentId = null;
-  renderAll();
-}
-
-function saveTrialData(id) {
-  if (!isTrial) return;
-  try {
-    const meta = schools.map((s, idx) => ({id:s.id, name:s.name, date:s.date||"", orderIndex: idx}));
-    localStorage.setItem("hk_trial_schools_meta", JSON.stringify(meta));
-    if (id) {
-      const s = schools.find(x => x.id === id);
-      if (s) {
-        localStorage.setItem("hk_trial_data_" + id, JSON.stringify({ name: s.name, date: s.date||"", data: compressData(s.data) }));
-      }
-    }
-  } catch(e) { console.error(e); }
-}
 
 // ─── AUTH ──────────────────────────────────────────────────
 window.handleGoogleLogin = async function() {
@@ -703,19 +677,71 @@ window.handleLogin = async function() {
   }
 };
 
-window.handleLogout = () => { 
-  window.closeDrawer(); 
-  if (isTrial) {
-    isTrial = false;
-    location.reload();
+// 試用モード開始
+window.startTrial = function() {
+  trialMode = true;
+  loginOverlay.style.display = 'none';
+  document.getElementById('drawer-username').textContent = '試用中（未ログイン）';
+  document.getElementById('drawer-upgrade-section').style.display = 'block';
+  statusEl.textContent = "お試しモード";
+  statusEl.className = "status-trial";
+  trialLoadData();
+};
+
+window.handleLogout = function() {
+  window.closeDrawer();
+  if (trialMode) {
+    if (confirm("試用を終了しますか？\n（LocalStorageのデータは保持されます）")) {
+      trialMode = false;
+      schools = []; currentId = null;
+      loginOverlay.style.display = 'flex';
+    }
   } else {
-    signOut(auth); 
+    signOut(auth);
   }
 };
 
+// ─── LOCALSTRAGE（試用モード用）──────────────────────────
+function trialSaveMeta() {
+  const meta = schools.map((s, i) => ({ id: s.id, name: s.name, date: s.date || '', order: i }));
+  localStorage.setItem(LS_SCHOOLS_KEY, JSON.stringify(meta));
+}
+
+function trialSaveData(id) {
+  const s = schools.find(x => x.id === id);
+  if (!s) return;
+  // スパースデータとして保存
+  localStorage.setItem(LS_DATA_PREFIX + id, JSON.stringify(serializeData(s.data)));
+}
+
+function trialLoadData() {
+  try {
+    const meta = JSON.parse(localStorage.getItem(LS_SCHOOLS_KEY) || '[]');
+    schools = meta.sort((a,b)=>(a.order||0)-(b.order||0)).map(m => {
+      const sparse = JSON.parse(localStorage.getItem(LS_DATA_PREFIX + m.id) || '{}');
+      return { id: m.id, name: m.name, date: m.date || '', data: deserializeData(sparse) };
+    });
+    currentId = schools.length > 0 ? schools[0].id : null;
+  } catch(e) {
+    schools = []; currentId = null;
+  }
+  renderAll();
+}
+
+function trialScheduleSave(id) {
+  statusEl.textContent = "保存中...";
+  statusEl.className = "status-saving";
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    trialSaveMeta();
+    trialSaveData(id);
+    statusEl.textContent = "お試しモード";
+    statusEl.className = "status-trial";
+  }, 400);
+}
+
 // ─── FIREBASE SYNC ─────────────────────────────────────────
 function bindRealtimeSync() {
-  if (isTrial) return;
   if(unsubscribeSnapshot) unsubscribeSnapshot();
   if(!currentUser || !currentId) return;
   const docRef = doc(db, "users", currentUser.uid, "checklists", currentId);
@@ -726,7 +752,8 @@ function bindRealtimeSync() {
       if(sc) {
         sc.name = serverData.name || sc.name;
         sc.date = serverData.date || "";
-        sc.data = decompressData(serverData.data);
+        // スパースデータを完全データに復元
+        sc.data = deserializeData(serverData.data);
         renderMain();
         renderTabs();
       }
@@ -744,32 +771,25 @@ async function firebaseLoadData() {
     schools = [];
     qSnap.forEach(docSnap => {
       const d = docSnap.data();
-      schools.push({ 
-        id: docSnap.id, 
-        name: d.name || docSnap.id, 
-        date: d.date || "", 
-        data: decompressData(d.data),
-        orderIndex: d.orderIndex !== undefined ? d.orderIndex : 999
+      schools.push({
+        id: docSnap.id,
+        name: d.name || docSnap.id,
+        date: d.date || "",
+        order: d.order ?? 99999,
+        // スパースデータを完全データに復元
+        data: deserializeData(d.data)
       });
     });
-    schools.sort((a, b) => a.orderIndex - b.orderIndex);
-    if (schools.length > 0) currentId = schools[0].id;
-    else currentId = null;
+    // orderフィールドで並べ替え
+    schools.sort((a, b) => a.order - b.order);
+    currentId = schools.length > 0 ? schools[0].id : null;
     renderAll();
     if(currentId) bindRealtimeSync();
   } catch(e) { console.error(e); }
 }
 
 function scheduleSave(id) {
-  if (isTrial) {
-    statusEl.textContent = "お試しモード";
-    statusEl.className = "status-saved";
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => {
-      saveTrialData(id);
-    }, 400);
-    return;
-  }
+  if (trialMode) { trialScheduleSave(id); return; }
   statusEl.textContent = "保存中...";
   statusEl.className = "status-saving";
   clearTimeout(saveTimer);
@@ -777,11 +797,11 @@ function scheduleSave(id) {
     const s = schools.find(x=>x.id===id);
     if (!s || !currentUser) return;
     try {
+      // スパースデータのみFirestoreに送る（容量効率化）
       await setDoc(doc(db, "users", currentUser.uid, "checklists", id), {
         name: s.name,
         date: s.date || "",
-        data: compressData(s.data),
-        orderIndex: schools.indexOf(s)
+        data: serializeData(s.data)
       }, { merge: true });
       statusEl.textContent = "同期済";
       statusEl.className = "status-saved";
@@ -794,14 +814,15 @@ function scheduleSave(id) {
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    isTrial = false;
+    trialMode = false;
     currentUser = user;
     loginOverlay.style.display = 'none';
     document.getElementById('drawer-username').textContent = user.displayName || user.email;
+    document.getElementById('drawer-upgrade-section').style.display = 'none';
     firebaseLoadData();
   } else {
-    if (!isTrial) {
-      currentUser = null;
+    currentUser = null;
+    if (!trialMode) {
       loginOverlay.style.display = 'flex';
       if(unsubscribeSnapshot) unsubscribeSnapshot();
     }
@@ -835,42 +856,53 @@ window.closeModal = function() { document.getElementById("modal").style.display 
 window.addSchool = async function() {
   const name = document.getElementById("modal-input").value.trim();
   if (!name) return;
-  
-  if (isTrial && schools.length >= 2) {
-    alert("お試しモードで追加できるのは2園までです。\\n3園以上の追加や、デバイス間の自動リアルタイム同期機能を利用するには有料版をご購入ください。\\n\\n【有料版購入ページ】\\nhttps://example.com/purchase");
+
+  // 試用モード：2園制限チェック
+  if (trialMode) {
+    if (schools.length >= TRIAL_MAX) {
+      window.closeModal();
+      if (confirm(`無料版では${TRIAL_MAX}園までです。\n有料版にアップグレードすると無制限に登録できます。\n有料版のページを開きますか？`)) {
+        window.open(UPGRADE_URL, '_blank');
+      }
+      return;
+    }
+    if (schools.some(s => s.id === name)) { alert("同名の園がすでに存在します。"); return; }
+    const id = name;
+    const school = { id, name, date:"", data: makeEmptyData() };
+    schools.push(school);
+    currentId = id;
     window.closeModal();
-    return;
-  }
-  
-  if (!currentUser && !isTrial) return;
-  if (schools.some(s => s.id === name)) { alert("同名の園がすでに存在します。"); return; }
-  const id = name;
-  const school = {id, name, date:"", data: makeEmptyData()};
-  schools.push(school);
-  currentId = id;
-  window.closeModal();
-  
-  if (isTrial) {
-    saveTrialData(id);
+    trialSaveMeta();
+    trialSaveData(id);
     renderAll();
     return;
   }
-  
+
+  // Firebaseモード
+  if (!currentUser) return;
+  if (schools.some(s => s.id === name)) { alert("同名の園がすでに存在します。"); return; }
+  const id = name;
+  const school = { id, name, date:"", data: makeEmptyData() };
+  schools.push(school);
+  currentId = id;
+  window.closeModal();
   try {
-    await setDoc(doc(db, "users", currentUser.uid, "checklists", id), { name, date: "", data: compressData(school.data), orderIndex: schools.indexOf(school) });
+    // 新規作成時はスパースデータ（空 = {}）
+    await setDoc(doc(db, "users", currentUser.uid, "checklists", id),
+      { name, date: "", data: {}, order: schools.length - 1 });
     renderAll();
     bindRealtimeSync();
   } catch(e) { console.error(e); }
 };
 
 window.deleteSchool = async function(id) {
-  if (!confirm(`「\${schools.find(s=>s.id===id)?.name}」を削除しますか？\\n（データが完全に消えます）`)) return;
-  
-  if (isTrial) {
-    try { localStorage.removeItem("hk_trial_data_" + id); } catch(e){}
+  if (!confirm(`「${schools.find(s=>s.id===id)?.name}」を削除しますか？`)) return;
+
+  if (trialMode) {
+    localStorage.removeItem(LS_DATA_PREFIX + id);
     schools = schools.filter(s=>s.id!==id);
     if (currentId === id) currentId = schools.length > 0 ? schools[0].id : null;
-    saveTrialData();
+    trialSaveMeta();
     renderAll();
     return;
   }
@@ -887,28 +919,24 @@ window.switchSchool = function(id) {
   currentId = id;
   renderMain();
   renderTabs();
-  if (!isTrial) bindRealtimeSync();
+  if (!trialMode) bindRealtimeSync();
 };
 
 window.handleSchoolNameChange = async function(oldId, newName) {
   newName = newName.trim();
   if (!newName || oldId === newName) return;
   if (schools.some(s => s.id === newName)) { alert("その園名はすでに使用されています。"); renderMain(); return; }
-  
-  if (isTrial) {
-    const idx = schools.findIndex(s => s.id === oldId);
-    if (idx !== -1) {
-      try {
-        const rawData = localStorage.getItem("hk_trial_data_" + oldId);
-        localStorage.setItem("hk_trial_data_" + newName, rawData);
-        localStorage.removeItem("hk_trial_data_" + oldId);
-      } catch(e){}
-      schools[idx].id = newName;
-      schools[idx].name = newName;
-      currentId = newName;
-      saveTrialData(newName);
-      renderAll();
-    }
+
+  if (trialMode) {
+    // LocalStorage: 旧キーを削除、新キーで保存
+    const sc = schools.find(s => s.id === oldId);
+    if (!sc) return;
+    localStorage.removeItem(LS_DATA_PREFIX + oldId);
+    sc.id = newName; sc.name = newName;
+    currentId = newName;
+    trialSaveMeta();
+    trialSaveData(newName);
+    renderAll();
     return;
   }
 
@@ -929,27 +957,6 @@ window.handleSchoolNameChange = async function(oldId, newName) {
       bindRealtimeSync();
     }
   } catch(e) { alert("名前の変更に失敗しました。"); renderMain(); }
-};
-
-window.moveSchool = function(index, direction) {
-  const targetIndex = index + direction;
-  if (targetIndex < 0 || targetIndex >= schools.length) return;
-  
-  const temp = schools[index];
-  schools[index] = schools[targetIndex];
-  schools[targetIndex] = temp;
-  
-  if (isTrial) {
-    saveTrialData();
-  } else {
-    schools.forEach(s => {
-      scheduleSave(s.id);
-    });
-  }
-  renderTabs();
-  if (document.getElementById('drawer').classList.contains('open')) {
-    renderDrawerSchoolList();
-  }
 };
 
 // ─── FIELD UPDATES ─────────────────────────────────────────
@@ -1163,10 +1170,6 @@ function renderMain() {
   const cont = document.getElementById("main-content");
   if(!cont) return;
   const sc = currentSchool();
-  if (isTrial) {
-    statusEl.textContent = "お試しモード";
-    statusEl.className = "status-saved";
-  }
   if (!sc) {
     cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🏫</div><div class="empty-text">上の「＋ 園を追加」から<br>見学する園を登録してください</div></div>`;
     return;
