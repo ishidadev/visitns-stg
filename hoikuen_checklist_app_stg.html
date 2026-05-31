@@ -139,14 +139,19 @@
   .time-input{max-width:140px;width:auto;}
   .note-input{margin-top:5px;width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--sub);background:var(--bg);}
   .note-input:focus{border-color:var(--sec-color);background:var(--surface);}
+  /* ===== MEMO TOGGLE ===== */
+  .memo-btn{margin-top:5px;padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;line-height:1.4;transition:background .15s;}
+  .memo-btn:hover{background:var(--gray-bg);}
+  .memo-btn.has-note{border-color:var(--sec-color);color:var(--sec-color);background:var(--sec-bg,#f5f5f5);}
+  .note-wrap{margin-top:4px;}
   .textarea{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:90px;transition:border .2s;color:var(--text);background:var(--surface);}
   .textarea:focus{border-color:var(--sec-color);}
 
   /* ===== AGE GROUP ===== */
-  .agegroup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;}
-  .agegroup-item{display:flex;align-items:center;gap:6px;}
-  .agegroup-label{font-size:11px;color:var(--sub);min-width:34px;flex-shrink:0;}
-  .agegroup-input{flex:1;padding:5px 8px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--text);background:var(--surface);}
+  .agegroup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+  .agegroup-item{display:flex;align-items:center;gap:4px;}
+  .agegroup-label{font-size:10px;color:var(--sub);min-width:30px;flex-shrink:0;}
+  .agegroup-input{flex:1;min-width:0;padding:4px 6px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--text);background:var(--surface);}
   .agegroup-input:focus{border-color:var(--sec-color);}
 
   /* ===== STARS ===== */
@@ -554,22 +559,20 @@ const errorEl = document.getElementById('login-error');
 
 // ─── SPARSE DATA: 入力済み項目のみ保存 ─────────────────────
 function serializeData(data) {
-  // 空の項目を除外してDBに送る（容量効率化）
+  // 入力済み項目のみ保存。note は全タイプで保持対象。
+  // ※ 空になった項目はエントリ自体を省くことでFirestore上からも消える
   const sparse = {};
   for (const [key, val] of Object.entries(data)) {
     if (!val) continue;
-    if (val.stars > 0) { sparse[key] = val; continue; }
-    if (val.value?.trim()) { sparse[key] = val; continue; }
-    if (val.selected?.length > 0 || val.note?.trim()) {
-      const entry = {};
-      if (val.selected?.length > 0) entry.selected = val.selected;
-      if (val.note?.trim()) entry.note = val.note;
-      sparse[key] = entry;
-      continue;
-    }
+    const entry = {};
+    let hasContent = false;
+    if ((val.stars ?? 0) > 0)             { entry.stars = val.stars; hasContent = true; }
+    if (val.value?.trim())                { entry.value = val.value; hasContent = true; }
+    if (val.selected?.length > 0)         { entry.selected = val.selected; hasContent = true; }
     if (val.ageData && Object.values(val.ageData).some(v => v?.trim())) {
-      sparse[key] = val; continue;
-    }
+                                            entry.ageData = val.ageData; hasContent = true; }
+    if (val.note?.trim())                 { entry.note = val.note; hasContent = true; }
+    if (hasContent) sparse[key] = entry;
   }
   return sparse;
 }
@@ -798,11 +801,14 @@ function scheduleSave(id) {
     if (!s || !currentUser) return;
     try {
       // スパースデータのみFirestoreに送る（容量効率化）
+      // ※ merge:true を使わずドキュメント全体を上書きすることで、
+      //    全チェックを外した際にFirestore上のフィールドも確実に削除される
       await setDoc(doc(db, "users", currentUser.uid, "checklists", id), {
         name: s.name,
         date: s.date || "",
+        order: s.order ?? 0,
         data: serializeData(s.data)
-      }, { merge: true });
+      });
       statusEl.textContent = "同期済";
       statusEl.className = "status-saved";
     } catch(e) {
@@ -834,10 +840,11 @@ function makeEmptyData() {
   const d = {};
   for (const sec of SECTIONS) {
     for (const row of sec.rows) {
-      if (row.type === "stars")    d[row.id] = {stars:0};
-      else if (row.type === "agegroup") d[row.id] = {ageData:{}};
-      else if (["text","textarea","time"].includes(row.type)) d[row.id] = {value:""};
-      else d[row.id] = {selected:[],note:""};
+      // すべてのタイプに note:"" を含める（全項目にメモ欄を追加するため）
+      if (row.type === "stars")    d[row.id] = {stars:0, note:""};
+      else if (row.type === "agegroup") d[row.id] = {ageData:{}, note:""};
+      else if (["text","textarea","time"].includes(row.type)) d[row.id] = {value:"", note:""};
+      else d[row.id] = {selected:[], note:""};
     }
   }
   return d;
@@ -993,9 +1000,12 @@ window.updateTextField = function(rowId, value) {
 
 window.updateNote = function(rowId, note) {
   const sc = currentSchool(); if (!sc) return;
-  const d = sc.data[rowId] || {selected:[],note:""};
+  const d = sc.data[rowId] || {};
   sc.data[rowId] = {...d, note};
   scheduleSave(currentId);
+  // メモボタンの色をメモ有無で切り替え
+  const btn = document.getElementById('memo-btn-' + rowId);
+  if (btn) btn.classList.toggle('has-note', !!note.trim());
 };
 
 window.setStars = function(secId, rowId, n, highlight) {
@@ -1092,6 +1102,16 @@ function renderSchoolHeader(sc) {
   </div>`;
 }
 
+// ─── MEMO TOGGLE (DOM-only, no re-render) ──────────────────
+window.toggleNote = function(rowId) {
+  const wrap = document.getElementById('note-wrap-' + rowId);
+  if (!wrap) return;
+  const isHidden = wrap.style.display === 'none';
+  wrap.style.display = isHidden ? '' : 'none';
+  const btn = document.getElementById('memo-btn-' + rowId);
+  if (btn) btn.textContent = isHidden ? '📝 メモ▲' : '📝 メモ';
+};
+
 function renderRow(row, sc, col) {
   const d = sc.data?.[row.id] || {};
   let inner = "";
@@ -1127,23 +1147,36 @@ function renderRow(row, sc, col) {
     ).join("")}</div>`;
 
   } else {
+    // hasNote:true の項目は従来通りメモ欄を常時表示（後続の共通メモと重複しないよう hasNote は廃止済み扱い）
     const chips = (row.opts||[]).map(opt => {
       const sel = (d.selected||[]).includes(opt);
       return `<button class="chip ${sel?'selected':''}" data-opt="${escH(opt)}"
         style="border-color:${col.color};background:${sel?col.color:'#fff'};color:${sel?'#fff':col.color}"
         onclick="window.toggleChip('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}','${escJ(opt)}')">${escH(opt)}</button>`;
     }).join("");
-    const note = row.hasNote ? `<input class="note-input" value="${escH(d.note||'')}" placeholder="${escH(row.np||'メモ')}"
-      oninput="window.updateNote('${row.id}',this.value)">` : "";
-    inner = `<div class="chips" data-row="${row.id}">${chips}</div>${note}`;
+    inner = `<div class="chips" data-row="${row.id}">${chips}</div>`;
   }
+
+  // ── 全タイプ共通：メモトグルボタン ──────────────────────
+  const existingNote = d.note?.trim() || "";
+  const noteVisible  = !!existingNote;  // 既存メモがあれば最初から展開
+  const hasNoteClass = existingNote ? ' has-note' : '';
+  const memoBtnLabel = noteVisible ? '📝 メモ▲' : '📝 メモ';
+  const noteBlock = `
+    <button id="memo-btn-${row.id}" class="memo-btn${hasNoteClass}" style="--sec-color:${col.color};--sec-bg:${col.bg}"
+      onclick="window.toggleNote('${row.id}')">${memoBtnLabel}</button>
+    <div id="note-wrap-${row.id}" class="note-wrap" style="${noteVisible?'':'display:none'}">
+      <input class="note-input" value="${escH(existingNote)}" placeholder="${escH(row.np||'メモを入力...')}"
+        style="--sec-color:${col.color}"
+        oninput="window.updateNote('${row.id}',this.value)">
+    </div>`;
 
   const badge = row.b==="重要" ? `<span class="badge badge-req">重要</span>` :
                 row.b==="事前" ? `<span class="badge badge-pre">事前</span>` : "";
   return `
     <div class="row" data-row="${row.id}">
       <div class="row-label">${badge}<span class="label-text">${escH(row.l)}</span></div>
-      ${inner}
+      ${inner}${noteBlock}
     </div>`;
 }
 
