@@ -144,6 +144,8 @@
   .memo-btn:hover{background:var(--gray-bg);}
   .memo-btn.has-note{border-color:var(--sec-color);color:var(--sec-color);background:var(--sec-bg,#f5f5f5);}
   .chips-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px;}
+  .input-row{display:flex;align-items:center;gap:6px;}
+  .input-row .text-input{flex:1;min-width:0;}
   .note-wrap{margin-top:4px;}
   .textarea{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:90px;transition:border .2s;color:var(--text);background:var(--surface);}
   .textarea:focus{border-color:var(--sec-color);}
@@ -1109,14 +1111,27 @@ function renderSchoolHeader(sc) {
 window.toggleNote = function(rowId) {
   const wrap = document.getElementById('note-wrap-' + rowId);
   if (!wrap) return;
-  const isHidden = wrap.style.display === 'none';
-  wrap.style.display = isHidden ? '' : 'none';
-  const btn = document.getElementById('memo-btn-' + rowId);
-  if (btn) btn.textContent = isHidden ? '📝 メモ▲' : '📝 メモ';
+  // メモ欄に内容がある場合は閉じない
+  const input = wrap.querySelector('input');
+  if (input && input.value.trim()) { wrap.style.display = 'block'; return; }
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
 };
 
 function renderRow(row, sc, col) {
   const d = sc.data?.[row.id] || {};
+  const existingNote = d.note?.trim() || "";
+  const noteVisible  = !!existingNote;
+  const hasNoteClass = existingNote ? ' has-note' : '';
+
+  // ── メモブロック（note-wrap）は全タイプ共通 ──
+  const noteWrap = `<div id="note-wrap-${row.id}" class="note-wrap" style="${noteVisible?'display:block':'display:none'}">
+      <input class="note-input" value="${escH(existingNote)}" placeholder="${escH(row.np||'メモを入力...')}"
+        style="--sec-color:${col.color}" oninput="window.updateNote('${row.id}',this.value)">
+    </div>`;
+  const memoBtn = `<button id="memo-btn-${row.id}" class="memo-btn${hasNoteClass}"
+      style="--sec-color:${col.color};--sec-bg:${col.bg}"
+      onclick="window.toggleNote('${row.id}')">📝</button>`;
+
   let inner = "";
 
   if (row.type === "stars") {
@@ -1125,82 +1140,55 @@ function renderRow(row, sc, col) {
     const btns = [1,2,3,4,5].map(n =>
       `<button class="star-btn" style="color:${n<=stars?starColor:'#ddd'}" onclick="window.setStars('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}',${n},${!!row.highlight})">★</button>`
     ).join("");
-    inner = `<div class="stars" data-row="${row.id}">${btns}</div>`;
+    // stars行：ボタン群とメモボタンを横並び
+    inner = `<div class="input-row"><div class="stars" data-row="${row.id}">${btns}</div>${memoBtn}</div>${noteWrap}`;
 
   } else if (row.type === "time") {
-    inner = `<input type="time" class="text-input time-input" value="${escH(d.value||'')}"
-      oninput="window.updateTextField('${row.id}',this.value)">`;
+    inner = `<div class="input-row">
+      <input type="time" class="text-input time-input" value="${escH(d.value||'')}"
+        oninput="window.updateTextField('${row.id}',this.value)">
+      ${memoBtn}</div>${noteWrap}`;
 
   } else if (row.type === "text") {
-    inner = `<input class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}" placeholder="${escH(row.ph||'')}"
-      oninput="window.updateTextField('${row.id}',this.value)">`;
+    inner = `<div class="input-row">
+      <input class="text-input" style="--sec-color:${col.color}" value="${escH(d.value||'')}" placeholder="${escH(row.ph||'')}"
+        oninput="window.updateTextField('${row.id}',this.value)">
+      ${memoBtn}</div>${noteWrap}`;
 
   } else if (row.type === "textarea") {
-    inner = `<textarea class="textarea" style="--sec-color:${col.color}" placeholder="${escH(row.ph||'')}"
-      oninput="window.updateTextField('${row.id}',this.value)">${escH(d.value||'')}</textarea>`;
+    inner = `<div class="input-row" style="align-items:flex-start">
+      <textarea class="textarea" style="--sec-color:${col.color};flex:1;min-width:0" placeholder="${escH(row.ph||'')}"
+        oninput="window.updateTextField('${row.id}',this.value)">${escH(d.value||'')}</textarea>
+      ${memoBtn}</div>${noteWrap}`;
 
   } else if (row.type === "agegroup") {
     const ageData = d.ageData || {};
-    inner = `<div class="agegroup-grid">${AGE_CLASSES.map(cls =>
+    inner = `<div class="input-row" style="align-items:flex-start">
+      <div class="agegroup-grid" style="flex:1">${AGE_CLASSES.map(cls =>
       `<div class="agegroup-item">
         <span class="agegroup-label">${cls}</span>
-        <input class="agegroup-input" value="${escH(ageData[cls]||'')}" placeholder="○名"
+        <input class="agegroup-input" value="${escH(ageData[cls]||'')}" placeholder="○"
           oninput="window.updateAgeGroup('${row.id}','${cls}',this.value)">
       </div>`
-    ).join("")}</div>`;
+    ).join("")}</div>${memoBtn}</div>${noteWrap}`;
 
   } else {
-    // hasNote:true の項目は従来通りメモ欄を常時表示（後続の共通メモと重複しないよう hasNote は廃止済み扱い）
+    // チップ：メモボタンをチップ末尾に inline
     const chips = (row.opts||[]).map(opt => {
       const sel = (d.selected||[]).includes(opt);
       return `<button class="chip ${sel?'selected':''}" data-opt="${escH(opt)}"
         style="border-color:${col.color};background:${sel?col.color:'#fff'};color:${sel?'#fff':col.color}"
         onclick="window.toggleChip('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}','${escJ(opt)}')">${escH(opt)}</button>`;
     }).join("");
-    // チップの場合はメモボタンをチップ列の末尾に inline で入れる
-    const existingNote = d.note?.trim() || "";
-    const noteVisible  = !!existingNote;
-    const hasNoteClass = existingNote ? ' has-note' : '';
-    const memoBtnLabel = noteVisible ? '📝▲' : '📝';
-    inner = `<div class="chips-row" data-row="${row.id}">${chips}
-      <button id="memo-btn-${row.id}" class="memo-btn${hasNoteClass}" style="--sec-color:${col.color};--sec-bg:${col.bg}"
-        onclick="window.toggleNote('${row.id}')">${memoBtnLabel}</button>
-    </div>
-    <div id="note-wrap-${row.id}" class="note-wrap" style="${noteVisible?'':'display:none'}">
-      <input class="note-input" value="${escH(existingNote)}" placeholder="${escH(row.np||'メモを入力...')}"
-        style="--sec-color:${col.color}"
-        oninput="window.updateNote('${row.id}',this.value)">
-    </div>`;
-    // 以降の共通 noteBlock は出力しない（chips の場合は上で完結）
-    const badge2 = row.b==="重要" ? `<span class="badge badge-req">重要</span>` :
-                   row.b==="事前" ? `<span class="badge badge-pre">事前</span>` : "";
-    return `
-      <div class="row" data-row="${row.id}">
-        <div class="row-label">${badge2}<span class="label-text">${escH(row.l)}</span></div>
-        ${inner}
-      </div>`;
+    inner = `<div class="chips-row" data-row="${row.id}">${chips}${memoBtn}</div>${noteWrap}`;
   }
-
-  // ── chips 以外のタイプ（stars/text/time/textarea/agegroup）：メモボタンを下に表示 ──
-  const existingNote = d.note?.trim() || "";
-  const noteVisible  = !!existingNote;
-  const hasNoteClass = existingNote ? ' has-note' : '';
-  const memoBtnLabel = noteVisible ? '📝 メモ▲' : '📝 メモ';
-  const noteBlock = `
-    <button id="memo-btn-${row.id}" class="memo-btn${hasNoteClass}" style="--sec-color:${col.color};--sec-bg:${col.bg}"
-      onclick="window.toggleNote('${row.id}')">${memoBtnLabel}</button>
-    <div id="note-wrap-${row.id}" class="note-wrap" style="${noteVisible?'':'display:none'}">
-      <input class="note-input" value="${escH(existingNote)}" placeholder="${escH(row.np||'メモを入力...')}"
-        style="--sec-color:${col.color}"
-        oninput="window.updateNote('${row.id}',this.value)">
-    </div>`;
 
   const badge = row.b==="重要" ? `<span class="badge badge-req">重要</span>` :
                 row.b==="事前" ? `<span class="badge badge-pre">事前</span>` : "";
   return `
     <div class="row" data-row="${row.id}">
       <div class="row-label">${badge}<span class="label-text">${escH(row.l)}</span></div>
-      ${inner}${noteBlock}
+      ${inner}
     </div>`;
 }
 
