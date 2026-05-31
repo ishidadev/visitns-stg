@@ -140,9 +140,10 @@
   .note-input{margin-top:5px;width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--sub);background:var(--bg);}
   .note-input:focus{border-color:var(--sec-color);background:var(--surface);}
   /* ===== MEMO TOGGLE ===== */
-  .memo-btn{margin-top:5px;padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;line-height:1.4;transition:background .15s;}
+  .memo-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--sub);font-size:11px;cursor:pointer;font-family:inherit;line-height:1.4;transition:background .15s;flex-shrink:0;}
   .memo-btn:hover{background:var(--gray-bg);}
   .memo-btn.has-note{border-color:var(--sec-color);color:var(--sec-color);background:var(--sec-bg,#f5f5f5);}
+  .chips-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px;}
   .note-wrap{margin-top:4px;}
   .textarea{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:90px;transition:border .2s;color:var(--text);background:var(--surface);}
   .textarea:focus{border-color:var(--sec-color);}
@@ -151,7 +152,7 @@
   .agegroup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
   .agegroup-item{display:flex;align-items:center;gap:4px;}
   .agegroup-label{font-size:10px;color:var(--sub);min-width:30px;flex-shrink:0;}
-  .agegroup-input{flex:1;min-width:0;padding:4px 6px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--text);background:var(--surface);}
+  .agegroup-input{width:2.8em;flex-shrink:0;padding:4px 4px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none;color:var(--text);background:var(--surface);text-align:center;}
   .agegroup-input:focus{border-color:var(--sec-color);}
 
   /* ===== STARS ===== */
@@ -993,7 +994,9 @@ window.toggleChip = function(secId, rowId, opt) {
 
 window.updateTextField = function(rowId, value) {
   const sc = currentSchool(); if (!sc) return;
-  sc.data[rowId] = {value};
+  // note を上書きしないよう既存の note を引き継ぐ
+  const prevNote = sc.data[rowId]?.note || "";
+  sc.data[rowId] = {value, note: prevNote};
   scheduleSave(currentId);
   updateProgress(SECTIONS.find(sec=>sec.rows.some(r=>r.id===rowId))?.id);
 };
@@ -1154,12 +1157,33 @@ function renderRow(row, sc, col) {
         style="border-color:${col.color};background:${sel?col.color:'#fff'};color:${sel?'#fff':col.color}"
         onclick="window.toggleChip('${SECTIONS.find(s=>s.rows.includes(row)).id}','${row.id}','${escJ(opt)}')">${escH(opt)}</button>`;
     }).join("");
-    inner = `<div class="chips" data-row="${row.id}">${chips}</div>`;
+    // チップの場合はメモボタンをチップ列の末尾に inline で入れる
+    const existingNote = d.note?.trim() || "";
+    const noteVisible  = !!existingNote;
+    const hasNoteClass = existingNote ? ' has-note' : '';
+    const memoBtnLabel = noteVisible ? '📝▲' : '📝';
+    inner = `<div class="chips-row" data-row="${row.id}">${chips}
+      <button id="memo-btn-${row.id}" class="memo-btn${hasNoteClass}" style="--sec-color:${col.color};--sec-bg:${col.bg}"
+        onclick="window.toggleNote('${row.id}')">${memoBtnLabel}</button>
+    </div>
+    <div id="note-wrap-${row.id}" class="note-wrap" style="${noteVisible?'':'display:none'}">
+      <input class="note-input" value="${escH(existingNote)}" placeholder="${escH(row.np||'メモを入力...')}"
+        style="--sec-color:${col.color}"
+        oninput="window.updateNote('${row.id}',this.value)">
+    </div>`;
+    // 以降の共通 noteBlock は出力しない（chips の場合は上で完結）
+    const badge2 = row.b==="重要" ? `<span class="badge badge-req">重要</span>` :
+                   row.b==="事前" ? `<span class="badge badge-pre">事前</span>` : "";
+    return `
+      <div class="row" data-row="${row.id}">
+        <div class="row-label">${badge2}<span class="label-text">${escH(row.l)}</span></div>
+        ${inner}
+      </div>`;
   }
 
-  // ── 全タイプ共通：メモトグルボタン ──────────────────────
+  // ── chips 以外のタイプ（stars/text/time/textarea/agegroup）：メモボタンを下に表示 ──
   const existingNote = d.note?.trim() || "";
-  const noteVisible  = !!existingNote;  // 既存メモがあれば最初から展開
+  const noteVisible  = !!existingNote;
   const hasNoteClass = existingNote ? ' has-note' : '';
   const memoBtnLabel = noteVisible ? '📝 メモ▲' : '📝 メモ';
   const noteBlock = `
