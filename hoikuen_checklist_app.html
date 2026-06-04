@@ -68,11 +68,6 @@
   .sort-btn{background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:13px;padding:3px 5px;line-height:1;color:var(--sub);flex-shrink:0;transition:background .15s;}
   .sort-btn:hover{background:var(--gray-bg);}
   .sort-btn:disabled{opacity:.3;cursor:default;}
-  /* 🛠️ 変更箇所：並び替え用ドラッグ行および掴み手ハンドルのスタイル定義を追加 */
-  .drawer-school-row { transition: transform 0.2s ease, opacity 0.2s ease; position: relative; }
-  .drawer-school-row.dragging { opacity: 0.5; transform: scale(0.98); z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-  .drag-handle { cursor: grab; font-size: 14px; color: var(--sub); padding: 5px 8px; user-select: none; -webkit-user-select: none; display: flex; align-items: center; justify-content: center; }
-  .drag-handle:active { cursor: grabbing; color: var(--blue); }
   .drawer-add-btn{color:var(--blue);margin-top:4px;padding:6px 8px;font-size:13px;}
   .mode-row{display:flex;gap:4px;background:#e8ecf0;padding:3px;border-radius:20px;}
   body.dark .mode-row{background:#2a2a3a;}
@@ -612,91 +607,27 @@ window.closeDrawer = function() {
 function renderDrawerSchoolList() {
   const el = document.getElementById('drawer-school-list');
   if (!el) return;
-  // 🛠️ 変更箇所：↑↓ボタンを廃止し、ドラッグを検知する各種イベントと掴み手ハンドルにリプレイス
+  const n = schools.length;
   el.innerHTML = schools.map((s, i) =>
-    `<div class="drawer-school-row" data-index="${i}" 
-          ontouchstart="window.handleDragStart(event, ${i})" 
-          onmousedown="window.handleDragStart(event, ${i})">
-      <div class="drag-handle">☰</div>
-      <div class="drawer-school-name ${s.id===currentId?'active':''}" style="margin:0;"
+    `<div class="drawer-school-row">
+      <div class="drawer-school-name ${s.id===currentId?'active':''}"
         onclick="window.switchSchool('${escJ(s.id)}');window.closeDrawer();">${escH(s.name)}</div>
+      <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',-1)" ${i===0?'disabled':''} title="上へ">↑</button>
+      <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',1)"  ${i===n-1?'disabled':''} title="下へ">↓</button>
     </div>`
   ).join('') +
   `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>`;
 }
 
-// ─── SCHOOL ORDER (🛠️ 変更箇所：ボタン式からスマホの引っ張りドラッグソート式へ完全リプレイス) ───
-let dragStartIndex = null;
-let currentDragIndex = null;
-let dragElement = null;
-
-window.handleDragStart = function(e, index) {
-  // ☰のつまみハンドルを掴んだ時だけドラッグを開始（文字タップ時は通常の園切り替えを優先）
-  if (!e.target.classList.contains('drag-handle')) return;
-  
-  dragStartIndex = index;
-  currentDragIndex = index;
-  dragElement = e.currentTarget;
-  dragElement.classList.add('dragging');
-  
-  if (e.type === 'touchstart') {
-    document.addEventListener('touchmove', window.handleDragMove, { passive: false });
-    document.addEventListener('touchend', window.handleDragEnd);
-  } else {
-    document.addEventListener('mousemove', window.handleDragMove);
-    document.addEventListener('mouseup', window.handleDragEnd);
-  }
-};
-
-window.handleDragMove = function(e) {
-  if (dragStartIndex === null || !dragElement) return;
-  if (e.type === 'touchmove') e.preventDefault(); // スマホの画面全体の上下スクロールをロック
-  
-  const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-  const rows = Array.from(document.querySelectorAll('.drawer-school-row'));
-  
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    if (row === dragElement) continue;
-    
-    const box = row.getBoundingClientRect();
-    // 掴んでいる指が、別の行の中心境界線を越えた瞬間にリアルタイムで配列を入れ替える
-    if (clientY > box.top && clientY < box.bottom) {
-      const targetIndex = parseInt(row.getAttribute('data-index'));
-      if (targetIndex !== currentDragIndex) {
-        // メモリ上の配列（schools）の順序を入れ替え
-        [schools[currentDragIndex], schools[targetIndex]] = [schools[targetIndex], schools[currentDragIndex]];
-        currentDragIndex = targetIndex;
-        
-        // サイドバー内のHTML構造を瞬時にリフレッシュ（インデックス属性の再割り当て）
-        renderDrawerSchoolList();
-        
-        // ドラッグ中の要素の状態を視覚的に引き継ぐ
-        dragElement = document.querySelector(`.drawer-school-row[data-index="${currentDragIndex}"]`);
-        if (dragElement) dragElement.classList.add('dragging');
-        break;
-      }
-    }
-  }
-};
-
-window.handleDragEnd = function(e) {
-  if (dragElement) dragElement.classList.remove('dragging');
-  
-  document.removeEventListener('touchmove', window.handleDragMove);
-  document.removeEventListener('touchend', window.handleDragEnd);
-  document.removeEventListener('mousemove', window.handleDragMove);
-  document.removeEventListener('mouseup', window.handleDragEnd);
-  
-  // 実際に順序が変わっていた場合のみ、セーブ処理を走らせる
-  if (dragStartIndex !== null && currentDragIndex !== null && dragStartIndex !== currentDragIndex) {
-    saveSchoolOrder();
-    renderTabs(); // 画面上部タブの並び順も完全にリアルタイム同期
-  }
-  
-  dragStartIndex = null;
-  currentDragIndex = null;
-  dragElement = null;
+// ─── SCHOOL ORDER ──────────────────────────────────────────
+window.moveSchool = function(id, dir) {
+  const idx = schools.findIndex(s => s.id === id);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= schools.length) return;
+  [schools[idx], schools[newIdx]] = [schools[newIdx], schools[idx]];
+  saveSchoolOrder();
+  renderTabs();
+  renderDrawerSchoolList();
 };
 
 async function saveSchoolOrder() {
