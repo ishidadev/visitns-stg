@@ -636,27 +636,28 @@ function renderDrawerSchoolList() {
   if (!el) return;
   const n = schools.length;
   
-  // 🛠️ 変更箇所：比較モード中は、ドラッグ用のハンドルをチェックボックスへ全自動で入れ替える
+  // 🛠️ 変更箇所：ドラッグハンドル（☰）を完全廃止し、どのモードでも「↑」「↓」ボタンが安全に動作する構造へ差し戻し・拡張
   el.innerHTML = schools.map((s, i) => {
     if (currentViewMode === 'compare') {
       const isChecked = compareSelectedIds.includes(s.id) ? 'checked' : '';
-      return `<div class="drawer-school-row" style="padding: 5px 0; display:flex; align-items:center;">
+      return `<div class="drawer-school-row" style="display:flex; align-items:center; gap:4px; padding:4px 0;">
         <input type="checkbox" id="chk-comp-${i}" value="${escH(s.id)}" ${isChecked} 
                onchange="window.toggleCompareSchool('${escJ(s.id)}')" 
                style="width:18px; height:18px; cursor:pointer; margin-left:6px; flex-shrink:0;">
-        <label for="chk-comp-${i}" class="drawer-school-name" style="margin:0; cursor:pointer; padding-left:6px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escH(s.name)}</label>
+        <label for="chk-comp-${i}" class="drawer-school-name" style="margin:0; cursor:pointer; padding-left:4px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escH(s.name)}</label>
+        <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',-1)" ${i===0?'disabled':''} title="上へ">↑</button>
+        <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',1)"  ${i===n-1?'disabled':''} title="下へ">↓</button>
       </div>`;
     } else {
-      return `<div class="drawer-school-row" data-index="${i}" 
-            ontouchstart="window.handleDragStart(event, ${i})" 
-            onmousedown="window.handleDragStart(event, ${i})">
-        <div class="drag-handle">☰</div>
-        <div class="drawer-school-name ${s.id===currentId?'active':''}" style="margin:0;"
+      return `<div class="drawer-school-row" style="display:flex; align-items:center; gap:4px; padding:4px 0;">
+        <div class="drawer-school-name ${s.id===currentId?'active':''}"
           onclick="window.switchSchool('${escJ(s.id)}');window.closeDrawer();">${escH(s.name)}</div>
+        <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',-1)" ${i===0?'disabled':''} title="上へ">↑</button>
+        <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',1)"  ${i===n-1?'disabled':''} title="下へ">↓</button>
       </div>`;
     }
   }).join('') +
-  (currentViewMode === 'compare' ? '' : `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>`);
+  `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>`;
 }
 
 // ─── SCHOOL ORDER (変更箇所：ボタン式からスマホの引っ張りドラッグソート式へ完全リプレイス) ───
