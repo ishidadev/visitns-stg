@@ -845,11 +845,24 @@ function bindRealtimeSync() {
       currentId = schools[0].id;
     }
     
-    // 画面構成部品のリフレッシュ
+    // 🛠️ 変更箇所：現在表示中の園（currentId）に、自分自身以外の変更が本当にあったかのみをdocChangesで精密検知
+    let mainNeedsRender = false;
+    snapshot.docChanges().forEach(change => {
+      if (change.doc.id === currentId) {
+        // 自分がsetDocして通信中の間（hasPendingWrites === true）は描画をスキップ（移行前と完全に同一の鉄壁の防衛ロジック）
+        if (!snapshot.metadata.hasPendingWrites) {
+          mainNeedsRender = true;
+        }
+      }
+    });
+
+    // 画面構成部品のリフレッシュ（他人の園追加や並び替えは、メインを壊さずタブやサイドバーだけが即座に動く）
     renderTabs();
-    renderMain();
     
-    // 🛠️ 変更箇所：サイドバー（メニュー）が現在開いている場合は、園一覧もその場でリアルタイムに再描画・並び替える
+    if (mainNeedsRender) {
+      renderMain();
+    }
+    
     if (document.getElementById('drawer').classList.contains('open')) {
       renderDrawerSchoolList();
     }
