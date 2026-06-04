@@ -208,6 +208,24 @@
   .btn-trial{width:100%;padding:11px;background:#f3e5f5;color:#7b1fa2;border:1.5px solid #ce93d8;border-radius:10px;font-size:13px;cursor:pointer;font-weight:700;font-family:inherit;}
   .btn-trial:hover{background:#e1bee7;}
   .trial-note{font-size:11px;color:#888;margin-top:6px;line-height:1.5;}
+  
+  /* 🛠️ 変更箇所：園の一括比較モード用のレスポンシブスタイル定義を追加 */
+  .compare-container { width: 100%; overflow-x: auto; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-top: 4px; -webkit-overflow-scrolling: touch; }
+  .compare-table { width: max-content; min-width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
+  .compare-table th, .compare-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: top; font-size: 13px; line-height: 1.4; }
+  .compare-table tr:last-child th, .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table th:last-child, .compare-table td:last-child { border-right: none; }
+  .compare-hdr-sticky { position: sticky; top: 0; background: var(--surface); z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.04); border-bottom: 2px solid var(--border) !important; }
+  .compare-col-label { position: sticky; left: 0; background: var(--gray-bg); font-weight: bold; width: 180px; min-width: 180px; max-width: 180px; z-index: 3; border-right: 2px solid var(--border) !important; }
+  .compare-hdr-sticky.compare-col-label { z-index: 4; background: var(--gray-bg); }
+  .compare-col-data { width: 290px; min-width: 290px; max-width: 290px; word-break: break-all; }
+  .compare-sec-row { background: var(--bg); font-weight: bold; }
+  .compare-sec-row th { border-right: none; padding: 10px 14px; font-size: 13px; color: var(--text); }
+  .compare-stars { color: #f59e0b; font-size: 15px; letter-spacing: 1px; }
+  .compare-stars-highlight { color: #e65100; font-size: 15px; letter-spacing: 1px; }
+  .compare-badge { display: inline-block; font-size: 9px; padding: 2px 4px; border-radius: 4px; color: #fff; font-weight: 700; margin-right: 4px; vertical-align: middle; line-height: 1; }
+  .compare-note { font-size: 11px; color: var(--sub); margin-top: 6px; background: rgba(0,0,0,0.03); padding: 5px 8px; border-radius: 6px; border-left: 3px solid #b0b0b0; word-break: break-all; white-space: pre-wrap; }
+  body.dark .compare-note { background: rgba(255,255,255,0.04); border-left-color: #555; }
 </style>
 </head>
 <body>
@@ -249,6 +267,7 @@
     <div class="mode-row">
       <button id="mode-toggle-btn" class="mode-btn active" onclick="window.setViewMode('toggle')">📱 トグル</button>
       <button id="mode-a3-btn" class="mode-btn" onclick="window.setViewMode('a3')">📄 A3印刷</button>
+      <button id="mode-compare-btn" class="mode-btn" onclick="window.setViewMode('compare')">⚖️ 園比較</button>
     </div>
   </div>
   <div class="drawer-section scrollable">
@@ -555,6 +574,8 @@ let currentUser = null;
 let trialMode = false;
 let unsubscribeSnapshot = null;
 let currentViewMode = 'toggle';
+// 🛠️ 変更箇所：比較モードでチェックが入った園のIDを格納するグローバル配列を追加
+let compareSelectedIds = [];
 
 const statusEl = document.getElementById('sync-status');
 const loginOverlay = document.getElementById('login-overlay');
@@ -614,16 +635,42 @@ function renderDrawerSchoolList() {
   const el = document.getElementById('drawer-school-list');
   if (!el) return;
   const n = schools.length;
-  el.innerHTML = schools.map((s, i) =>
-    `<div class="drawer-school-row">
-      <div class="drawer-school-name ${s.id===currentId?'active':''}"
-        onclick="window.switchSchool('${escJ(s.id)}');window.closeDrawer();">${escH(s.name)}</div>
-      <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',-1)" ${i===0?'disabled':''} title="上へ">↑</button>
-      <button class="sort-btn" onclick="window.moveSchool('${escJ(s.id)}',1)"  ${i===n-1?'disabled':''} title="下へ">↓</button>
-    </div>`
-  ).join('') +
-  `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>`;
+  
+  // 🛠️ 変更箇所：比較モード中は、ドラッグ用のハンドルをチェックボックスへ全自動で入れ替える
+  el.innerHTML = schools.map((s, i) => {
+    if (currentViewMode === 'compare') {
+      const isChecked = compareSelectedIds.includes(s.id) ? 'checked' : '';
+      return `<div class="drawer-school-row" style="padding: 5px 0; display:flex; align-items:center;">
+        <input type="checkbox" id="chk-comp-${i}" value="${escH(s.id)}" ${isChecked} 
+               onchange="window.toggleCompareSchool('${escJ(s.id)}')" 
+               style="width:18px; height:18px; cursor:pointer; margin-left:6px; flex-shrink:0;">
+        <label for="chk-comp-${i}" class="drawer-school-name" style="margin:0; cursor:pointer; padding-left:6px; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escH(s.name)}</label>
+      </div>`;
+    } else {
+      return `<div class="drawer-school-row" data-index="${i}" 
+            ontouchstart="window.handleDragStart(event, ${i})" 
+            onmousedown="window.handleDragStart(event, ${i})">
+        <div class="drag-handle">☰</div>
+        <div class="drawer-school-name ${s.id===currentId?'active':''}" style="margin:0;"
+          onclick="window.switchSchool('${escJ(s.id)}');window.closeDrawer();">${escH(s.name)}</div>
+      </div>`;
+    }
+  }).join('') +
+  (currentViewMode === 'compare' ? '' : `<div class="drawer-school-item drawer-add-btn" onclick="window.openModal();window.closeDrawer();">＋ 園を追加</div>`);
 }
+
+// ─── SCHOOL ORDER (変更箇所：ボタン式からスマホの引っ張りドラッグソート式へ完全リプレイス) ───
+// 🛠️ 変更箇所：チェックボックスがクリックされた際に、配列を書き換えてメイン画面をリアルタイム再描画する関数
+window.toggleCompareSchool = function(id) {
+  if (compareSelectedIds.includes(id)) {
+    compareSelectedIds = compareSelectedIds.filter(x => x !== id);
+  } else {
+    compareSelectedIds.push(id);
+  }
+  renderMain();
+};
+
+let dragStartIndex = null;
 
 // ─── SCHOOL ORDER ──────────────────────────────────────────
 window.moveSchool = function(id, dir) {
@@ -657,8 +704,14 @@ window.setViewMode = function(mode) {
   currentViewMode = mode;
   document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
   document.getElementById('mode-a3-btn').classList.toggle('active', mode === 'a3');
+  // 🛠️ 変更箇所：比較モードボタンの活性化、およびクラス名のバインディングを拡張
+  document.getElementById('mode-compare-btn').classList.toggle('active', mode === 'compare');
   const isDark = document.body.classList.contains('dark');
-  document.body.className = (mode === 'a3' ? 'mode-a3' : '') + (isDark ? ' dark' : '');
+  document.body.className = (mode === 'a3' ? 'mode-a3' : mode === 'compare' ? 'mode-compare' : '') + (isDark ? ' dark' : '');
+  
+  // 🛠️ 変更箇所：比較モードの切り替え時は、サイドバー内の表示と上部案内をリフレッシュさせる
+  renderDrawerSchoolList();
+  renderTabs();
   renderMain();
 };
 
@@ -1084,6 +1137,11 @@ window.collapseAll = function() {
 function renderTabs() {
   const cont = document.getElementById("school-tabs");
   if(!cont) return;
+  // 🛠️ 変更箇所：比較モードのときは上部タブを非表示にし、ユーザーへの操作ガイドテキストを表示する
+  if (currentViewMode === 'compare') {
+    cont.innerHTML = `<div style="font-size:12px; color:var(--sub); font-weight:bold; padding:6px 4px;">⚖️ 園の一括比較表（メニューから比較したい園にチェックを入れてください）</div>`;
+    return;
+  }
   let html = schools.map(s =>
     `<button class="tab-btn ${s.id===currentId?'active':'inactive'}" onclick="window.switchSchool('${escJ(s.id)}')">${escH(s.name)}</button>`
   ).join("");
@@ -1214,6 +1272,13 @@ function renderSection(sec, sc) {
 function renderMain() {
   const cont = document.getElementById("main-content");
   if(!cont) return;
+  
+  // 🛠️ 変更箇所：比較モードのときは、通常の1園詳細画面ではなく、一括比較ビューのレンダラーへ横流しする
+  if (currentViewMode === 'compare') {
+    renderCompareView(cont);
+    return;
+  }
+  
   const sc = currentSchool();
   if (!sc) {
     cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🏫</div><div class="empty-text">上の「＋ 園を追加」から<br>見学する園を登録してください</div></div>`;
@@ -1226,6 +1291,87 @@ function renderMain() {
   cont.innerHTML = html;
 }
 
+// 🛠️ 変更箇所：完全に読み取り専用（リードオンリー）で、全項目のメモ（note）もバインドして並列表示する比較ビューのコア関数を実装
+window.renderCompareView = function(cont) {
+  const selectedSchools = schools.filter(s => compareSelectedIds.includes(s.id));
+  
+  if (selectedSchools.length === 0) {
+    cont.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-text">左側のメニュー（☰）を開き、<br>表示形式で「園比較」を選択してから<br>比較したい園にチェックを入れてください。</div>
+      </div>`;
+    return;
+  }
+  
+  let html = `<div class="compare-container"><table class="compare-table">`;
+  
+  // 1. ヘッダー sticky 行 (園名と見学日の並列配置)
+  html += `<thead><tr>`;
+  html += `<th class="compare-hdr-sticky compare-col-label">項目 / 園名</th>`;
+  selectedSchools.forEach(sc => {
+    html += `<th class="compare-hdr-sticky compare-col-data" style="color:var(--blue); font-weight:bold; font-size:14px; background:var(--blue-bg);">
+      <div>${escH(sc.name)}</div>
+      <div style="font-size:11px; color:var(--sub); font-weight:normal; margin-top:4px;">📅 ${escH(sc.date || '未設定')}</div>
+    </th>`;
+  });
+  html += `</tr></thead><tbody>`;
+  
+  // 2. セクション構造および全評価項目のループマッピング
+  SECTIONS.forEach(sec => {
+    html += `<tr class="compare-sec-row">`;
+    html += `<th class="compare-col-label">${sec.e} ${escH(sec.t)}</th>`;
+    selectedSchools.forEach(() => { html += `<th></th>`; });
+    html += `</tr>`;
+    
+    sec.rows.forEach(row => {
+      html += `<tr>`;
+      
+      const badgeHtml = row.b === "重要" ? `<span class="compare-badge badge-req">重要</span>` :
+                        row.b === "事前" ? `<span class="compare-badge badge-pre">事前</span>` : "";
+      html += `<td class="compare-col-label">${badgeHtml}<span style="font-weight:normal; color:var(--sub);">${escH(row.l)}</span></td>`;
+      
+      selectedSchools.forEach(sc => {
+        const d = sc.data?.[row.id] || {};
+        let cellContent = `<span style="color:#aaa;">-</span>`;
+        
+        if (row.type === "stars") {
+          if ((d.stars || 0) > 0) {
+            const cls = row.highlight ? "compare-stars-highlight" : "compare-stars";
+            cellContent = `<span class="${cls}">${"★".repeat(d.stars)}${"☆".repeat(5 - d.stars)}</span>`;
+          }
+        } else if (["text", "textarea", "time"].includes(row.type)) {
+          if (d.value?.trim()) {
+            cellContent = `<div style="white-space:pre-wrap;">${escH(d.value)}</div>`;
+          }
+        } else if (row.type === "agegroup") {
+          if (d.ageData) {
+            const parts = AGE_CLASSES.filter(c => d.ageData[c]?.trim()).map(c => `${c.replace('児','')}:${d.ageData[c]}`);
+            if (parts.length > 0) cellContent = `<div>${escH(parts.join(" / "))}</div>`;
+          }
+        } else {
+          if (d.selected && d.selected.length > 0) {
+            cellContent = `<div style="font-weight:500;">${escH(d.selected.join("、"))}</div>`;
+          }
+        }
+        
+        // 各項目に紐づく個別メモ（note）のバインディング
+        let noteHtml = "";
+        if (d.note?.trim()) {
+          noteHtml = `<div class="compare-note">📝 ${escH(d.note)}</div>`;
+        }
+        
+        html += `<td class="compare-col-data">${cellContent}${noteHtml}</td>`;
+      });
+      
+      html += `</tr>`;
+    });
+  });
+  
+  html += `</tbody></table></div>`;
+  cont.innerHTML = html;
+};
+  
 function renderAll() { renderTabs(); renderMain(); }
 
 window.exportSummary = function() {
