@@ -181,6 +181,24 @@
   body.mode-a3 .export-area{display:none!important;}
   body.mode-a3 .chip{padding:4px 8px;font-size:11px;}
 
+  /* 🛠️ 変更箇所：📊 園比較モード（リードオンリー）専用のレスポンシブ・テーブルスタイルを追加 */
+  body.mode-compare .main { max-width: 100%!important; padding: 10px 4px 40px; }
+  body.mode-compare .export-area { display: none!important; }
+  .compare-table-wrap { width: 100%; overflow-x: auto; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); -webkit-overflow-scrolling: touch; }
+  .compare-table { width: 100%; border-collapse: collapse; min-width: 750px; font-size: 13px; table-layout: fixed; }
+  .compare-table th, .compare-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: top; word-break: break-all; }
+  .compare-table th:last-child, .compare-table td:last-child { border-right: none; }
+  .compare-table th { background: var(--gray-bg); font-weight: 700; color: var(--text); text-align: center; }
+  .compare-table th.sticky-col, .compare-table td.sticky-col { position: sticky; left: 0; background: var(--surface); z-index: 2; border-right: 2px solid var(--border); width: 160px; }
+  .compare-table th.sticky-col { background: var(--gray-bg); z-index: 3; }
+  .compare-sec-row { background: var(--blue-bg)!important; font-weight: 700; }
+  .compare-sec-row td { color: var(--blue); padding: 8px 12px; font-size: 13px; border-right: none; }
+  .compare-val-text { color: var(--text); line-height: 1.4; }
+  .compare-val-note { font-size: 11px; color: var(--sub); margin-top: 5px; padding-top: 4px; border-top: 1.5px dashed var(--border); }
+  .compare-val-empty { color: #ccc; font-style: italic; font-size: 11px; }
+  .compare-star { color: #f59e0b; font-size: 13px; letter-spacing: .5px; }
+  .compare-star-highlight { color: #e65100; font-size: 13px; letter-spacing: .5px; }
+  
   /* ===== LOGIN ===== */
   #login-overlay{position:fixed;inset:0;background:#f4f7f9;z-index:9999;display:flex;justify-content:center;align-items:center;padding:16px;}
   .login-box{background:white;padding:32px 28px;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.1);width:100%;max-width:360px;text-align:center;}
@@ -241,6 +259,7 @@
     <div class="mode-row">
       <button id="mode-toggle-btn" class="mode-btn active" onclick="window.setViewMode('toggle')">📱 トグル</button>
       <button id="mode-a3-btn" class="mode-btn" onclick="window.setViewMode('a3')">📄 A3印刷</button>
+      <button id="mode-compare-btn" class="mode-btn" onclick="window.setViewMode('compare')">📊 園比較</button>
     </div>
   </div>
   <div class="drawer-section scrollable">
@@ -651,8 +670,10 @@ window.setViewMode = function(mode) {
   currentViewMode = mode;
   document.getElementById('mode-toggle-btn').classList.toggle('active', mode === 'toggle');
   document.getElementById('mode-a3-btn').classList.toggle('active', mode === 'a3');
+  // 🛠️ 変更箇所：比較ボタンのハイライト制御と、bodyへのクラス指定を安全に拡張
+  document.getElementById('mode-compare-btn').classList.toggle('active', mode === 'compare');
   const isDark = document.body.classList.contains('dark');
-  document.body.className = (mode === 'a3' ? 'mode-a3' : '') + (isDark ? ' dark' : '');
+  document.body.className = (mode === 'a3' ? 'mode-a3' : mode === 'compare' ? 'mode-compare' : '') + (isDark ? ' dark' : '');
   renderMain();
 };
 
@@ -1174,6 +1195,66 @@ function renderMain() {
     cont.innerHTML = `<div class="empty-state"><div class="empty-icon">🏫</div><div class="empty-text">上の「＋ 園を追加」から<br>見学する園を登録してください</div></div>`;
     return;
   }
+
+  // 🛠️ 変更箇所：📊 園比較モード（入力不可・リードオンリーマトリクス）のレンダリング処理を追記
+  if (currentViewMode === 'compare') {
+    let html = `<div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th class="sticky-col">チェック項目</th>`;
+    schools.forEach(s => {
+      html += `<th>${escH(s.name)}<br><span style="font-size:11px;font-weight:400;opacity:0.7;">${escH(s.date || '見学日未定')}</span></th>`;
+    });
+    html += `</tr></thead><tbody>`;
+
+    SECTIONS.forEach(sec => {
+      // セクション見出し行の生成
+      html += `<tr class="compare-sec-row"><td colspan="${schools.length + 1}">${sec.e} ${sec.n ? sec.n + ' ' : ''}${escH(sec.t)}</td></tr>`;
+      
+      sec.rows.forEach(row => {
+        html += `<tr><td class="sticky-col" style="font-weight:500;background:var(--gray-bg);color:var(--text);font-size:12px;">${escH(row.l)}</td>`;
+        
+        schools.forEach(s => {
+          const d = s.data?.[row.id] || {};
+          html += `<td>`;
+          
+          let innerHtml = "";
+          if (row.type === "stars") {
+            const stars = d.stars || 0;
+            innerHtml = stars > 0 ? `<span class="${row.highlight ? 'compare-star-highlight' : 'compare-star'}">${"★".repeat(stars)}${"☆".repeat(5-stars)}</span>` : `<span class="compare-val-empty">未評価</span>`;
+          } else if (["text", "textarea", "time"].includes(row.type)) {
+            innerHtml = d.value?.trim() ? `<div class="compare-val-text">${escH(d.value)}</div>` : `<span class="compare-val-empty">-</span>`;
+          } else if (row.type === "agegroup") {
+            const ageData = d.ageData || {};
+            const activeAgeParts = [];
+            AGE_CLASSES.forEach(c => {
+              if (ageData[c]?.trim()) activeAgeParts.push(`${c}: ${ageData[c]}名`);
+            });
+            innerHtml = activeAgeParts.length > 0 ? `<div class="compare-val-text">${activeAgeParts.join('<br>')}</div>` : `<span class="compare-val-empty">-</span>`;
+          } else {
+            // 一般の選択型チップ（複数選択を改行で綺麗に縦並び表示）
+            innerHtml = d.selected && d.selected.length > 0 ? `<div class="compare-val-text">${d.selected.map(o => `・${o}`).join('<br>')}</div>` : `<span class="compare-val-empty">-</span>`;
+          }
+          
+          html += innerHtml;
+          
+          // 全共通：もし各項目に個別メモ（📝）が入力されていれば、下部に境界線付きでマージ表示
+          if (d.note?.trim()) {
+            html += `<div class="compare-val-note">📝 ${escH(d.note)}</div>`;
+          }
+          html += `</td>`;
+        });
+        html += `</tr>`;
+      });
+    });
+
+    html += `</tbody></table></div>`;
+    cont.innerHTML = html;
+    return;
+  }
+
+  // 既存のトグル、A3印刷ロジック（完全に維持）
   let html = renderSchoolHeader(sc);
   if(currentViewMode === 'a3') html += '<div class="main-container-grid">';
   html += SECTIONS.map(sec => renderSection(sec, sc)).join("");
