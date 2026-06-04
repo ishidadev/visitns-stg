@@ -830,7 +830,8 @@ function bindRealtimeSync() {
     schools = serverSchools.map(ss => {
       const localSc = schools.find(s => s.id === ss.id);
       if (localSc) {
-        if (snapshot.metadata.hasPendingWrites || ss.id === currentId) {
+        // 🛠️ 変更箇所：ただ画面を開いているだけの時は他人の更新を許可し、「自分がまさにタイピング中(400ms以内)の時」だけ上書きをブロックする
+        if (snapshot.metadata.hasPendingWrites || (ss.id === currentId && saveTimer !== null)) {
           return { ...ss, data: localSc.data };
         }
       }
@@ -891,6 +892,9 @@ function scheduleSave(id) {
     } catch(e) {
       statusEl.textContent = "保存失敗";
       statusEl.className = "";
+    } finally {
+      // 🛠️ 変更箇所：クラウドへの保存処理が完了したら、タイマーをnullに戻して「入力終了」を確定させる
+      saveTimer = null;
     }
   }, 400);
 }
