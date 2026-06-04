@@ -823,16 +823,13 @@ function bindRealtimeSync() {
       });
     });
     
-    // サーバーの最新の並び順(order)に従ってソート
+    // サーバーの最新の並び順（order）に従ってソート
     serverSchools.sort((a, b) => a.order - b.order);
     
     // 現在のローカル状態を考慮しながら安全にマージ（現在自分が入力中の文字の吹き飛びを徹底防御）
     schools = serverSchools.map(ss => {
       const localSc = schools.find(s => s.id === ss.id);
       if (localSc) {
-        // 💡 自分が文字を入力中(未同期データあり)、または現在開いている園の場合
-        // 画面のチラつきやデータ衝突を防ぐため、入力中の中身(data)はローカルの値を維持し、
-        // 順序(order)や園名・見学日のみをリアルタイムで他端末の変更に追従させる
         if (snapshot.metadata.hasPendingWrites || ss.id === currentId) {
           return { ...ss, data: localSc.data };
         }
@@ -847,8 +844,14 @@ function bindRealtimeSync() {
       currentId = schools[0].id;
     }
     
+    // 画面構成部品のリフレッシュ
     renderTabs();
     renderMain();
+    
+    // 🛠️ 変更箇所：サイドバー（メニュー）が現在開いている場合は、園一覧もその場でリアルタイムに再描画・並び替える
+    if (document.getElementById('drawer').classList.contains('open')) {
+      renderDrawerSchoolList();
+    }
     
     if (snapshot.metadata.hasPendingWrites) {
       statusEl.textContent = "保存中...";
@@ -860,7 +863,7 @@ function bindRealtimeSync() {
   });
 }
 
-// 🛠️ 変更箇所：コレクション監視に一本化したため、初回読込も共通ロジックへ流用
+// 初回読み込みも一括リアルタイム監視側の共通ロジックに委ねる
 async function firebaseLoadData() {
   bindRealtimeSync();
 }
