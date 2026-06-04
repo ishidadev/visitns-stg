@@ -802,51 +802,67 @@ function trialScheduleSave(id) {
 }
 
 // ─── FIREBASE SYNC ─────────────────────────────────────────
+// 🛠️ 変更箇所：個別の園ではなく園全体のコレクションをリアルタイム監視し、他端末の並び替え・追加・削除を即時同期
 function bindRealtimeSync() {
   if(unsubscribeSnapshot) unsubscribeSnapshot();
-  if(!currentUser || !currentId) return;
-  const docRef = doc(db, "users", currentUser.uid, "checklists", currentId);
-  unsubscribeSnapshot = onSnapshot(docRef, (snapshot) => {
-    if (snapshot.exists() && snapshot.metadata.hasPendingWrites === false) {
-      const serverData = snapshot.data();
-      const sc = schools.find(x => x.id === currentId);
-      if(sc) {
-        sc.name = serverData.name || sc.name;
-        sc.date = serverData.date || "";
-        // スパースデータを完全データに復元
-        sc.data = deserializeData(serverData.data);
-        renderMain();
-        renderTabs();
+  if(!currentUser) return;
+  
+  statusEl.textContent = "読込中...";
+  const colRef = collection(db, "users", currentUser.uid, "checklists");
+  
+  unsubscribeSnapshot = onSnapshot(colRef, (snapshot) => {
+    const serverSchools = [];
+    snapshot.forEach(docSnap => {
+      const d = docSnap.data();
+      serverSchools.push({
+        id: docSnap.id,
+        name: d.name || docSnap.id,
+        date: d.date || "",
+        order: d.order ?? 99999,
+        data: deserializeData(d.data)
+      });
+    });
+    
+    // サーバーの最新の並び順(order)に従ってソート
+    serverSchools.sort((a, b) => a.order - b.order);
+    
+    // 現在のローカル状態を考慮しながら安全にマージ（現在自分が入力中の文字の吹き飛びを徹底防御）
+    schools = serverSchools.map(ss => {
+      const localSc = schools.find(s => s.id === ss.id);
+      if (localSc) {
+        // 💡 自分が文字を入力中(未同期データあり)、または現在開いている園の場合
+        // 画面のチラつきやデータ衝突を防ぐため、入力中の中身(data)はローカルの値を維持し、
+        // 順序(order)や園名・見学日のみをリアルタイムで他端末の変更に追従させる
+        if (snapshot.metadata.hasPendingWrites || ss.id === currentId) {
+          return { ...ss, data: localSc.data };
+        }
       }
+      return ss;
+    });
+    
+    // アクティブな園IDの初期化整合性
+    if (schools.length === 0) {
+      currentId = null;
+    } else if (!currentId || !schools.some(s => s.id === currentId)) {
+      currentId = schools[0].id;
+    }
+    
+    renderTabs();
+    renderMain();
+    
+    if (snapshot.metadata.hasPendingWrites) {
+      statusEl.textContent = "保存中...";
+      statusEl.className = "status-saving";
+    } else {
       statusEl.textContent = "同期済";
       statusEl.className = "status-saved";
     }
   });
 }
 
+// 🛠️ 変更箇所：コレクション監視に一本化したため、初回読込も共通ロジックへ流用
 async function firebaseLoadData() {
-  if(!currentUser) return;
-  statusEl.textContent = "読込中...";
-  try {
-    const qSnap = await getDocs(collection(db, "users", currentUser.uid, "checklists"));
-    schools = [];
-    qSnap.forEach(docSnap => {
-      const d = docSnap.data();
-      schools.push({
-        id: docSnap.id,
-        name: d.name || docSnap.id,
-        date: d.date || "",
-        order: d.order ?? 99999,
-        // スパースデータを完全データに復元
-        data: deserializeData(d.data)
-      });
-    });
-    // orderフィールドで並べ替え
-    schools.sort((a, b) => a.order - b.order);
-    currentId = schools.length > 0 ? schools[0].id : null;
-    renderAll();
-    if(currentId) bindRealtimeSync();
-  } catch(e) { console.error(e); }
+  bindRealtimeSync();
 }
 
 function scheduleSave(id) {
