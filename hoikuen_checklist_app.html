@@ -492,7 +492,7 @@ const SECTIONS = [
     rows:[
       {id:"renraku_shudan",l:"連絡手段",opts:["アプリ","紙の連絡帳"]},
       {id:"renraku_freq",l:"連絡頻度",opts:["毎日","必要時のみ"]},
-      {id:"shashin_shoyu",l:"写真共有",opts:["あり","なし"],hasNote:true,np:"サービス名等"},
+      {id:"shashin_shoyu",l:"写真共有・販売",opts:["あり(サービス利用)","あり","なし"],hasNote:true,np:"サービス名等"},
       {id:"mendan",l:"面談",opts:["あり","なし"],hasNote:true,np:"頻度・形式"},
       {id:"hogoshakai_yakuin",l:"保護者会・役員",opts:["あり","なし"],hasNote:true,np:"内容・頻度"},
       {id:"sankanbi",l:"参観日",opts:["あり","なし"],hasNote:true,np:"内容・頻度"},
@@ -516,7 +516,8 @@ const SECTIONS = [
       {id:"mainichi_mochimono",l:"毎日の持ち物量",opts:["少ない","普通","多い"]},
       {id:"maisyu_mochimono",l:"毎週の持ち物量",opts:["少ない","普通","多い"]},
       {id:"omutsu_subscription",l:"おむつサブスク",b:"重要",opts:["サブスク有","持参(記名)","持参(スタンプ可)"]},
-      {id:"futon_lease",l:"布団リース有無",opts:["リース有","持参","園用意"]},
+      {id:"epuron",l:"エプロン・口拭き",b:"重要",opts:["サブスク有","園用意","持参"]},
+      {id:"futon_lease",l:"布団リース",opts:["リース有","園用意","持参"]},
       {id:"futon_motikaeri",l:"布団洗濯頻度",opts:["毎日","毎週","その他"],hasNote:true,np:"頻度"},
       {id:"sentaku_freq",l:"洗濯頻度・予洗い",type:"text",ph:"週○回 / 予洗い有無"},
       {id:"namaezuke_futan",l:"名前付けの負担",opts:["少ない","普通","多い"]},
