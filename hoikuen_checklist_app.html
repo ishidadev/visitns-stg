@@ -211,7 +211,7 @@
   
   /* 🛠️ 変更箇所：園の一括比較モード用のレスポンシブスタイル定義を追加 */
   /* 🛠️ 変更箇所：max-height と overflow: auto を指定し、Excelのウィンドウ枠固定（縦横 sticky）を完全に有効化 */
-  .compare-container { width: 100%; max-height: calc(100vh - 165px); overflow: auto; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-top: 4px; -webkit-overflow-scrolling: touch; }
+  .compare-container { width: 100%; overflow: auto; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-top: 4px; -webkit-overflow-scrolling: touch; }
   .compare-table { width: max-content; min-width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
   .compare-table th, .compare-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: top; font-size: 13px; line-height: 1.4; }
   .compare-table tr:last-child th, .compare-table tr:last-child td { border-bottom: none; }
@@ -228,15 +228,22 @@
   .compare-note { font-size: 11px; color: var(--sub); margin-top: 6px; background: rgba(0,0,0,0.03); padding: 5px 8px; border-radius: 6px; border-left: 3px solid #b0b0b0; word-break: break-all; white-space: pre-wrap; }
   body.dark .compare-note { background: rgba(255,255,255,0.04); border-left-color: #555; }
   
-  /* 🛠️ 変更箇所：A3印刷・園比較モードにおけるメイン領域(mainタグ含む)の下部余白の完全消去と、下部バーの一括非表示化 */
+  /* ─── DISPLAY MODES OPTIMIZATION (A3 & COMPARE) ───────────────── */
+  /* 🛠️ 変更箇所：A3印刷・園比較モードにおける下部余白の完全相殺と、下部固定バーの一括非表示化（DRY統合） */
   .mode-a3 main, .mode-a3 #main, .mode-a3 #main-content, .mode-a3 .main-container,
   .mode-compare main, .mode-compare #main, .mode-compare #main-content, .mode-compare .main-container {
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
   }
-  .mode-a3 .export-area,
-  .mode-compare .export-area {
+  .mode-a3 .export-area, .mode-compare .export-area {
     display: none !important;
+  }
+
+  /* 🛠️ 変更箇所：園比較モード専用。max-heightとheightをジャストサイズ(125px)に完全同期させ、
+     データ件数に関わらずコンテナの底を画面最下部へピタッと接地させつつ、ヘッダーの上端 sticky 固定を100%両立 */
+  .mode-compare .compare-container {
+    height: calc(100vh - 125px) !important;
+    max-height: calc(100vh - 125px) !important;
   }
 </style>
 </head>
