@@ -228,12 +228,14 @@
   .compare-note { font-size: 11px; color: var(--sub); margin-top: 6px; background: rgba(0,0,0,0.03); padding: 5px 8px; border-radius: 6px; border-left: 3px solid #b0b0b0; word-break: break-all; white-space: pre-wrap; }
   body.dark .compare-note { background: rgba(255,255,255,0.04); border-left-color: #555; }
   
-  /* 🛠️ 変更箇所：A3印刷モード・園比較モードでは下部バーが存在しないため、メイン領域の下部余白(padding)を完全にカットして不自然な空白を解消 */
-  body.mode-a3 #main-content,
-  body.mode-a3 .main-container,
-  body.mode-compare #main-content,
-  body.mode-compare .main-container {
+  /* 🛠️ 変更箇所：A3印刷・園比較モード時における不要な下部要素と余白の一括共通レイアウト補正 */
+  .mode-a3 #main-content, .mode-a3 .main-container,
+  .mode-compare #main-content, .mode-compare .main-container {
     padding-bottom: 0 !important;
+  }
+  .mode-a3 .bottom-bar, .mode-a3 #bottom-bar, .mode-a3 .footer-bar, .mode-a3 .bottom-nav,
+  .mode-compare .bottom-bar, .mode-compare #bottom-bar, .mode-compare .footer-bar, .mode-compare .bottom-nav {
+    display: none !important;
   }
 </style>
 </head>
