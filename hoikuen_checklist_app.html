@@ -211,7 +211,8 @@
   
   /* 🛠️ 変更箇所：園の一括比較モード用のレスポンシブスタイル定義を追加 */
   /* 🛠️ 変更箇所：max-height と overflow: auto を指定し、Excelのウィンドウ枠固定（縦横 sticky）を完全に有効化 */
-　.compare-container { width: 100%; max-height: calc(100vh - 95px); overflow: auto; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-top: 4px; -webkit-overflow-scrolling: touch; }  .compare-table { width: max-content; min-width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
+  .compare-container { width: 100%; max-height: calc(100vh - 165px); overflow: auto; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); margin-top: 4px; -webkit-overflow-scrolling: touch; }
+  .compare-table { width: max-content; min-width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
   .compare-table th, .compare-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: top; font-size: 13px; line-height: 1.4; }
   .compare-table tr:last-child th, .compare-table tr:last-child td { border-bottom: none; }
   .compare-table th:last-child, .compare-table td:last-child { border-right: none; }
